@@ -8,6 +8,7 @@ part 'login_state.dart';
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   LoginBloc() : super(LoginInitialState()) {
     on<LoginPageLoginButtonClickedEvent>(processLogin);
+    on<LoginPageRegisterButtonClickedEvent>(processRedirectToRegisterPage);
   }
   FutureOr<void> processLogin(LoginPageLoginButtonClickedEvent event, Emitter<LoginState> emit) async{
     // login user
@@ -26,5 +27,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     } catch(error){
       emit(LoginFailedState("An unexpected error occurred"));
     }
+  }
+  FutureOr<void> processRedirectToRegisterPage (LoginPageRegisterButtonClickedEvent event, Emitter<LoginState> emit){
+    emit(LoginNavigateToRegisterPageActionState());
   }
 }
