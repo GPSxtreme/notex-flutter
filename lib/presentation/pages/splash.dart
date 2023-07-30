@@ -30,6 +30,7 @@ class _SplashPageState extends State<SplashPage>{
 
     return BlocConsumer<SplashBloc,SplashState>(
       bloc: splashBloc,
+      listenWhen: (previous,current) => current is SplashActionState,
       buildWhen: (previous,current) => current is! SplashActionState,
       listener: (context,state){
         if(state is SplashUserNotAuthenticatedState){
@@ -61,7 +62,7 @@ class _SplashPageState extends State<SplashPage>{
                   child: Column(
                     children: [
                       if(state is SplashLoadingState) ...[
-                        const SpinKitCircle(color: kWhite,size: 30,),
+                        const SpinKitRing(color: kPinkD1,size: 30,),
                         SizedBox(height: SizeConfig.blockSizeVertical,),
                       ],
                       Center(child: kDevLogo,),
