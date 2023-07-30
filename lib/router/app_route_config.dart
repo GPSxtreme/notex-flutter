@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:notex/presentation/pages/register.dart';
 import 'package:notex/presentation/pages/splash.dart';
 import 'package:notex/router/app_route_constants.dart';
-
 import '../presentation/pages/home.dart';
 import '../presentation/pages/login.dart';
 import '../presentation/pages/notes.dart';
