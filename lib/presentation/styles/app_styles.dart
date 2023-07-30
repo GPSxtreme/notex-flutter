@@ -64,3 +64,31 @@ InputDecoration kTextFieldDecoration = InputDecoration(
     borderSide: BorderSide(color: kRed, width: 2.0),
   ),
 );
+
+ButtonStyle kBtnStyle = ButtonStyle(
+    backgroundColor: MaterialStateProperty.resolveWith<Color>(
+        (Set<MaterialState> states){
+          if(states.contains(MaterialState.disabled)){
+            return kPinkD1;
+          } else {
+            return kPink;
+          }
+        }
+    ),
+    padding: MaterialStateProperty.all<EdgeInsets>(const EdgeInsets.symmetric(vertical: 8)),
+    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+        RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.0),
+        )
+    ),
+
+);
+
+kSnackBar(BuildContext context,String text){
+  ScaffoldMessenger.of(context)
+      .showSnackBar(SnackBar(
+      content: Text(text,style: kInter.copyWith(fontSize: 15,fontWeight: FontWeight.w400),),
+    backgroundColor: kPinkD1,
+    padding: const EdgeInsets.symmetric(vertical: 20,horizontal: 30),
+  ));
+}
