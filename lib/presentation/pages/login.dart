@@ -48,8 +48,8 @@ class _LoginPageState extends State<LoginPage> {
       listenWhen: (previous,current) => current is LoginActionState,
       buildWhen: (previous,current) => current is! LoginActionState,
       listener: (context,state){
-        if(state is LoginPageRegisterButtonClickedEvent){
-          GoRouter.of(context).push(AppRouteConstants.registerRouteName);
+        if(state is LoginNavigateToRegisterPageActionState){
+          GoRouter.of(context).pushNamed(AppRouteConstants.registerRouteName);
         } else if(state is LoginSuccessState){
           GoRouter.of(context).pushReplacementNamed(AppRouteConstants.homeRouteName);
         } else if(state is LoginFailedState){
