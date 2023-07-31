@@ -3,7 +3,7 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 
 class JwtDecoderRepository {
   // Method to decode the JWT token and extract user data
-  Map<String, dynamic>? decodeJwtToken(String token) {
+  static Map<String, dynamic>? decodeJwtToken(String token) {
     try {
       Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
       return decodedToken;
