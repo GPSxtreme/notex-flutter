@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:notex/core/config/api_routes.dart';
 import 'package:notex/core/repositories/shared_preferences_repository.dart';
+import 'package:notex/data/models/register_response_model.dart';
 
 import '../../data/models/login_response_model.dart';
 
@@ -9,11 +10,12 @@ import '../../data/models/login_response_model.dart';
 
 class AuthRepository {
 
-  static Future<void> registerUser(String email, String password) async {
+  static Future<RegisterResponseModel> registerUser(String email, String password,bool? remember) async {
     final url = Uri.parse(USER_REGISTER_ROUTE);
     final body = jsonEncode({
       'email': email,
       'password': password,
+      'remember' : remember
     });
 
     try {
@@ -22,17 +24,14 @@ class AuthRepository {
         headers: {'Content-Type': 'application/json'},
         body: body,
       );
-
-      if (response.statusCode == 201) {
-        // Registration successful
-        // You can handle success or return relevant data here if needed.
-      } else {
-        // Registration failed
-        throw Exception('Failed to register user');
+      final RegisterResponseModel registerResponse =  registerResponseModelFromJson(response.body);
+      if(registerResponse.success){
+        //store token locally
+        await SharedPreferencesRepository.saveJwtToken(registerResponse.token!);
       }
+      return registerResponse;
     } catch (e) {
-      // Error handling for network or server-related issues
-      throw Exception('Failed to register user: $e');
+      return RegisterResponseModel(success: false, message: "An unexpected error occurred, $e");
     }
   }
 
