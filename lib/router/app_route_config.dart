@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:notex/presentation/pages/create_user_profile.dart';
 import 'package:notex/presentation/pages/register.dart';
 import 'package:notex/presentation/pages/splash.dart';
 import 'package:notex/router/app_route_constants.dart';
@@ -11,53 +12,58 @@ import '../presentation/pages/todos.dart';
 class MyAppRouter {
   static GoRouter getRouter(bool isAuth) {
     return GoRouter(
-      initialLocation: '/',
+        initialLocation: '/',
         routes: <GoRoute>[
-      GoRoute(
-          name: AppRouteConstants.splashRouteName,
-          path: '/',
-          pageBuilder: (BuildContext context, GoRouterState state) {
-            return const MaterialPage(child: SplashPage());
-          }),
-      GoRoute(
-          name: AppRouteConstants.loginRouteName,
-          path: '/login',
-          pageBuilder: (BuildContext context, GoRouterState state) {
-            return const MaterialPage(child: LoginPage());
-          }),
-      GoRoute(
-          name: AppRouteConstants.registerRouteName,
-          path: '/register',
-          pageBuilder: (BuildContext context, GoRouterState state) {
-            return const MaterialPage(child: RegisterPage());
-          }),
-      GoRoute(
-          name: AppRouteConstants.homeRouteName,
-          path: '/home',
-          pageBuilder: (BuildContext context, GoRouterState state) {
-            return const MaterialPage(child: HomePage());
-          }),
-      GoRoute(
-          name: AppRouteConstants.notesRouteName,
-          path: '/home/notes',
-          pageBuilder: (BuildContext context, GoRouterState state) {
-            return const MaterialPage(child: NotesPage());
-          }),
-      GoRoute(
-          name: AppRouteConstants.todosRouteName,
-          path: '/home/todos',
-          pageBuilder: (BuildContext context, GoRouterState state) {
-            return const MaterialPage(child: TodosPage());
-          }),
-    ],
-      redirect: (context,state){
-        // if(!isAuth){
-        //   return context.namedLocation(AppRouteConstants.loginRouteName);
-        // }else{
-        //   return null;
-        // }
-        print(state.fullPath);
-      }
-    );
+          GoRoute(
+              name: AppRouteConstants.splashRouteName,
+              path: '/',
+              pageBuilder: (BuildContext context, GoRouterState state) {
+                return const MaterialPage(child: SplashPage());
+              }),
+          GoRoute(
+              name: AppRouteConstants.loginRouteName,
+              path: '/login',
+              pageBuilder: (BuildContext context, GoRouterState state) {
+                return const MaterialPage(child: LoginPage());
+              }),
+          GoRoute(
+              name: AppRouteConstants.registerRouteName,
+              path: '/register',
+              pageBuilder: (BuildContext context, GoRouterState state) {
+                return const MaterialPage(child: RegisterPage());
+              }),
+          GoRoute(
+              name: AppRouteConstants.createUserProfileName,
+              path: '/createUserProfile',
+              pageBuilder: (BuildContext context, GoRouterState state) {
+                return const MaterialPage(child: CreateUserProfile());
+              }),
+          GoRoute(
+              name: AppRouteConstants.homeRouteName,
+              path: '/home',
+              pageBuilder: (BuildContext context, GoRouterState state) {
+                return const MaterialPage(child: HomePage());
+              }),
+          GoRoute(
+              name: AppRouteConstants.notesRouteName,
+              path: '/home/notes',
+              pageBuilder: (BuildContext context, GoRouterState state) {
+                return const MaterialPage(child: NotesPage());
+              }),
+          GoRoute(
+              name: AppRouteConstants.todosRouteName,
+              path: '/home/todos',
+              pageBuilder: (BuildContext context, GoRouterState state) {
+                return const MaterialPage(child: TodosPage());
+              }),
+        ],
+        redirect: (context, state) {
+          // if(!isAuth){
+          //   return context.namedLocation(AppRouteConstants.loginRouteName);
+          // }else{
+          //   return null;
+          // }
+          print(state.fullPath);
+        });
   }
 }
