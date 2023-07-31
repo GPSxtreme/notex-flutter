@@ -60,143 +60,163 @@ class _LoginPageState extends State<LoginPage> {
         return Scaffold(
           resizeToAvoidBottomInset: true,
           backgroundColor: kPinkD2,
-          body: Container(
-            width: SizeConfig.screenWidth,
-            height: SizeConfig.screenHeight,
-            decoration: const BoxDecoration(gradient: kPageBgGradient),
-            child: Stack(
-              children: [
-                Positioned(
-                  top: SizeConfig.blockSizeVertical! / 0.5,
-                  left: -SizeConfig.blockSizeHorizontal! * 0.5,
-                  child: SvgPicture.asset('assets/svg/login_page_bg_decor.svg'),
-                ),
-                Positioned(
-                  top: SizeConfig.blockSizeVertical! * 25,
-                  left: 25,
-                  right: 25,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Sign in to",
-                        style: kInter.copyWith(fontSize: 35),
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            "your ",
-                            style: kInter.copyWith(fontSize: 35),
-                          ),
-                          Text(
-                            "account",
-                            style: kInter.copyWith(fontSize: 35, color: kPink),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: SizeConfig.blockSizeVertical! * 15,
-                      ),
-                      TextField(
-                        style: kInter.copyWith(fontSize: 18),
-                        controller: _emailController,
-                        keyboardType: TextInputType.emailAddress,
-                        cursorColor: kWhite,
-                        decoration:
-                        kTextFieldDecoration.copyWith(labelText: "Email"),
-                      ),
-                      SizedBox(
-                        height: SizeConfig.blockSizeVertical! * 3,
-                      ),
-                      TextField(
-                        style: kInter.copyWith(fontSize: 18),
-                        keyboardType: TextInputType.text,
-                        controller: _passwordController,
-                        cursorColor: kWhite,
-                        obscureText: _hide,
-                        decoration: kTextFieldDecoration.copyWith(
-                            labelText: "Password",
-                            suffixIcon: IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    _hide = !_hide;
-                                  });
-                                },
-                                icon: Icon(
-                                  _hide ? Icons.visibility : Icons.visibility_off,
-                                  color: kWhite,
-                                ))),
-                      ),
-                      SizedBox(
-                        height: SizeConfig.blockSizeVertical! * 2,
-                      ),
-                      Row(
-                        children: [
-                          Transform.scale(
-                            scale:1.3,
-                            child: Checkbox(
-                                value: _rememberDevice,
-                                checkColor: kPink,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(5)),
-                                fillColor:
-                                MaterialStateProperty.resolveWith(getColor),
-                                onChanged: (bool? value) {
-                                  setState(() {
-                                    _rememberDevice = value!;
-                                  });
-                                }),
-                          ),
-                          Text("Remember device",style: kInter.copyWith(fontSize: 16,color: kWhite24),)
-                        ],
-                      ),
-                      SizedBox(
-                        height: SizeConfig.blockSizeVertical! * 5,
-                      ),
-                      SizedBox(
-                        width: double.maxFinite,
-                        child: ElevatedButton(
-                          onPressed: state is! LoginLoadingSate ? () {
-                            // login user
-                            if (_emailController.text.isEmpty ||
-                                _passwordController.text.isEmpty) {
-                              kSnackBar(context, 'Please fill in all fields');
-                            } else {
-                              loginBloc.add(LoginPageLoginButtonClickedEvent(_emailController.text, _passwordController.text,_rememberDevice));
-                            }
-                          } : null,
-                          style: kBtnStyle,
-                          child: state is! LoginLoadingSate ? Text(
-                            "Login",
-                            style: kInter.copyWith(fontSize: 20),
-                          ) :const SpinKitCircle(color: kWhite,size: 22,),
+          body: SafeArea(
+            child: Container(
+              width: SizeConfig.screenWidth,
+              height: SizeConfig.screenHeight,
+              decoration: const BoxDecoration(gradient: kPageBgGradient),
+              child: Stack(
+                children: [
+                  Positioned(
+                    top: 0,
+                    left: -SizeConfig.blockSizeHorizontal! * 0.5,
+                    child: SvgPicture.asset('assets/svg/login_page_bg_decor.svg'),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 0),
+                    child: NotificationListener<OverscrollIndicatorNotification>(
+                      onNotification: (overScroll) {
+                        overScroll.disallowIndicator();
+                        return true;
+                      },
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(height: SizeConfig.blockSizeVertical! * 20,),
+                            Text(
+                              "Sign in to",
+                              style: kInter.copyWith(fontSize: 35),
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  "your ",
+                                  style: kInter.copyWith(fontSize: 35),
+                                ),
+                                Text(
+                                  "account",
+                                  style: kInter.copyWith(fontSize: 35, color: kPink),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: SizeConfig.blockSizeVertical! * 15,
+                            ),
+                            TextField(
+                              style: kInter.copyWith(fontSize: 18),
+                              controller: _emailController,
+                              keyboardType: TextInputType.emailAddress,
+                              cursorColor: kWhite,
+                              decoration:
+                              kTextFieldDecoration.copyWith(labelText: "Email"),
+                            ),
+                            SizedBox(
+                              height: SizeConfig.blockSizeVertical! * 3,
+                            ),
+                            TextField(
+                              style: kInter.copyWith(fontSize: 18),
+                              keyboardType: TextInputType.text,
+                              controller: _passwordController,
+                              cursorColor: kWhite,
+                              obscureText: _hide,
+                              decoration: kTextFieldDecoration.copyWith(
+                                  labelText: "Password",
+                                  suffixIcon: IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          _hide = !_hide;
+                                        });
+                                      },
+                                      icon: Icon(
+                                        _hide ? Icons.visibility : Icons.visibility_off,
+                                        color: kWhite,
+                                      ))),
+                            ),
+                            SizedBox(
+                              height: SizeConfig.blockSizeVertical! * 2,
+                            ),
+                            Row(
+                              children: [
+                                Transform.scale(
+                                  scale:1.3,
+                                  child: Checkbox(
+                                      value: _rememberDevice,
+                                      checkColor: kPink,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(5)),
+                                      fillColor:
+                                      MaterialStateProperty.resolveWith(getColor),
+                                      onChanged: (bool? value) {
+                                        setState(() {
+                                          _rememberDevice = value!;
+                                        });
+                                      }),
+                                ),
+                                GestureDetector(
+                                  onTap: (){
+                                    setState(() {
+                                      _rememberDevice = !_rememberDevice;
+                                    });
+                                  },
+                                  child: Text(
+                                    "Remember device",
+                                    style: kInter.copyWith(
+                                        fontSize: 16, color: kWhite24),
+                                  ),
+                                )
+                              ],
+                            ),
+                            SizedBox(
+                              height: SizeConfig.blockSizeVertical! * 5,
+                            ),
+                            SizedBox(
+                              width: double.maxFinite,
+                              child: ElevatedButton(
+                                onPressed: state is! LoginLoadingSate ? () {
+                                  // login user
+                                  if (_emailController.text.isEmpty ||
+                                      _passwordController.text.isEmpty) {
+                                    kSnackBar(context, 'Please fill in all fields');
+                                  } else {
+                                    loginBloc.add(LoginPageLoginButtonClickedEvent(_emailController.text, _passwordController.text,_rememberDevice));
+                                  }
+                                } : null,
+                                style: kBtnStyle,
+                                child: state is! LoginLoadingSate ? Text(
+                                  "Login",
+                                  style: kInter.copyWith(fontSize: 20),
+                                ) :const SpinKitCircle(color: kWhite,size: 22,),
+                              ),
+                            ),
+                            SizedBox(
+                              height: SizeConfig.blockSizeVertical! * 5,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Don't have an account? ",
+                                  style: kInter.copyWith(fontSize: 16),
+                                ),
+                                GestureDetector(
+                                    onTap: () {
+                                      // go to register page
+                                      loginBloc.add(LoginPageRegisterButtonClickedEvent());
+                                    },
+                                    child: Text(
+                                      "Register ",
+                                      style: kInter.copyWith(fontSize: 16, color: kPink),
+                                    )),
+                              ],
+                            )
+                          ],
                         ),
                       ),
-                      SizedBox(
-                        height: SizeConfig.blockSizeVertical! * 5,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Don't have an account? ",
-                            style: kInter.copyWith(fontSize: 16),
-                          ),
-                          GestureDetector(
-                              onTap: () {
-                                // go to register page
-                                loginBloc.add(LoginPageRegisterButtonClickedEvent());
-                              },
-                              child: Text(
-                                "Register ",
-                                style: kInter.copyWith(fontSize: 16, color: kPink),
-                              )),
-                        ],
-                      )
-                    ],
-                  ),
-                )
-              ],
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
         );
