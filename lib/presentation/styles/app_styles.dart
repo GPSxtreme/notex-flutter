@@ -16,12 +16,14 @@ const Color kPinkD1 = Color.fromRGBO(100, 65, 98, 1);
 // for tile card color
 const Color kPinkD2 = Color.fromRGBO(45, 30, 44, 1);
 const Color kRed = Colors.red;
+const Color kPageBgStart = Color.fromRGBO(13, 12, 13, 1);
+const Color kPageBgEnd = Color.fromRGBO(50, 34, 49, 1);
 /* end of color constants */
 
 const Gradient kPageBgGradient = LinearGradient(
   colors: [
-    Color.fromRGBO(13, 12, 13, 1),
-    Color.fromRGBO(50, 34, 49, 1)
+    kPageBgStart,
+    kPageBgEnd
   ],
   begin: Alignment.topCenter,
   end: Alignment.bottomCenter,
