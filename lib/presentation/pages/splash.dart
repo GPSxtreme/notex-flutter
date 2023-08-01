@@ -36,7 +36,7 @@ class _SplashPageState extends State<SplashPage>{
         if(state is SplashUserNotAuthenticatedState){
           GoRouter.of(context).goNamed(AppRouteConstants.loginRouteName);
         } else if (state is  SplashUserAuthenticatedState){
-          GoRouter.of(context).goNamed(AppRouteConstants.homeRouteName);
+          GoRouter.of(context).go("/${AppRouteConstants.notesRouteName}");
         }
       },
       builder: (context, state){
