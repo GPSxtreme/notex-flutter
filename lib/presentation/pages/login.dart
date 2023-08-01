@@ -51,7 +51,7 @@ class _LoginPageState extends State<LoginPage> {
         if(state is LoginNavigateToRegisterPageActionState){
           GoRouter.of(context).pushNamed(AppRouteConstants.registerRouteName);
         } else if(state is LoginSuccessState){
-          GoRouter.of(context).pushReplacementNamed(AppRouteConstants.homeRouteName);
+          GoRouter.of(context).go("/${AppRouteConstants.notesRouteName}");
         } else if(state is LoginFailedState){
           kSnackBar(context, state.reason);
         }
