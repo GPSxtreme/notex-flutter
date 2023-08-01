@@ -12,7 +12,7 @@ import '../presentation/pages/todos.dart';
 class MyAppRouter {
   static GoRouter getRouter(bool isAuth) {
     return GoRouter(
-        initialLocation: '/',
+        initialLocation: '/createUserProfile',
         routes: <GoRoute>[
           GoRoute(
               name: AppRouteConstants.splashRouteName,
