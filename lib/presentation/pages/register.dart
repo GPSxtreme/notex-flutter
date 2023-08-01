@@ -128,7 +128,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 controller: _emailController,
                                 keyboardType: TextInputType.emailAddress,
                                 cursorColor: kWhite,
-                                decoration: kTextFieldDecoration.copyWith(
+                                decoration: kTextFieldDecorationT1.copyWith(
                                     labelText: "Email"),
                               ),
                               SizedBox(
@@ -140,7 +140,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 controller: _passwordController,
                                 cursorColor: kWhite,
                                 obscureText: _hide,
-                                decoration: kTextFieldDecoration.copyWith(
+                                decoration: kTextFieldDecorationT1.copyWith(
                                     labelText: "Password",
                                     suffixIcon: IconButton(
                                         onPressed: () {
@@ -164,7 +164,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 controller: _confirmPasswordController,
                                 cursorColor: kWhite,
                                 obscureText: _hideConfirm,
-                                decoration: kTextFieldDecoration.copyWith(
+                                decoration: kTextFieldDecorationT1.copyWith(
                                     labelText: "confirm password",
                                     suffixIcon: IconButton(
                                         onPressed: () {
@@ -244,7 +244,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                           }
                                         }
                                       : null,
-                                  style: kBtnStyle,
+                                  style: kBtnStyleT1,
                                   child: state is! RegisterLoadingState
                                       ? Text(
                                           "Register",
