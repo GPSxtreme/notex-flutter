@@ -48,6 +48,9 @@ dependencies:
   shared_preferences: ^2.2.0
   jwt_decoder: ^2.0.1
   meta: ^1.9.1
+  intl: ^0.18.1
+  country_code_picker: ^3.0.0
+  image_picker: ^1.0.1
 
 dev_dependencies:
   flutter_test:
