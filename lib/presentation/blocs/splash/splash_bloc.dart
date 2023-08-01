@@ -15,7 +15,7 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
   FutureOr<void> splashInitialEvent(
       SplashInitialEvent event, Emitter<SplashState> emit) async {
     emit(SplashLoadingState());
-    await Future.delayed(const Duration(seconds: 3));
+    await Future.delayed(const Duration(seconds: 1));
     String? userToken = await SharedPreferencesRepository.getJwtToken();
     if(userToken != null){
       bool isValid =  JwtDecoderRepository.verifyJwtToken(userToken);
