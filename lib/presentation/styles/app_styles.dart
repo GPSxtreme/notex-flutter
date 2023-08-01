@@ -42,7 +42,8 @@ TextStyle kInter = GoogleFonts.inter(
   fontWeight: FontWeight.w400
 );
 
-InputDecoration kTextFieldDecoration = InputDecoration(
+/// use cases : login , register page text fields etc
+InputDecoration kTextFieldDecorationT1 = InputDecoration(
   labelText: '',
   fillColor: kWhite.withOpacity(0.03),
   filled: true,
@@ -67,7 +68,8 @@ InputDecoration kTextFieldDecoration = InputDecoration(
   ),
 );
 
-ButtonStyle kBtnStyle = ButtonStyle(
+/// use cases : login page, register page (basically a pink btn)
+ButtonStyle kBtnStyleT1 = ButtonStyle(
     backgroundColor: MaterialStateProperty.resolveWith<Color>(
         (Set<MaterialState> states){
           if(states.contains(MaterialState.disabled)){
@@ -83,7 +85,26 @@ ButtonStyle kBtnStyle = ButtonStyle(
           borderRadius: BorderRadius.circular(20.0),
         )
     ),
+);
 
+/// looks like [kTextFieldDecorationT1] but a button
+ButtonStyle kBtnStyleT2 = ButtonStyle(
+  backgroundColor: MaterialStateProperty.resolveWith<Color>(
+          (Set<MaterialState> states){
+        if(states.contains(MaterialState.pressed)){
+          return kPinkD2;
+        } else {
+          return kPinkD1.withOpacity(0.3);
+        }
+      }
+  ),
+  padding: MaterialStateProperty.all<EdgeInsets>(const EdgeInsets.symmetric(vertical: 12)),
+  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+      RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0),
+          side: const BorderSide(color: kPinkD1,width: 2.0)
+      )
+  ),
 );
 
 kSnackBar(BuildContext context,String text){
