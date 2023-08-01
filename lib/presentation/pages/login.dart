@@ -109,7 +109,7 @@ class _LoginPageState extends State<LoginPage> {
                               keyboardType: TextInputType.emailAddress,
                               cursorColor: kWhite,
                               decoration:
-                              kTextFieldDecoration.copyWith(labelText: "Email"),
+                              kTextFieldDecorationT1.copyWith(labelText: "Email"),
                             ),
                             SizedBox(
                               height: SizeConfig.blockSizeVertical! * 3,
@@ -120,7 +120,7 @@ class _LoginPageState extends State<LoginPage> {
                               controller: _passwordController,
                               cursorColor: kWhite,
                               obscureText: _hide,
-                              decoration: kTextFieldDecoration.copyWith(
+                              decoration: kTextFieldDecorationT1.copyWith(
                                   labelText: "Password",
                                   suffixIcon: IconButton(
                                       onPressed: () {
@@ -182,7 +182,7 @@ class _LoginPageState extends State<LoginPage> {
                                     loginBloc.add(LoginPageLoginButtonClickedEvent(_emailController.text, _passwordController.text,_rememberDevice));
                                   }
                                 } : null,
-                                style: kBtnStyle,
+                                style: kBtnStyleT1,
                                 child: state is! LoginLoadingSate ? Text(
                                   "Login",
                                   style: kInter.copyWith(fontSize: 20),
