@@ -118,7 +118,7 @@ class _CreateUserProfileState extends State<CreateUserProfile> {
         } else if(state is CreateUserProfileFailedState){
           kSnackBar(context, state.reason);
         } else if(state is CreateUserProfileSuccessState){
-          GoRouter.of(context).pushReplacementNamed(AppRouteConstants.homeRouteName);
+          GoRouter.of(context).pushReplacementNamed(AppRouteConstants.notesRouteName);
         }
       },
       builder: (context, state) {
