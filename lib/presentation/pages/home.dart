@@ -1,27 +1,23 @@
+// ignore_for_file: deprecated_member_use
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:go_router/go_router.dart';
 import 'package:notex/presentation/pages/notes.dart';
 import 'package:notex/presentation/pages/todos.dart';
 import 'package:notex/presentation/styles/app_styles.dart';
-
+import '../physics/custom_scroll_physics.dart';
 import '../styles/size_config.dart';
 
+
 class HomePage extends StatefulWidget {
-  const HomePage({super.key, required this.navigationShell});
-  final StatefulNavigationShell navigationShell;
+  const HomePage({super.key});
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+  final PageController _pageController = PageController(initialPage: 0);
+  int _currentIndex = 0;
 
-  void _goBranch(int index) {
-    widget.navigationShell.goBranch(
-      index,
-      initialLocation: index == widget.navigationShell.currentIndex,
-    );
-  }
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -36,6 +32,17 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: kPageBgStart,
         elevation: 0,
       ),
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: kPink,
+          onPressed: () {
+            print(_currentIndex);
+          },
+          child: Icon(
+            Icons.add,
+            color: kWhite,
+            size: SizeConfig.blockSizeVertical! * 5,
+          ),
+        ),
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
           borderRadius: BorderRadius.only(
@@ -54,8 +61,10 @@ class _HomePageState extends State<HomePage> {
             selectedLabelStyle: kInter.copyWith(color: kPink,fontSize: 14),
             unselectedLabelStyle: kInter.copyWith(color: kWhite,fontSize: 14),
             selectedItemColor: kPink,
-            onTap: _goBranch,
-            currentIndex: widget.navigationShell.currentIndex,
+            onTap: (index){
+              _pageController.animateToPage(index ,duration: const Duration(milliseconds: 500), curve: Curves.ease);
+            },
+            currentIndex: _currentIndex,
             items: [
               BottomNavigationBarItem(
                   icon: SvgPicture.asset(
@@ -77,7 +86,22 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-      body: GoRouter.of(context).routerDelegate.currentConfiguration.uri.path == '/notes' ? const NotesPage() : const TodosPage(),
+      body: ScrollConfiguration(
+        behavior: const CustomScrollBehavior(kPinkD1), // Create a custom ScrollBehavior
+        child: PageView(
+          controller: _pageController,
+          onPageChanged: (newIndex) {
+            setState(() {
+              _currentIndex = newIndex;
+            });
+          },
+          children: const [
+            NotesPage(),
+            TodosPage()
+          ],
+        ),
+      ),
+
     );
   }
 }
