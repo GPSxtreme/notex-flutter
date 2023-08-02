@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
 import '../styles/app_styles.dart';
 import '../styles/size_config.dart';
 
@@ -94,18 +93,6 @@ class _NotesPageState extends State<NotesPage> {
               ),
             ),
           ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: kPink,
-        onPressed: () {
-          // create new note
-          print("add note pressed");
-        },
-        child: Icon(
-          Icons.add,
-          color: kWhite,
-          size: SizeConfig.blockSizeVertical! * 5,
         ),
       ),
     );
