@@ -96,18 +96,6 @@ class _TodosPageState extends State<TodosPage> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: kPink,
-        onPressed: () {
-          // create new note
-          print("add todo pressed");
-        },
-        child: Icon(
-          Icons.add,
-          color: kWhite,
-          size: SizeConfig.blockSizeVertical! * 5,
-        ),
-      ),
     );
   }
 }
