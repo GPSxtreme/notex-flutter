@@ -1,6 +1,9 @@
 // ignore_for_file: deprecated_member_use
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:notex/presentation/blocs/notes/notes_bloc.dart';
+import 'package:notex/presentation/blocs/todos/todos_bloc.dart';
 import 'package:notex/presentation/pages/notes.dart';
 import 'package:notex/presentation/pages/todos.dart';
 import 'package:notex/presentation/styles/app_styles.dart';
@@ -35,7 +38,6 @@ class _HomePageState extends State<HomePage> {
         floatingActionButton: FloatingActionButton(
           backgroundColor: kPink,
           onPressed: () {
-            print(_currentIndex);
           },
           child: Icon(
             Icons.add,
@@ -95,9 +97,15 @@ class _HomePageState extends State<HomePage> {
               _currentIndex = newIndex;
             });
           },
-          children: const [
-            NotesPage(),
-            TodosPage()
+          children: [
+            BlocProvider(
+              create: (context) => NotesBloc()..add(NotesInitialEvent()),
+              child: const NotesPage(),
+            ),
+            BlocProvider(
+              create: (context) => TodosBloc()..add(TodosInitialEvent()),
+              child: const TodosPage(),
+            ),
           ],
         ),
       ),
