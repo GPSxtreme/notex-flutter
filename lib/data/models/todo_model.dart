@@ -17,6 +17,7 @@ class TodoModel {
   final DateTime editedTime;
   final DateTime expireTime;
   final int v;
+  final bool? isSynced;
 
   TodoModel({
     required this.id,
@@ -27,6 +28,7 @@ class TodoModel {
     required this.editedTime,
     required this.expireTime,
     required this.v,
+    this.isSynced
   });
 
   factory TodoModel.fromJson(Map<String, dynamic> json) => TodoModel(
@@ -38,6 +40,18 @@ class TodoModel {
     editedTime: DateTime.parse(json["editedTime"]),
     expireTime: DateTime.parse(json["expireTime"]),
     v: json["__v"],
+  );
+
+  factory TodoModel.fromJsonOfLocalDb(Map<String, dynamic> json) => TodoModel(
+    id: json["_id"],
+    userId: json["userId"],
+    body: json["body"],
+    isCompleted: json["isCompleted"] == 0 ? false : true,
+    createdTime: DateTime.parse(json["createdTime"]),
+    editedTime: DateTime.parse(json["editedTime"]),
+    expireTime: DateTime.parse(json["expireTime"]),
+    v: json["__v"],
+    isSynced: json['isSynced'] == 0 ? false : true
   );
 
   Map<String, dynamic> toJson() => {
