@@ -11,13 +11,13 @@ String todoModelToJson(TodoModel data) => json.encode(data.toJson());
 class TodoModel {
   final String id;
   final String userId;
-  final String body;
-  final bool isCompleted;
+  String body;
+  bool isCompleted;
   final DateTime createdTime;
-  final DateTime editedTime;
-  final DateTime expireTime;
+  DateTime editedTime;
+  DateTime expireTime;
   final int v;
-  final bool? isSynced;
+  bool? isSynced;
 
   TodoModel({
     required this.id,
