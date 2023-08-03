@@ -11,12 +11,12 @@ String noteModelToJson(NoteModel data) => json.encode(data.toJson());
 class NoteModel {
   final String id;
   final String userId;
-  final String title;
-  final String body;
+  String title;
+  String body;
   final DateTime createdTime;
-  final DateTime editedTime;
+  DateTime editedTime;
   final int v;
-  final bool? isSynced;
+  bool? isSynced;
 
   NoteModel({
     required this.id,
