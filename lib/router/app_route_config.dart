@@ -15,7 +15,7 @@ class MyAppRouter {
     final rootNavigatorKey = GlobalKey<NavigatorState>();
 
     return GoRouter(
-        initialLocation: '/',
+        initialLocation: '/home',
         navigatorKey: rootNavigatorKey,
         routes: [
           GoRoute(
@@ -65,14 +65,6 @@ class MyAppRouter {
               ),
             ]
               ),
-        ],
-        redirect: (context, state) {
-          // if(!isAuth){
-          //   return context.namedLocation(AppRouteConstants.loginRouteName);
-          // }else{
-          //   return null;
-          // }
-          print(state.fullPath);
-        });
+        ],);
   }
 }
