@@ -7,7 +7,6 @@ import 'package:notex/presentation/styles/app_styles.dart';
 import 'package:notex/presentation/styles/size_config.dart';
 import 'package:notex/presentation/widgets/todo_tile.dart';
 
-
 class TodosPage extends StatefulWidget {
   const TodosPage({super.key});
 
@@ -15,7 +14,10 @@ class TodosPage extends StatefulWidget {
   State<TodosPage> createState() => _TodosPageState();
 }
 
-class _TodosPageState extends State<TodosPage> with AutomaticKeepAliveClientMixin<TodosPage>{
+class _TodosPageState extends State<TodosPage>
+    with AutomaticKeepAliveClientMixin<TodosPage> {
+
+
   @override
   bool get wantKeepAlive => true;
   late TodosBloc todosBloc; // Declare the NotesBloc variable
@@ -32,14 +34,13 @@ class _TodosPageState extends State<TodosPage> with AutomaticKeepAliveClientMixi
     SizeConfig().init(context);
     return BlocConsumer(
       bloc: todosBloc,
-      listener: (context,state){
-
-      },
-      builder: (context,state){
+      listener: (context, state) {},
+      builder: (context, state) {
         return Scaffold(
           appBar: null,
           body: Container(
-            padding: const EdgeInsets.only(left: 0,right: 0,top: 30,bottom: 10),
+            padding:
+                const EdgeInsets.only(left: 0, right: 0, top: 30, bottom: 10),
             width: SizeConfig.screenWidth,
             height: SizeConfig.screenHeight,
             decoration: const BoxDecoration(gradient: kPageBgGradient),
@@ -96,7 +97,7 @@ class _TodosPageState extends State<TodosPage> with AutomaticKeepAliveClientMixi
                           Text(
                             "You can add new todo by pressing\nAdd button at the bottom",
                             style:
-                            kInter.copyWith(fontSize: 15, color: kWhite24),
+                                kInter.copyWith(fontSize: 15, color: kWhite24),
                             textAlign: TextAlign.center,
                           )
                         ],
@@ -115,7 +116,8 @@ class _TodosPageState extends State<TodosPage> with AutomaticKeepAliveClientMixi
                       children: [
                         Text(
                           'Failed to load notes',
-                          style: kInter.copyWith(fontSize: 22,fontWeight: FontWeight.w600),
+                          style: kInter.copyWith(
+                              fontSize: 22, fontWeight: FontWeight.w600),
                         ),
                         SizedBox(
                           height: SizeConfig.blockSizeVertical! * 2,
@@ -130,28 +132,65 @@ class _TodosPageState extends State<TodosPage> with AutomaticKeepAliveClientMixi
                 ] else if (state is TodosFetchedState) ...[
                   Padding(
                     padding:
-                    const EdgeInsets.symmetric(horizontal: 25, vertical: 0),
+                        const EdgeInsets.symmetric(horizontal: 25, vertical: 0),
                     child:
-                    NotificationListener<OverscrollIndicatorNotification>(
+                        NotificationListener<OverscrollIndicatorNotification>(
                       onNotification: (overScroll) {
                         overScroll.disallowIndicator();
                         return true;
                       },
                       child: SingleChildScrollView(
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // note widgets go here if present
                             ListView.builder(
                               shrinkWrap: true,
-                              itemCount: state.todos.length, itemBuilder: (BuildContext context, int todoIndex) {
-                              final todos = state.todos;
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 10),
-                                child: TodoTile(todo: todos[todoIndex]),
-                              );
-                            },
+                              itemCount: state.notDoneTodos.length,
+                              itemBuilder:
+                                  (BuildContext context, int todoIndex) {
+                                final todo = state.notDoneTodos[todoIndex];
+                                return Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 10),
+                                  child: TodoTile(
+                                    todo: todo,
+                                    onCheckboxPressed: (bool isDone) {
+                                      if(isDone){
+                                        todosBloc.add(TodosMarkTodoDoneEvent(todo));
+                                      } else{
+                                        todosBloc.add(TodosMarkTodoNotDoneEvent(todo));
+                                      }
+                                    },
+                                  ),
+                                );
+                              },
+                            ),
+                            if(state.doneTodos.isNotEmpty) ...[
+                              SizedBox(height: SizeConfig.blockSizeVertical! * 2,),
+                              Text("Done (${state.doneTodos.length})",style: kInter.copyWith(color: kWhite75),),
+                              ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: state.doneTodos.length,
+                                itemBuilder:
+                                    (BuildContext context, int todoIndex) {
+                                  final todo = state.doneTodos[todoIndex];
+                                  return Padding(
+                                    padding:
+                                    const EdgeInsets.symmetric(vertical: 10),
+                                    child: TodoTile(
+                                      todo: todo,
+                                      onCheckboxPressed: (bool isDone) {
+                                        if(isDone == false){
+                                          todosBloc.add(TodosMarkTodoNotDoneEvent(todo));
+                                        }
+                                      },
+                                    ),
+                                  );
+                                },
+                              )
 
-                            )
+                            ]
                           ],
                         ),
                       ),
