@@ -11,25 +11,25 @@ GetNotesResponseModel getNotesResponseModelFromJson(String str) => GetNotesRespo
 String getNotesResponseModelToJson(GetNotesResponseModel data) => json.encode(data.toJson());
 
 class GetNotesResponseModel {
-  final bool status;
+  final bool success;
   final String message;
-  final List<NoteModel> notes;
+  final List<NoteModel>? notes;
 
   GetNotesResponseModel({
-    required this.status,
+    required this.success,
     required this.message,
-    required this.notes,
+    this.notes,
   });
 
   factory GetNotesResponseModel.fromJson(Map<String, dynamic> json) => GetNotesResponseModel(
-    status: json["status"],
+    success: json["success"],
     message: json["message"],
     notes: List<NoteModel>.from(json["notes"].map((x) => NoteModel.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
-    "status": status,
+    "status": success,
     "message": message,
-    "todos": List<dynamic>.from(notes.map((x) => x.toJson())),
+    "todos": notes != null ? List<dynamic>.from(notes!.map((x) => x.toJson())) : null,
   };
 }
