@@ -34,9 +34,7 @@ class TodosRepository {
     };
 
     for (final onlineTodo in onlineTodos) {
-      if (offlineTodosMap.containsKey(onlineTodo.id)) {
-        offlineTodosMap[onlineTodo.id] = onlineTodo;
-      } else {
+      if (!offlineTodosMap.containsKey(onlineTodo.id)) {
         offlineTodosMap[onlineTodo.id] = onlineTodo;
         await LOCAL_DB.insertTodo(
           ModelToEntityRepository.mapToTodoEntity(onlineTodo),
