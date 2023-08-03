@@ -63,6 +63,7 @@ class _RegisterPageState extends State<RegisterPage> {
         builder: (context, state) {
           return Scaffold(
             resizeToAvoidBottomInset: true,
+            backgroundColor: kPinkD2,
             body: SafeArea(
               child: Container(
                 height: SizeConfig.screenHeight,
