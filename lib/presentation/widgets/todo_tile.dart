@@ -6,14 +6,14 @@ import 'package:notex/presentation/styles/app_styles.dart';
 import '../styles/size_config.dart';
 
 class TodoTile extends StatefulWidget {
-  const TodoTile({super.key, required this.todo});
+  const TodoTile({super.key, required this.todo, required this.onCheckboxPressed});
   final TodoModel todo;
+  final Function(bool isDone) onCheckboxPressed;
   @override
   State<TodoTile> createState() => _TodoTileState();
 }
 
 class _TodoTileState extends State<TodoTile> {
-  bool _isDone = false;
   Color getColor(Set<MaterialState> states) {
     const Set<MaterialState> interactiveStates = <MaterialState>{
       MaterialState.pressed,
@@ -41,16 +41,16 @@ class _TodoTileState extends State<TodoTile> {
           Transform.scale(
             scale:1.3,
             child: Checkbox(
-                value: _isDone,
+                value: widget.todo.isCompleted,
                 checkColor: kPink,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
                 fillColor:
                 MaterialStateProperty.resolveWith(getColor),
                 onChanged: (bool? value) {
-                  setState(() {
-                    _isDone = value!;
-                  });
+                  if(value != null){
+                    widget.onCheckboxPressed(value);
+                  }
                 }),
           ),
           SizedBox(width: SizeConfig.blockSizeHorizontal! * 2,),
@@ -61,6 +61,8 @@ class _TodoTileState extends State<TodoTile> {
                 Text(widget.todo.body,style: kInter,),
                 SizedBox(height: SizeConfig.blockSizeVertical!  * 0.5,),
                 Text(DateFormat('d MMMM, h:mm a').format(widget.todo.createdTime).toString(),style: kInter.copyWith(color: kWhite75,fontSize: 12),),
+                SizedBox(height: SizeConfig.blockSizeVertical!  * 0.5,),
+                Text(DateFormat('d MMMM, h:mm a').format(widget.todo.editedTime).toString(),style: kInter.copyWith(color: kWhite75,fontSize: 12),),
               ],
             ),
           )
