@@ -1,4 +1,5 @@
 import 'package:notex/data/models/todo_model.dart';
+import 'package:notex/data/repositories/entitiy_to_json_repository..dart';
 import 'package:sqflite/sqflite.dart';
 import '../../data/models/note_model.dart';
 import 'package:path/path.dart';
@@ -62,16 +63,7 @@ class LocalDatabaseRepository {
   }
 
   Future<void> insertNote(NoteDataEntity note, bool isSynced) async {
-    final noteMap = {
-      '_id': note.id,
-      'userId': note.userId,
-      'title': note.title,
-      'body': note.body,
-      'createdTime': note.createdTime.toIso8601String(),
-      'editedTime': note.editedTime.toIso8601String(),
-      '__v': note.v,
-      'isSynced': isSynced ? 1 : 0,
-    };
+    final noteMap = EntityToJson.noteEntityToJson(note, isSynced);
 
     await _database.insert('notes', noteMap,
         conflictAlgorithm: ConflictAlgorithm.replace);
@@ -85,21 +77,25 @@ class LocalDatabaseRepository {
   }
 
   Future<void> insertTodo(TodoDataEntity todo, bool isSynced) async {
-    final todoMap = {
-      '_id': todo.id,
-      'userId': todo.userId,
-      'body': todo.body,
-      // Store as 1 for true, 0 for false
-      'isCompleted': todo.isCompleted ? 1 : 0,
-      'createdTime': todo.createdTime.toIso8601String(),
-      'editedTime': todo.editedTime.toIso8601String(),
-      'expireTime': todo.expireTime.toIso8601String(),
-      '__v': todo.v,
-      'isSynced': isSynced ? 1 : 0,
-    };
+    final todoMap = EntityToJson.todoEntityToJson(todo, isSynced);
 
     await _database.insert('todos', todoMap,
         conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  Future<void> updateTodo(TodoDataEntity todo,bool isSynced)async{
+    try{
+      final todoMap = EntityToJson.todoEntityToJson(todo, isSynced);
+      // update record in todos table
+      await _database.update(
+        'todos', // Table name
+        todoMap, // Updated values
+        where: '_id = ?', // Condition to match the record
+        whereArgs: [todo.id], // Values to substitute in the WHERE clause
+      );
+    } catch(error){
+      rethrow;
+    }
   }
 
   Future<List<TodoModel>> getTodos() async {
