@@ -34,9 +34,7 @@ class NotesRepository {
     };
 
     for (final onlineNote in onlineNotes) {
-      if (offlineNotesMap.containsKey(onlineNote.id)) {
-        offlineNotesMap[onlineNote.id] = onlineNote;
-      } else {
+      if (!offlineNotesMap.containsKey(onlineNote.id)) {
         offlineNotesMap[onlineNote.id] = onlineNote;
         await LOCAL_DB.insertNote(
           ModelToEntityRepository.mapToNoteEntity(onlineNote),
