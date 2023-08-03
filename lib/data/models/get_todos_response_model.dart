@@ -11,25 +11,25 @@ GetTodosResponseModel getTodosResponseModelFromJson(String str) => GetTodosRespo
 String getTodosResponseModelToJson(GetTodosResponseModel data) => json.encode(data.toJson());
 
 class GetTodosResponseModel {
-  final bool status;
+  final bool success;
   final String message;
-  final List<TodoModel> todos;
+  final List<TodoModel>? todos;
 
   GetTodosResponseModel({
-    required this.status,
+    required this.success,
     required this.message,
-    required this.todos,
+    this.todos,
   });
 
   factory GetTodosResponseModel.fromJson(Map<String, dynamic> json) => GetTodosResponseModel(
-    status: json["status"],
+    success: json["success"],
     message: json["message"],
     todos: List<TodoModel>.from(json["todos"].map((x) => TodoModel.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
-    "status": status,
+    "status": success,
     "message": message,
-    "todos": List<dynamic>.from(todos.map((x) => x.toJson())),
+    "todos": todos != null ?  List<dynamic>.from(todos!.map((x) => x.toJson())) : null,
   };
 }
