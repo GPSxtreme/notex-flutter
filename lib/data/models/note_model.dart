@@ -16,6 +16,7 @@ class NoteModel {
   final DateTime createdTime;
   final DateTime editedTime;
   final int v;
+  final bool? isSynced;
 
   NoteModel({
     required this.id,
@@ -25,6 +26,7 @@ class NoteModel {
     required this.createdTime,
     required this.editedTime,
     required this.v,
+    this.isSynced
   });
 
   factory NoteModel.fromJson(Map<String, dynamic> json) => NoteModel(
@@ -35,6 +37,16 @@ class NoteModel {
     createdTime: DateTime.parse(json["createdTime"]),
     editedTime: DateTime.parse(json["editedTime"]),
     v: json["__v"],
+  );
+  factory NoteModel.fromJsonOfLocalDb(Map<String, dynamic> json) => NoteModel(
+    id: json["_id"],
+    userId: json["userId"],
+    title: json["title"],
+    body: json["body"],
+    createdTime: DateTime.parse(json["createdTime"]),
+    editedTime: DateTime.parse(json["editedTime"]),
+    v: json["__v"],
+    isSynced: json["isSynced"] == 0 ? false : true
   );
 
   Map<String, dynamic> toJson() => {
