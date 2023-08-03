@@ -4,3 +4,13 @@ part of 'todos_bloc.dart';
 abstract class TodosEvent {}
 
 class TodosInitialEvent extends TodosEvent {}
+
+class TodosMarkTodoDoneEvent extends TodosEvent {
+  final TodoModel todo;
+  TodosMarkTodoDoneEvent(this.todo);
+}
+
+class TodosMarkTodoNotDoneEvent extends TodosEvent {
+  final TodoModel todo;
+  TodosMarkTodoNotDoneEvent(this.todo);
+}
