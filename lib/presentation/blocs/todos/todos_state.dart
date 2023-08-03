@@ -10,8 +10,9 @@ class TodosInitialState extends TodosState {}
 class TodosFetchingState extends TodosState {}
 
 class TodosFetchedState extends TodosState {
-  final List<TodoModel> todos;
-  TodosFetchedState(this.todos);
+  final List<TodoModel> doneTodos;
+  final List<TodoModel> notDoneTodos;
+  TodosFetchedState(this.doneTodos, this.notDoneTodos);
 }
 
 class TodosFetchingFailedState extends TodosState {
@@ -26,4 +27,6 @@ class TodosLoadedState extends TodosState{}
 
 class TodosEmptyState extends TodosState {}
 
+class TodosTodoDoneState extends TodosState {}
 
+class TodosTodoUndoneState extends TodosState {}
