@@ -30,3 +30,10 @@ class TodosEmptyState extends TodosState {}
 class TodosTodoDoneState extends TodosState {}
 
 class TodosTodoUndoneState extends TodosState {}
+
+class TodosShowAddTodoDialogBoxState extends TodosActionState {
+  final BuildContext context;
+
+  TodosShowAddTodoDialogBoxState(this.context);
+
+}
