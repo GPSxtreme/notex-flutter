@@ -29,21 +29,38 @@ class NotesRepository {
 
   static Future<List<NoteModel>> syncOnlineNotes(
       List<NoteModel> onlineNotes) async {
+    final List<NoteModel> offlineNotes = await LOCAL_DB.getNotes();
+
     final Map<String, NoteModel> offlineNotesMap = {
-      for (var note in await LOCAL_DB.getNotes()) note.id: note
+      for (var note in offlineNotes) note.id: note
     };
 
     for (final onlineNote in onlineNotes) {
       if (!offlineNotesMap.containsKey(onlineNote.id)) {
+        // Note doesn't exist offline, insert it
         offlineNotesMap[onlineNote.id] = onlineNote;
         await LOCAL_DB.insertNote(
-          ModelToEntityRepository.mapToNoteEntity(onlineNote),
+          ModelToEntityRepository.mapToNoteEntity(model: onlineNote),
           true,
         );
+      } else {
+        // Note exists offline, compare edited times
+        final offlineNote = offlineNotesMap[onlineNote.id]!;
+        if (onlineNote.editedTime.isAfter(offlineNote.editedTime)) {
+          // Online note is more recent, update the offline note
+          offlineNotesMap[onlineNote.id] = onlineNote;
+          await LOCAL_DB.updateNote(
+            ModelToEntityRepository.mapToNoteEntity(model: onlineNote),
+          );
+          await LOCAL_DB.setNoteSynced(onlineNote.id, true);
+        }
       }
-    }// Convert the Map values back to a List
+    }
+
+    // Convert the Map values back to a List
     final updatedOfflineNotesList = offlineNotesMap.values.toList();
 
     return updatedOfflineNotesList;
   }
+
 }
