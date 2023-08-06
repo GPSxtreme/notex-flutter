@@ -37,9 +37,16 @@ class TodosRepository {
       if (!offlineTodosMap.containsKey(onlineTodo.id)) {
         offlineTodosMap[onlineTodo.id] = onlineTodo;
         await LOCAL_DB.insertTodo(
-          ModelToEntityRepository.mapToTodoEntity(onlineTodo),
+          ModelToEntityRepository.mapToTodoEntity(model: onlineTodo),
           true,
         );
+      }else if (offlineTodosMap[onlineTodo.id]!.editedTime.isBefore(onlineTodo.editedTime)) {
+        // Update local to-do only if online version has been edited more recently
+        offlineTodosMap[onlineTodo.id] = onlineTodo;
+        await LOCAL_DB.updateTodo(
+          ModelToEntityRepository.mapToTodoEntity(model: onlineTodo),
+        );
+        await LOCAL_DB.setTodoSynced(onlineTodo.id, true);
       }
     }// Convert the Map values back to a List
     final updatedOfflineTodosList = offlineTodosMap.values.toList();
