@@ -83,9 +83,9 @@ class LocalDatabaseRepository {
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  Future<void> updateTodo(TodoDataEntity todo,bool isSynced)async{
-    try{
-      final todoMap = EntityToJson.todoEntityToJson(todo, isSynced);
+  Future<void> updateTodo(TodoDataEntity todo) async {
+    try {
+      final todoMap = EntityToJson.todoEntityToJson(todo, false);
       // update record in todos table
       await _database.update(
         'todos', // Table name
@@ -93,7 +93,40 @@ class LocalDatabaseRepository {
         where: '_id = ?', // Condition to match the record
         whereArgs: [todo.id], // Values to substitute in the WHERE clause
       );
-    } catch(error){
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<void> setTodoSynced(String todoId, bool status) async {
+    try {
+      await _database.update('todos', {"isSynced": status ? 1 : 0},
+          where: '_id = ?', whereArgs: [todoId]);
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<void> setNoteSynced(String noteId, bool status) async {
+    try {
+      await _database.update('notes', {"isSynced": status ? 1 : 0},
+          where: '_id = ?', whereArgs: [noteId]);
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<void> updateNote(NoteDataEntity note) async {
+    try {
+      final todoMap = EntityToJson.noteEntityToJson(note, false);
+      // update record in todos table
+      await _database.update(
+        'notes', // Table name
+        todoMap, // Updated values
+        where: '_id = ?', // Condition to match the record
+        whereArgs: [note.id], // Values to substitute in the WHERE clause
+      );
+    } catch (error) {
       rethrow;
     }
   }
