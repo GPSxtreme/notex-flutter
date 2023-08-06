@@ -12,12 +12,12 @@ class TodoModel {
   final String id;
   final String userId;
   String body;
-  bool isCompleted;
+  dynamic isCompleted;
   final DateTime createdTime;
   DateTime editedTime;
   DateTime expireTime;
   final int v;
-  bool? isSynced;
+  dynamic isSynced;
 
   TodoModel({
     required this.id,
