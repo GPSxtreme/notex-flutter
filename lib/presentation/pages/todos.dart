@@ -67,6 +67,7 @@ class _TodosPageState extends State<TodosPage>
         duration: const Duration(milliseconds: ANIMATION_DURATION),
       );
     }
+    todosBloc.add(TodosShowAddTodoDialogBoxEvent()); // works flawlessly
     todosBloc.add(TodosMarkTodoDoneEvent(todo));
   }
 
@@ -76,11 +77,11 @@ class _TodosPageState extends State<TodosPage>
     SizeConfig().init(context);
     return BlocConsumer(
       bloc: todosBloc,
-      listener: (_, state) {
+      listener: (context, state) {
         if(state is TodosShowAddTodoDialogBoxState){
           showDialog(
-            context: state.context,
-            builder: (BuildContext context) {
+            context: _scaffoldKey.currentContext!,
+            builder: (context) {
               return const AddTodoDialogBox();
             },
           );

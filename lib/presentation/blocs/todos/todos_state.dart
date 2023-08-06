@@ -12,6 +12,7 @@ class TodosFetchingState extends TodosState {}
 class TodosFetchedState extends TodosState {
   final List<TodoModel> doneTodos;
   final List<TodoModel> notDoneTodos;
+
   TodosFetchedState(this.doneTodos, this.notDoneTodos);
 }
 
@@ -21,9 +22,9 @@ class TodosFetchingFailedState extends TodosState {
   TodosFetchingFailedState(this.reason);
 }
 
-class TodosLoadingState extends TodosState{}
+class TodosLoadingState extends TodosState {}
 
-class TodosLoadedState extends TodosState{}
+class TodosLoadedState extends TodosState {}
 
 class TodosEmptyState extends TodosState {}
 
@@ -31,9 +32,4 @@ class TodosTodoDoneState extends TodosState {}
 
 class TodosTodoUndoneState extends TodosState {}
 
-class TodosShowAddTodoDialogBoxState extends TodosActionState {
-  final BuildContext context;
-
-  TodosShowAddTodoDialogBoxState(this.context);
-
-}
+class TodosShowAddTodoDialogBoxState extends TodosActionState {}

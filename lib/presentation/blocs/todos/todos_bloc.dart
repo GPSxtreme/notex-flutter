@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:meta/meta.dart';
 import 'package:notex/core/repositories/todos_repository.dart';
 import 'package:notex/data/models/todo_model.dart';
 import 'package:notex/data/repositories/model_to_entity_repository.dart';
@@ -105,7 +104,7 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
   }
 
   FutureOr<void> handleAddTodo(TodosShowAddTodoDialogBoxEvent event , Emitter<TodosState> emit){
-    emit(TodosShowAddTodoDialogBoxState(event.context));
+    emit(TodosShowAddTodoDialogBoxState());
   }
 
 }

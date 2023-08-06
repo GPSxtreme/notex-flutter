@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 class AddTodoDialogBox extends StatefulWidget {
   const AddTodoDialogBox({super.key});
-
   @override
   State<AddTodoDialogBox> createState() => _AddTodoDialogBoxState();
 }

@@ -17,8 +17,4 @@ class TodosMarkTodoNotDoneEvent extends TodosEvent {
   TodosMarkTodoNotDoneEvent(this.todo);
 }
 
-class TodosShowAddTodoDialogBoxEvent extends TodosEvent {
-  final BuildContext context;
-
-  TodosShowAddTodoDialogBoxEvent(this.context);
-}
+class TodosShowAddTodoDialogBoxEvent extends TodosEvent {}

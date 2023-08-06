@@ -19,6 +19,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final PageController _pageController = PageController(initialPage: 0);
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int _currentPageIndex = 0;
   final NotesBloc notesBloc = NotesBloc();
   final TodosBloc todosBloc = TodosBloc();
@@ -27,6 +28,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: kPageBgEnd,
       appBar: AppBar(
         centerTitle: true,
@@ -45,7 +47,7 @@ class _HomePageState extends State<HomePage> {
 
                 break;
               case 1: // todos page
-                todosBloc.add(TodosShowAddTodoDialogBoxEvent(context));
+                todosBloc.add(TodosShowAddTodoDialogBoxEvent());
                 break;
             }
           },
@@ -55,48 +57,34 @@ class _HomePageState extends State<HomePage> {
             size: SizeConfig.blockSizeVertical! * 5,
           ),
         ),
-      bottomNavigationBar: Container(
-        decoration: const BoxDecoration(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
-        ),
-        child: ClipRRect(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
-          child: BottomNavigationBar(
-            backgroundColor: kPinkD1,
-            elevation: 0,
-            selectedLabelStyle: kInter.copyWith(color: kPink,fontSize: 14),
-            unselectedLabelStyle: kInter.copyWith(color: kWhite,fontSize: 14),
-            selectedItemColor: kPink,
-            onTap: (index){
-              _pageController.animateToPage(index ,duration: const Duration(milliseconds: 500), curve: Curves.ease);
-            },
-            currentIndex: _currentPageIndex,
-            items: [
-              BottomNavigationBarItem(
-                  icon: SvgPicture.asset(
-                    'assets/svg/notes_icon.svg',
-                  ),
-                  activeIcon: SvgPicture.asset(
-                    'assets/svg/notes_icon.svg',
-                    color: kPink,
-                  ),
-                  label: "notes"),
-              BottomNavigationBarItem(
-                  icon: SvgPicture.asset('assets/svg/todo_icon.svg'),
-                  activeIcon: SvgPicture.asset(
-                    'assets/svg/todo_icon.svg',
-                    color: kPink,
-                  ),
-                  label: "todo")
-            ],
-          ),
-        ),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: kPinkD1,
+        elevation: 0,
+        selectedLabelStyle: kInter.copyWith(color: kPink,fontSize: 14),
+        unselectedLabelStyle: kInter.copyWith(color: kWhite,fontSize: 14),
+        selectedItemColor: kPink,
+        onTap: (index){
+          _pageController.animateToPage(index ,duration: const Duration(milliseconds: 500), curve: Curves.ease);
+        },
+        currentIndex: _currentPageIndex,
+        items: [
+          BottomNavigationBarItem(
+              icon: SvgPicture.asset(
+                'assets/svg/notes_icon.svg',
+              ),
+              activeIcon: SvgPicture.asset(
+                'assets/svg/notes_icon.svg',
+                color: kPink,
+              ),
+              label: "notes"),
+          BottomNavigationBarItem(
+              icon: SvgPicture.asset('assets/svg/todo_icon.svg'),
+              activeIcon: SvgPicture.asset(
+                'assets/svg/todo_icon.svg',
+                color: kPink,
+              ),
+              label: "todo")
+        ],
       ),
       body: ScrollConfiguration(
         behavior: const CustomScrollBehavior(kPinkD1), // Create a custom ScrollBehavior
