@@ -6,9 +6,16 @@ import 'package:notex/presentation/styles/app_styles.dart';
 import '../styles/size_config.dart';
 
 class TodoTile extends StatefulWidget {
-  const TodoTile({super.key, required this.todo, required this.onCheckboxPressed});
+  const TodoTile(
+      {super.key,
+      required this.todo,
+      required this.onCheckboxPressed,
+      required this.animation});
+
   final TodoModel todo;
+  final Animation<double> animation;
   final Function(bool isDone) onCheckboxPressed;
+
   @override
   State<TodoTile> createState() => _TodoTileState();
 }
@@ -25,44 +32,80 @@ class _TodoTileState extends State<TodoTile> {
     }
     return kPinkD1;
   }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => SlideTransition(
+    key: ValueKey(widget.todo.id),
+    position: Tween<Offset>(
+      begin: const Offset(1.0, 0.0),
+      end: const Offset(0.0, 0.0),
+    ).animate(widget.animation),
+    child: buildItem(),
+  );
+
+  Widget buildItem() {
     SizeConfig().init(context);
     return Container(
       width: double.maxFinite,
-      padding: EdgeInsets.symmetric(vertical: SizeConfig.blockSizeVertical! * 0.5),
+      padding:
+          EdgeInsets.symmetric(vertical: SizeConfig.blockSizeVertical! * 0.5),
       decoration: BoxDecoration(
-        color: kPinkD2,
-        borderRadius: BorderRadius.circular(20.0),
-        border: Border.all(width: 1.0,color: kPinkD1)
-      ),
+          color: kPinkD2,
+          borderRadius: BorderRadius.circular(20.0),
+          border: Border.all(width: 1.0, color: kPinkD1)),
       child: Row(
         children: [
           Transform.scale(
-            scale:1.3,
+            scale: 1.3,
             child: Checkbox(
                 value: widget.todo.isCompleted,
                 checkColor: kPink,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)),
-                fillColor:
-                MaterialStateProperty.resolveWith(getColor),
+                fillColor: MaterialStateProperty.resolveWith(getColor),
                 onChanged: (bool? value) {
-                  if(value != null){
+                  if (value != null) {
                     widget.onCheckboxPressed(value);
                   }
                 }),
           ),
-          SizedBox(width: SizeConfig.blockSizeHorizontal! * 2,),
+          SizedBox(
+            width: SizeConfig.blockSizeHorizontal! * 2,
+          ),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(widget.todo.body,style: kInter,),
-                SizedBox(height: SizeConfig.blockSizeVertical!  * 0.5,),
-                Text(DateFormat('d MMMM, h:mm a').format(widget.todo.createdTime).toString(),style: kInter.copyWith(color: kWhite75,fontSize: 12),),
-                SizedBox(height: SizeConfig.blockSizeVertical!  * 0.5,),
-                Text(DateFormat('d MMMM, h:mm a').format(widget.todo.editedTime).toString(),style: kInter.copyWith(color: kWhite75,fontSize: 12),),
+                Text(
+                  widget.todo.body,
+                  style: kInter,
+                ),
+                SizedBox(
+                  height: SizeConfig.blockSizeVertical! * 0.5,
+                ),
+                Text(
+                  'created on : ${DateFormat('d MMMM, h:mm a')
+                      .format(widget.todo.createdTime)
+                      .toString()}',
+                  style: kInter.copyWith(color: kWhite75, fontSize: 12),
+                ),
+                SizedBox(
+                  height: SizeConfig.blockSizeVertical! * 0.5,
+                ),
+                Text(
+                  'last edited : ${DateFormat('d MMMM, h:mm a')
+                      .format(widget.todo.editedTime)
+                      .toString()}',
+                  style: kInter.copyWith(color: kWhite75, fontSize: 12),
+                ),
+                Text(
+                  'is synced : ${widget.todo.isSynced}',
+                  style: kInter.copyWith(color: kWhite75, fontSize: 12),
+                ),
+                Text(
+                  'is completed : ${widget.todo.isCompleted}',
+                  style: kInter.copyWith(color: kWhite75, fontSize: 12),
+                ),
               ],
             ),
           )
