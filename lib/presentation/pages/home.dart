@@ -19,7 +19,9 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final PageController _pageController = PageController(initialPage: 0);
-  int _currentIndex = 0;
+  int _currentPageIndex = 0;
+  final NotesBloc notesBloc = NotesBloc();
+  final TodosBloc todosBloc = TodosBloc();
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +40,14 @@ class _HomePageState extends State<HomePage> {
         floatingActionButton: FloatingActionButton(
           backgroundColor: kPink,
           onPressed: () {
+            switch(_currentPageIndex){
+              case 0: // notes page
+
+                break;
+              case 1: // todos page
+                todosBloc.add(TodosShowAddTodoDialogBoxEvent(context));
+                break;
+            }
           },
           child: Icon(
             Icons.add,
@@ -66,7 +76,7 @@ class _HomePageState extends State<HomePage> {
             onTap: (index){
               _pageController.animateToPage(index ,duration: const Duration(milliseconds: 500), curve: Curves.ease);
             },
-            currentIndex: _currentIndex,
+            currentIndex: _currentPageIndex,
             items: [
               BottomNavigationBarItem(
                   icon: SvgPicture.asset(
@@ -94,16 +104,16 @@ class _HomePageState extends State<HomePage> {
           controller: _pageController,
           onPageChanged: (newIndex) {
             setState(() {
-              _currentIndex = newIndex;
+              _currentPageIndex = newIndex;
             });
           },
           children: [
             BlocProvider(
-              create: (context) => NotesBloc()..add(NotesInitialEvent()),
+              create: (context) => notesBloc..add(NotesInitialEvent()),
               child: const NotesPage(),
             ),
             BlocProvider(
-              create: (context) => TodosBloc()..add(TodosInitialEvent()),
+              create: (context) => todosBloc..add(TodosInitialEvent()),
               child: const TodosPage(),
             ),
           ],
