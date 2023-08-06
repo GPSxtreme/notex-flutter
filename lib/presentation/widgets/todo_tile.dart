@@ -101,7 +101,13 @@ class _TodoTileState extends State<TodoTile> {
                 Text(
                   'is synced : ${widget.todo.isSynced}',
                   style: kInter.copyWith(color: kWhite75, fontSize: 12),
+                ),Text(
+                  'expires on : ${DateFormat('d MMMM, h:mm a')
+                      .format(widget.todo.expireTime)
+                      .toString()}',
+                  style: kInter.copyWith(color: kWhite75, fontSize: 12),
                 ),
+
                 Text(
                   'is completed : ${widget.todo.isCompleted}',
                   style: kInter.copyWith(color: kWhite75, fontSize: 12),
