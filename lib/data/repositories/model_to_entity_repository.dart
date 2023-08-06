@@ -14,7 +14,7 @@ class ModelToEntityRepository {
     );
   }
 
-  static NoteDataEntity mapToNoteEntity(NoteModel model) {
+  static NoteDataEntity mapToNoteEntity({required NoteModel model, bool? synced}) {
     return NoteDataEntity(
       id: model.id,
       userId: model.userId,
@@ -23,10 +23,11 @@ class ModelToEntityRepository {
       createdTime: model.createdTime,
       editedTime: model.editedTime,
       v: model.v,
+      isSynced: synced ?? false
     );
   }
 
-  static TodoDataEntity mapToTodoEntity(TodoModel model) {
+  static TodoDataEntity mapToTodoEntity({required TodoModel model, bool? synced}) {
     return TodoDataEntity(
       id: model.id,
       userId: model.userId,
@@ -36,6 +37,7 @@ class ModelToEntityRepository {
       editedTime: model.editedTime,
       expireTime: model.expireTime,
       v: model.v,
+      isSynced: synced ?? false
     );
   }
 }
