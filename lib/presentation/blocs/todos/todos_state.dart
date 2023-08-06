@@ -33,3 +33,10 @@ class TodosTodoDoneState extends TodosState {}
 class TodosTodoUndoneState extends TodosState {}
 
 class TodosShowAddTodoDialogBoxState extends TodosActionState {}
+
+class TodosAddTodoSuccessState extends TodosActionState {}
+
+class TodosAddTodoFailedState extends TodosActionState{
+  final String reason;
+  TodosAddTodoFailedState(this.reason);
+}
