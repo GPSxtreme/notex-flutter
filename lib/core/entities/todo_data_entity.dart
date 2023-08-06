@@ -7,6 +7,7 @@ class TodoDataEntity {
   final DateTime editedTime;
   final DateTime expireTime;
   final int v;
+  final bool? isSynced;
 
   TodoDataEntity({
     required this.id,
@@ -17,5 +18,6 @@ class TodoDataEntity {
     required this.editedTime,
     required this.expireTime,
     required this.v,
+    this.isSynced
   });
 }
