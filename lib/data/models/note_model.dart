@@ -16,7 +16,7 @@ class NoteModel {
   final DateTime createdTime;
   DateTime editedTime;
   final int v;
-  bool? isSynced;
+  dynamic isSynced;
 
   NoteModel({
     required this.id,
