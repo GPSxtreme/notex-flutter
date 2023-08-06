@@ -10,6 +10,7 @@ LocalDatabaseRepository LOCAL_DB = LocalDatabaseRepository();
 
 void main() async{
   await dotenv.load();
+  // print({"time":DateTime.now().toIso8601String()});
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: kPageBgStart,
   ));
