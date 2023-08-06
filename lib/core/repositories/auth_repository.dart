@@ -1,14 +1,28 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:notex/core/config/api_routes.dart';
+import 'package:notex/core/repositories/jwt_decoder_repository.dart';
 import 'package:notex/core/repositories/shared_preferences_repository.dart';
 import 'package:notex/data/models/register_response_model.dart';
+import 'package:notex/data/models/user_model.dart';
 
 import '../../data/models/login_response_model.dart';
 
 
 
 class AuthRepository {
+
+  static Future<UserDataModel?> getUserData()async{
+    try{
+      final token = await SharedPreferencesRepository.getJwtToken();
+      if(token != null){
+        return UserDataModel.fromJson(JwtDecoderRepository.decodeJwtToken(token)!);
+      }
+    }catch(e){
+      rethrow;
+    }
+    return null;
+  }
 
   static Future<RegisterResponseModel> registerUser(String email, String password,bool? remember) async {
     final url = Uri.parse(USER_REGISTER_ROUTE);
