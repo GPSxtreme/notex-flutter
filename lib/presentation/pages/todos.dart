@@ -67,7 +67,7 @@ class _TodosPageState extends State<TodosPage>
         duration: const Duration(milliseconds: ANIMATION_DURATION),
       );
     }
-    todosBloc.add(TodosShowAddTodoDialogBoxEvent()); // works flawlessly
+    // perform bloc operation
     todosBloc.add(TodosMarkTodoDoneEvent(todo));
   }
 
@@ -77,14 +77,19 @@ class _TodosPageState extends State<TodosPage>
     SizeConfig().init(context);
     return BlocConsumer(
       bloc: todosBloc,
+      listenWhen: (previous,current) => current is TodosActionState,
+      buildWhen: (previous,current) => current is! TodosActionState,
       listener: (context, state) {
         if(state is TodosShowAddTodoDialogBoxState){
           showDialog(
-            context: _scaffoldKey.currentContext!,
+            context: context,
+            barrierDismissible: false,
             builder: (context) {
-              return const AddTodoDialogBox();
+              return AddTodoDialogBox(todosBloc: todosBloc,);
             },
           );
+        } else if (state is TodosAddTodoSuccessState){
+          kSnackBar(context, "Successfully added todo!");
         }
       },
       builder: (context, state) {
@@ -162,7 +167,7 @@ class _TodosPageState extends State<TodosPage>
                       size: 35,
                     ),
                   )
-                ] else if (state is TodosFetchingFailedState) ...[
+                ] else if (state is TodosFetchingFailedState ) ...[
                   Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -200,7 +205,8 @@ class _TodosPageState extends State<TodosPage>
                             AnimatedList(
                               key: _notDoneTodosListKey,
                               shrinkWrap: true,
-                              initialItemCount: state.notDoneTodos.length,
+                              physics: const NeverScrollableScrollPhysics(),
+                              initialItemCount: state.notDoneTodos.length ,
                               itemBuilder: (BuildContext context, int todoIndex,
                                   Animation<double> animation) {
                                 final todo = state.notDoneTodos[todoIndex];
@@ -232,6 +238,7 @@ class _TodosPageState extends State<TodosPage>
                               AnimatedList(
                                 key: _doneTodosListKey,
                                 shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
                                 initialItemCount: state.doneTodos.length,
                                 itemBuilder: (BuildContext context,
                                     int todoIndex,
