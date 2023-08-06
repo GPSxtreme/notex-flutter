@@ -5,7 +5,12 @@ import 'package:flutter_svg/svg.dart';
 import 'package:notex/presentation/blocs/todos/todos_bloc.dart';
 import 'package:notex/presentation/styles/app_styles.dart';
 import 'package:notex/presentation/styles/size_config.dart';
+import 'package:notex/presentation/widgets/add_todo_dialog_box.dart';
 import 'package:notex/presentation/widgets/todo_tile.dart';
+import '../../data/models/todo_model.dart';
+
+// ignore: constant_identifier_names
+const ANIMATION_DURATION = 220;
 
 class TodosPage extends StatefulWidget {
   const TodosPage({super.key});
@@ -16,7 +21,9 @@ class TodosPage extends StatefulWidget {
 
 class _TodosPageState extends State<TodosPage>
     with AutomaticKeepAliveClientMixin<TodosPage> {
-
+  final _doneTodosListKey = GlobalKey<AnimatedListState>();
+  final _notDoneTodosListKey = GlobalKey<AnimatedListState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   bool get wantKeepAlive => true;
@@ -28,15 +35,60 @@ class _TodosPageState extends State<TodosPage>
     todosBloc = BlocProvider.of<TodosBloc>(context);
   }
 
+  _handleClickOnDoneTodoTile(int todoIndex, TodoModel todo) {
+    // set removing animation
+    _doneTodosListKey.currentState!.removeItem(
+        todoIndex,
+        duration: const Duration(milliseconds: ANIMATION_DURATION),
+        (context, animation) => TodoTile(
+            todo: todo, onCheckboxPressed: (bool _) {}, animation: animation));
+    // set adding animation
+    if (_notDoneTodosListKey.currentState != null) {
+      _notDoneTodosListKey.currentState!.insertItem(
+        0,
+        duration: const Duration(milliseconds: ANIMATION_DURATION),
+      );
+    }
+    // perform bloc operation
+    todosBloc.add(TodosMarkTodoNotDoneEvent(todo));
+  }
+
+  _handleClickOnNotDoneTodoTile(int todoIndex, TodoModel todo) {
+    // set removing animation
+    _notDoneTodosListKey.currentState!.removeItem(
+        todoIndex,
+        duration: const Duration(milliseconds: ANIMATION_DURATION),
+        (context, animation) => TodoTile(
+            todo: todo, onCheckboxPressed: (bool _) {}, animation: animation));
+    // set adding animation
+    if (_doneTodosListKey.currentState != null) {
+      _doneTodosListKey.currentState!.insertItem(
+        0,
+        duration: const Duration(milliseconds: ANIMATION_DURATION),
+      );
+    }
+    todosBloc.add(TodosMarkTodoDoneEvent(todo));
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
     SizeConfig().init(context);
     return BlocConsumer(
       bloc: todosBloc,
-      listener: (context, state) {},
+      listener: (_, state) {
+        if(state is TodosShowAddTodoDialogBoxState){
+          showDialog(
+            context: state.context,
+            builder: (BuildContext context) {
+              return const AddTodoDialogBox();
+            },
+          );
+        }
+      },
       builder: (context, state) {
         return Scaffold(
+          key: _scaffoldKey,
           appBar: null,
           body: Container(
             padding:
@@ -143,53 +195,63 @@ class _TodosPageState extends State<TodosPage>
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // note widgets go here if present
-                            ListView.builder(
+                            // to-do widgets go here if present
+                            AnimatedList(
+                              key: _notDoneTodosListKey,
                               shrinkWrap: true,
-                              itemCount: state.notDoneTodos.length,
-                              itemBuilder:
-                                  (BuildContext context, int todoIndex) {
+                              initialItemCount: state.notDoneTodos.length,
+                              itemBuilder: (BuildContext context, int todoIndex,
+                                  Animation<double> animation) {
                                 final todo = state.notDoneTodos[todoIndex];
                                 return Padding(
+                                  key: ValueKey<int>(todoIndex),
+                                  // This key is important for item identity
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 10),
                                   child: TodoTile(
                                     todo: todo,
-                                    onCheckboxPressed: (bool isDone) {
-                                      if(isDone){
-                                        todosBloc.add(TodosMarkTodoDoneEvent(todo));
-                                      } else{
-                                        todosBloc.add(TodosMarkTodoNotDoneEvent(todo));
-                                      }
-                                    },
+                                    onCheckboxPressed: (bool isDone) =>
+                                        isDone == true
+                                            ? _handleClickOnNotDoneTodoTile(
+                                                todoIndex, todo)
+                                            : null,
+                                    animation: animation,
                                   ),
                                 );
                               },
                             ),
-                            if(state.doneTodos.isNotEmpty) ...[
-                              SizedBox(height: SizeConfig.blockSizeVertical! * 2,),
-                              Text("Done (${state.doneTodos.length})",style: kInter.copyWith(color: kWhite75),),
-                              ListView.builder(
+                            if (state.doneTodos.isNotEmpty) ...[
+                              SizedBox(
+                                height: SizeConfig.blockSizeVertical! * 2,
+                              ),
+                              Text(
+                                "Done (${state.doneTodos.length})",
+                                style: kInter.copyWith(color: kWhite75),
+                              ),
+                              AnimatedList(
+                                key: _doneTodosListKey,
                                 shrinkWrap: true,
-                                itemCount: state.doneTodos.length,
-                                itemBuilder:
-                                    (BuildContext context, int todoIndex) {
+                                initialItemCount: state.doneTodos.length,
+                                itemBuilder: (BuildContext context,
+                                    int todoIndex,
+                                    Animation<double> animation) {
                                   final todo = state.doneTodos[todoIndex];
                                   return Padding(
-                                    padding:
-                                    const EdgeInsets.symmetric(vertical: 10),
+                                    key: ValueKey<int>(todoIndex),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 10),
                                     child: TodoTile(
                                       todo: todo,
-                                      onCheckboxPressed: (bool isDone) {
-                                        if(isDone == false){
-                                          todosBloc.add(TodosMarkTodoNotDoneEvent(todo));
-                                        }
-                                      },
+                                      onCheckboxPressed: (bool isDone) =>
+                                          isDone == false
+                                              ? _handleClickOnDoneTodoTile(
+                                                  todoIndex, todo)
+                                              : null,
+                                      animation: animation,
                                     ),
                                   );
                                 },
                               )
-
                             ]
                           ],
                         ),
