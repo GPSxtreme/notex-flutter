@@ -17,7 +17,8 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
     on<TodosInitialEvent>(handleFetchTodos);
     on<TodosMarkTodoDoneEvent>(handleMarkTodoDone);
     on<TodosMarkTodoNotDoneEvent>(handleMarkTodoNotDone);
-    on<TodosShowAddTodoDialogBoxEvent>(handleAddTodo);
+    on<TodosShowAddTodoDialogBoxEvent>(handleAddTodoDialogBox);
+    on<TodosAddTodoEvent>(handleAddTodo);
   }
   late List<TodoModel> _doneTodos;
   late List<TodoModel> _notDoneTodos;
@@ -103,8 +104,22 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
     // update task on cloud
   }
 
-  FutureOr<void> handleAddTodo(TodosShowAddTodoDialogBoxEvent event , Emitter<TodosState> emit){
+  FutureOr<void> handleAddTodoDialogBox(TodosShowAddTodoDialogBoxEvent event , Emitter<TodosState> emit){
     emit(TodosShowAddTodoDialogBoxState());
+  }
+
+  FutureOr<void> handleAddTodo(TodosAddTodoEvent event, Emitter<TodosState> emit)async{
+    try{
+      await TodosRepository.addTodo(event.todo).then(
+          (_) {
+            _notDoneTodos.insert(0,event.todo);
+            emit(TodosAddTodoSuccessState());
+            emit(TodosFetchedState(_doneTodos, _notDoneTodos));
+          }
+      );
+    }catch(error){
+      emit(TodosAddTodoFailedState('An unexpected error occurred \n $error'));
+    }
   }
 
 }
