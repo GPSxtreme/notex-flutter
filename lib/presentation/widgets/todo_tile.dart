@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:notex/data/models/todo_model.dart';
 import 'package:notex/presentation/styles/app_styles.dart';
-
 import '../styles/size_config.dart';
 
 class TodoTile extends StatefulWidget {

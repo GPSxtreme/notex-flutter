@@ -110,11 +110,11 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
 
   FutureOr<void> handleAddTodo(TodosAddTodoEvent event, Emitter<TodosState> emit)async{
     try{
+      _notDoneTodos.insert(0,event.todo);
+      emit(TodosFetchedState(_doneTodos, _notDoneTodos));
       await TodosRepository.addTodo(event.todo).then(
           (_) {
-            _notDoneTodos.insert(0,event.todo);
             emit(TodosAddTodoSuccessState());
-            emit(TodosFetchedState(_doneTodos, _notDoneTodos));
           }
       );
     }catch(error){
