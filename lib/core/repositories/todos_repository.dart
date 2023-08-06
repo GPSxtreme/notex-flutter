@@ -53,4 +53,11 @@ class TodosRepository {
 
     return updatedOfflineTodosList;
   }
+  static Future<void> addTodo(TodoModel todo)async{
+    try{
+      await LOCAL_DB.insertTodo(ModelToEntityRepository.mapToTodoEntity(model: todo), false);
+    }catch(error){
+      rethrow;
+    }
+  }
 }
