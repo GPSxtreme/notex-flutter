@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:connectivity/connectivity.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
 import 'package:notex/core/repositories/todos_repository.dart';
 import 'package:notex/data/models/todo_model.dart';
@@ -17,9 +18,11 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
     on<TodosInitialEvent>(handleFetchTodos);
     on<TodosMarkTodoDoneEvent>(handleMarkTodoDone);
     on<TodosMarkTodoNotDoneEvent>(handleMarkTodoNotDone);
+    on<TodosShowAddTodoDialogBoxEvent>(handleAddTodo);
   }
   late List<TodoModel> _doneTodos;
   late List<TodoModel> _notDoneTodos;
+
 
   Future<void> handleFetchTodos(
       TodosInitialEvent event, Emitter<TodosState> emit) async {
@@ -58,7 +61,7 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
           emit(TodosEmptyState());
         } else {
           _doneTodos = offlineFetchedNotes.where((todo) => todo.isCompleted).toList();
-          _notDoneTodos = offlineFetchedNotes.where((todo) => !todo.isCompleted).toList();
+          _notDoneTodos = offlineFetchedNotes.where((todo) =>  !todo.isCompleted).toList();
           emit(TodosFetchedState(_doneTodos,_notDoneTodos));
         }
       }
@@ -68,32 +71,41 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
   }
 
   FutureOr<void> handleMarkTodoDone ( TodosMarkTodoDoneEvent event , Emitter<TodosState> emit)async{
-    // update local lists in bloc
-    _notDoneTodos.removeWhere((todo) => todo.id == event.todo.id);
-    _doneTodos.add(event.todo);
-    emit(TodosFetchedState(_doneTodos, _notDoneTodos));
-
-    // set to-do as done on local db
     final modifiedTodo = event.todo;
     modifiedTodo.isCompleted = true;
     modifiedTodo.editedTime = DateTime.now();
-    await LOCAL_DB.updateTodo(ModelToEntityRepository.mapToTodoEntity(modifiedTodo), false);
+    modifiedTodo.isSynced = false;
+
+    // update local lists in bloc
+    _notDoneTodos.removeWhere((todo) => todo.id == modifiedTodo.id);
+    _doneTodos.insert(0,modifiedTodo);
+    emit(TodosFetchedState(_doneTodos, _notDoneTodos));
+
+    // set to-do as done on local db
+    await LOCAL_DB.updateTodo(ModelToEntityRepository.mapToTodoEntity(model: modifiedTodo));
     // update task on cloud
   }
 
   FutureOr<void> handleMarkTodoNotDone(TodosMarkTodoNotDoneEvent event , Emitter<TodosState> emit)async{
-    // update local lists in bloc
-    _doneTodos.removeWhere((todo) => todo.id == event.todo.id);
-    _notDoneTodos.add(event.todo);
-    emit(TodosFetchedState(_doneTodos, _notDoneTodos));
 
-    // set to-do as not done on local db
     final modifiedTodo = event.todo;
     modifiedTodo.isCompleted = false;
     modifiedTodo.editedTime = DateTime.now();
-    await LOCAL_DB.updateTodo(ModelToEntityRepository.mapToTodoEntity(modifiedTodo), false);
+    modifiedTodo.isSynced = false;
+
+    // update local lists in bloc
+    _doneTodos.removeWhere((todo) => todo.id == modifiedTodo.id);
+    _notDoneTodos.insert(0,modifiedTodo);
+    emit(TodosFetchedState(_doneTodos, _notDoneTodos));
+
+    // set to-do as not done on local db
+    await LOCAL_DB.updateTodo(ModelToEntityRepository.mapToTodoEntity(model: modifiedTodo));
 
     // update task on cloud
+  }
+
+  FutureOr<void> handleAddTodo(TodosShowAddTodoDialogBoxEvent event , Emitter<TodosState> emit){
+    emit(TodosShowAddTodoDialogBoxState(event.context));
   }
 
 }
