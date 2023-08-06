@@ -18,3 +18,9 @@ class TodosMarkTodoNotDoneEvent extends TodosEvent {
 }
 
 class TodosShowAddTodoDialogBoxEvent extends TodosEvent {}
+
+class TodosAddTodoEvent extends TodosEvent {
+  final TodoModel todo;
+  TodosAddTodoEvent(this.todo);
+
+}
