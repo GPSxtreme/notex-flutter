@@ -21,11 +21,6 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
     String? userToken = await SharedPreferencesRepository.getJwtToken();
     if (userToken != null) {
       bool isValid = JwtDecoderRepository.verifyJwtToken(userToken);
-      final tokenData = JwtDecoderRepository.decodeJwtToken(userToken);
-      if (kDebugMode) {
-        // TODO: remove debug print statements
-        print(tokenData);
-      }
       if (isValid) {
         emit(SplashUserAuthenticatedState());
       }
