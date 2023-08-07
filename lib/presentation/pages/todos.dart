@@ -42,16 +42,24 @@ class _TodosPageState extends State<TodosPage>
     );
   }
 
-  _handleClickOnDoneTodoTile(int todoIndex, TodoModel todo) {
+  _handleClickOnDoneTodoTile(
+      int todoIndex, TodoModel todo, TodosFetchedState state) {
     // set removing animation
     _doneTodosListKey.currentState!.removeItem(
         todoIndex,
         duration: const Duration(milliseconds: ANIMATION_DURATION),
-            (context, animation) =>
-            TodoTile(
-                todo: todo,
-                onCheckboxPressed: (bool _) {},
-                animation: animation));
+        (context, animation) => TodoTile(
+            todo: todo,
+            onCheckboxPressed: (bool _) {},
+            animation: animation,
+            onLongPress: () {
+              todosBloc.add(TodosEnteredEditingEvent());
+            },
+            isInEditMode: state.isInEditState,
+            isSelected: state.areAllSelected,
+            onSelect: (bool isSelected) {
+              todosBloc.add(TodosIsTodoSelectedEvent(isSelected, todo));
+            }));
     // set adding animation
     if (_notDoneTodosListKey.currentState != null) {
       _notDoneTodosListKey.currentState!.insertItem(
@@ -63,16 +71,24 @@ class _TodosPageState extends State<TodosPage>
     todosBloc.add(TodosMarkTodoNotDoneEvent(todo));
   }
 
-  _handleClickOnNotDoneTodoTile(int todoIndex, TodoModel todo) {
+  _handleClickOnNotDoneTodoTile(
+      int todoIndex, TodoModel todo, TodosFetchedState state) {
     // set removing animation
     _notDoneTodosListKey.currentState!.removeItem(
         todoIndex,
         duration: const Duration(milliseconds: ANIMATION_DURATION),
-            (context, animation) =>
-            TodoTile(
-                todo: todo,
-                onCheckboxPressed: (bool _) {},
-                animation: animation));
+        (context, animation) => TodoTile(
+            todo: todo,
+            onCheckboxPressed: (bool _) {},
+            animation: animation,
+            onLongPress: () {
+              todosBloc.add(TodosEnteredEditingEvent());
+            },
+            isInEditMode: state.isInEditState,
+            isSelected: state.areAllSelected,
+            onSelect: (bool isSelected) {
+              todosBloc.add(TodosIsTodoSelectedEvent(isSelected, todo));
+            }));
     // set adding animation
     if (_doneTodosListKey.currentState != null) {
       _doneTodosListKey.currentState!.insertItem(
@@ -82,6 +98,49 @@ class _TodosPageState extends State<TodosPage>
     }
     // perform bloc operation
     todosBloc.add(TodosMarkTodoDoneEvent(todo));
+  }
+
+  /// common for hiding and deleting a to-do tile
+  _handleRemovingTodoTile(List<TodoModel> removedTodos,
+      List<TodoModel> doneTodos, List<TodoModel> notDoneTodos) {
+    for (var todo in removedTodos) {
+      // find which list the
+      if (doneTodos.contains(todo)) {
+        int index = doneTodos.indexOf(todo);
+        _doneTodosListKey.currentState!.removeItem(
+            index,
+            duration: const Duration(milliseconds: ANIMATION_DURATION),
+            (context, animation) => TodoTile(
+                todo: todo,
+                onCheckboxPressed: (bool _) {},
+                animation: animation,
+                onLongPress: () {
+                  todosBloc.add(TodosEnteredEditingEvent());
+                },
+                isInEditMode: false,
+                isSelected: false,
+                onSelect: (bool isSelected) {
+                  todosBloc.add(TodosIsTodoSelectedEvent(isSelected, todo));
+                }));
+      } else if (notDoneTodos.contains(todo)) {
+        int index = notDoneTodos.indexOf(todo);
+        _notDoneTodosListKey.currentState!.removeItem(
+            index,
+            duration: const Duration(milliseconds: ANIMATION_DURATION),
+            (context, animation) => TodoTile(
+                todo: todo,
+                onCheckboxPressed: (bool _) {},
+                animation: animation,
+                onLongPress: () {
+                  todosBloc.add(TodosEnteredEditingEvent());
+                },
+                isInEditMode: false,
+                isSelected: false,
+                onSelect: (bool isSelected) {
+                  todosBloc.add(TodosIsTodoSelectedEvent(isSelected, todo));
+                }));
+      }
+    }
   }
 
   @override
@@ -106,6 +165,11 @@ class _TodosPageState extends State<TodosPage>
         } else if (state is TodosAddTodoSuccessState) {
           _handleAddTodoTile();
           kSnackBar(context, "Successfully added todo!");
+        } else if (state is TodosOperationFailedState) {
+          kSnackBar(context, state.reason);
+        } else if (state is TodosManageAnimationsOfRemoved) {
+          _handleRemovingTodoTile(
+              state.removedTodos, state.doneTodos, state.notDoneTodos);
         }
       },
       builder: (context, state) {
@@ -113,8 +177,7 @@ class _TodosPageState extends State<TodosPage>
           key: _scaffoldKey,
           appBar: null,
           body: Container(
-            padding:
-            const EdgeInsets.only(left: 0, right: 0, top: 30, bottom: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 0),
             width: SizeConfig.screenWidth,
             height: SizeConfig.screenHeight,
             decoration: const BoxDecoration(gradient: kPageBgGradient),
@@ -171,138 +234,182 @@ class _TodosPageState extends State<TodosPage>
                           Text(
                             "You can add new todo by pressing\nAdd button at the bottom",
                             style:
-                            kInter.copyWith(fontSize: 15, color: kWhite24),
+                                kInter.copyWith(fontSize: 15, color: kWhite24),
                             textAlign: TextAlign.center,
                           )
                         ],
                       )),
-                ] else
-                  if (state is TodosFetchingState) ...[
-                    const Center(
-                      child: SpinKitRing(
-                        color: kPinkD1,
-                        size: 35,
-                      ),
-                    )
-                  ] else
-                    if (state is TodosFetchingFailedState) ...[
-                      Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Failed to load notes',
-                              style: kInter.copyWith(
-                                  fontSize: 22, fontWeight: FontWeight.w600),
-                            ),
-                            SizedBox(
-                              height: SizeConfig.blockSizeVertical! * 2,
-                            ),
-                            Text(
-                              state.reason,
-                              style: kInter.copyWith(fontSize: 14),
-                            ),
-                          ],
+                ] else if (state is TodosFetchingState) ...[
+                  const Center(
+                    child: SpinKitRing(
+                      color: kPinkD1,
+                      size: 35,
+                    ),
+                  )
+                ] else if (state is TodosFetchingFailedState) ...[
+                  Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Failed to load notes',
+                          style: kInter.copyWith(
+                              fontSize: 22, fontWeight: FontWeight.w600),
                         ),
-                      )
-                    ] else
-                      if (state is TodosFetchedState) ...[
-                        Padding(
-                          padding:
-                          const EdgeInsets.symmetric(
-                              horizontal: 25, vertical: 0),
-                          child:
-                          NotificationListener<OverscrollIndicatorNotification>(
-                            onNotification: (overScroll) {
-                              overScroll.disallowIndicator();
-                              return true;
-                            },
-                            child: SingleChildScrollView(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  // to-do widgets go here if present
-                                  if(state.notDoneTodos.isNotEmpty) ...[
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(vertical: SizeConfig.blockSizeVertical!),
+                        SizedBox(
+                          height: SizeConfig.blockSizeVertical! * 2,
+                        ),
+                        Text(
+                          state.reason,
+                          style: kInter.copyWith(fontSize: 14),
+                        ),
+                      ],
+                    ),
+                  )
+                ] else if (state is TodosFetchedState) ...[
+                  Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 25, vertical: 0),
+                    child:
+                        NotificationListener<OverscrollIndicatorNotification>(
+                      onNotification: (overScroll) {
+                        overScroll.disallowIndicator();
+                        return true;
+                      },
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if(!todosBloc.isSelectedTodoStreamClosed)
+                            StreamBuilder<List<TodoModel>>(
+                              stream: todosBloc.selectedTodosStream,
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                  final selectedTodos = snapshot.data;
+                                  if(selectedTodos != null ){
+                                    final selectedTodosCount = selectedTodos.length;
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(vertical: 20),
                                       child: Text(
-                                        "Todo (${state.notDoneTodos.length})",
-                                        style: kInter.copyWith(color: kWhite75),
+                                        'Selected (${selectedTodosCount.toString()})',
+                                        style: kInter.copyWith(
+                                            fontSize: 35, fontWeight: FontWeight.w600),
                                       ),
-                                    ),
-                                    AnimatedList(
-                                      key: _notDoneTodosListKey,
-                                      shrinkWrap: true,
-                                      physics: const NeverScrollableScrollPhysics(),
-                                      initialItemCount: state.notDoneTodos
-                                          .length,
-                                      itemBuilder: (BuildContext context,
-                                          int todoIndex,
-                                          Animation<double> animation) {
-                                        final todo = state
-                                            .notDoneTodos[todoIndex];
-                                        return Padding(
-                                          key: ValueKey<String>(todo.id),
-                                          // This key is important for item identity
-                                          padding:
-                                          EdgeInsets.symmetric(
-                                              vertical: SizeConfig.blockSizeVertical! * 0.8),
-                                          child: TodoTile(
-                                            todo: todo,
-                                            onCheckboxPressed: (bool isDone) =>
-                                            isDone == true
-                                                ? _handleClickOnNotDoneTodoTile(
-                                                todoIndex, todo)
-                                                : null,
-                                            animation: animation,
-                                          ),
-                                        );
+                                    );
+                                  } else {
+                                    return const SizedBox.shrink();
+                                  }
+                                } else {
+                                  // Handle the case when the snapshot doesn't have data yet
+                                  return const SizedBox.shrink();
+                                }
+                              },
+                            ),
+                            // to-do widgets go here if present
+                            if (state.notDoneTodos.isNotEmpty) ...[
+                              Padding(
+                                padding: EdgeInsets.symmetric(
+                                    vertical: SizeConfig.blockSizeVertical!),
+                                child: Text(
+                                  "Todo (${state.notDoneTodos.length})",
+                                  style: kInter.copyWith(color: kWhite75),
+                                ),
+                              ),
+                              AnimatedList(
+                                key: _notDoneTodosListKey,
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                initialItemCount: state.notDoneTodos.length,
+                                itemBuilder: (BuildContext context,
+                                    int todoIndex,
+                                    Animation<double> animation) {
+                                  final todo = state.notDoneTodos[todoIndex];
+                                  return Padding(
+                                    key: ValueKey<String>(todo.id),
+                                    // This key is important for item identity
+                                    padding: EdgeInsets.symmetric(
+                                        vertical:
+                                            SizeConfig.blockSizeVertical! *
+                                                0.8),
+                                    child: TodoTile(
+                                      todo: todo,
+                                      onCheckboxPressed: (bool isDone) =>
+                                          isDone == true
+                                              ? _handleClickOnNotDoneTodoTile(
+                                                  todoIndex, todo, state)
+                                              : null,
+                                      animation: animation,
+                                      onLongPress: () {
+                                        todosBloc
+                                            .add(TodosEnteredEditingEvent());
+                                      },
+                                      isInEditMode: state.isInEditState,
+                                      isSelected: state.areAllSelected,
+                                      onSelect: (bool isSelected) {
+                                        todosBloc.add(TodosIsTodoSelectedEvent(
+                                            isSelected, todo));
                                       },
                                     ),
-                                  ],
-                                  if (state.doneTodos.isNotEmpty) ...[
-                                    SizedBox(
-                                      height: SizeConfig.blockSizeVertical! * 2,
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(vertical: SizeConfig.blockSizeVertical!),
-                                      child: Text(
-                                        "Done (${state.doneTodos.length})",
-                                        style: kInter.copyWith(color: kWhite75),
-                                      ),
-                                    ),
-                                    AnimatedList(
-                                      key: _doneTodosListKey,
-                                      shrinkWrap: true,
-                                      physics: const NeverScrollableScrollPhysics(),
-                                      initialItemCount: state.doneTodos.length,
-                                      itemBuilder: (BuildContext context,
-                                          int todoIndex,
-                                          Animation<double> animation) {
-                                        final todo = state.doneTodos[todoIndex];
-                                        return Padding(
-                                          key: ValueKey<int>(todoIndex),
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: SizeConfig.blockSizeVertical! * 0.8),
-                                          child: TodoTile(
-                                            todo: todo,
-                                            onCheckboxPressed: (bool isDone) =>
+                                  );
+                                },
+                              ),
+                            ],
+                            if (state.doneTodos.isNotEmpty) ...[
+                              SizedBox(
+                                height: SizeConfig.blockSizeVertical! * 2,
+                              ),
+                              Padding(
+                                padding: EdgeInsets.symmetric(
+                                    vertical: SizeConfig.blockSizeVertical!),
+                                child: Text(
+                                  "Done (${state.doneTodos.length})",
+                                  style: kInter.copyWith(color: kWhite75),
+                                ),
+                              ),
+                              AnimatedList(
+                                key: _doneTodosListKey,
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                initialItemCount: state.doneTodos.length,
+                                itemBuilder: (BuildContext context,
+                                    int todoIndex,
+                                    Animation<double> animation) {
+                                  final todo = state.doneTodos[todoIndex];
+                                  return Padding(
+                                    key: ValueKey<int>(todoIndex),
+                                    padding: EdgeInsets.symmetric(
+                                        vertical:
+                                            SizeConfig.blockSizeVertical! *
+                                                0.8),
+                                    child: TodoTile(
+                                        todo: todo,
+                                        onCheckboxPressed: (bool isDone) =>
                                             isDone == false
                                                 ? _handleClickOnDoneTodoTile(
-                                                todoIndex, todo)
+                                                    todoIndex, todo, state)
                                                 : null,
-                                            animation: animation,
-                                          ),
-                                        );
-                                      },
-                                    )
-                                  ]
-                                ],
-                              ),
-                            ),
-                          ),
+                                        animation: animation,
+                                        onLongPress: () {
+                                          todosBloc
+                                              .add(TodosEnteredEditingEvent());
+                                        },
+                                        isInEditMode: state.isInEditState,
+                                        isSelected: state.areAllSelected,
+                                        onSelect: (bool isSelected) {
+                                          todosBloc.add(
+                                              TodosIsTodoSelectedEvent(
+                                                  isSelected, todo));
+                                        }),
+                                  );
+                                },
+                              )
+                            ]
+                          ],
                         ),
-                      ]
+                      ),
+                    ),
+                  ),
+                ]
               ],
             ),
           ),
