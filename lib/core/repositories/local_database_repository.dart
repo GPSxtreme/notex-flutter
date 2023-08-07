@@ -83,6 +83,15 @@ class LocalDatabaseRepository {
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
+  Future<void> removeTodo(String todoId) async {
+    await _database.delete(
+      'todos',
+      where: '_id = ?',
+      whereArgs: [todoId],
+    );
+  }
+
+
   Future<void> updateTodo(TodoDataEntity todo) async {
     try {
       final todoMap = EntityToJson.todoEntityToJson(todo, false);
