@@ -37,7 +37,7 @@ class _NotesPageState extends State<NotesPage> with AutomaticKeepAliveClientMixi
         return Scaffold(
           appBar: null,
           body: Container(
-            padding: const EdgeInsets.only(left: 15,right: 15,top: 30,bottom: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 0),
             width: SizeConfig.screenWidth,
             height: SizeConfig.screenHeight,
             decoration: const BoxDecoration(gradient: kPageBgGradient),
@@ -141,6 +141,8 @@ class _NotesPageState extends State<NotesPage> with AutomaticKeepAliveClientMixi
                             // note widgets go here if present
                             ListView.builder(
                               shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              padding: EdgeInsets.zero,
                               itemCount: state.notes.length, itemBuilder: (BuildContext context, int notesIndex) {
                                 final notes = state.notes;
                                 return ListTile(
