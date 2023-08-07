@@ -27,3 +27,4 @@ class NotesLoadedState extends NotesState{}
 class NotesEmptyState extends NotesState {}
 
 
+class NotesEnteredEditingState extends NotesState {}
