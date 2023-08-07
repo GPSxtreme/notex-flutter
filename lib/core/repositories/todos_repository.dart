@@ -60,4 +60,11 @@ class TodosRepository {
       rethrow;
     }
   }
+  static Future<void> removeTodo(String todoId)async{
+    try{
+      await LOCAL_DB.removeTodo(todoId);
+    }catch(error){
+      rethrow;
+    }
+  }
 }
