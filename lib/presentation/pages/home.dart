@@ -159,8 +159,10 @@ class _HomePageState extends State<HomePage> {
               current is TodosActionState ||
               (previous == null || current == null),
           builder: (context, todosState) {
+
             bool isInEditing = (todosState is TodosEnteredEditingState ||
                 notesState is NotesEnteredEditingState);
+            bool isFetching = (todosState is TodosFetchingState || notesState is NotesFetchingState);
             return Scaffold(
               key: _scaffoldKey,
               backgroundColor: kPageBgEnd,
@@ -226,7 +228,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
               ),
-              floatingActionButton: !isInEditing
+              floatingActionButton: !isInEditing && !isFetching
                   ? FloatingActionButton(
                       backgroundColor: kPink,
                       onPressed: () {
