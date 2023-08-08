@@ -293,7 +293,7 @@ class _TodosPageState extends State<TodosPage>
                                       child: Text(
                                         'Selected (${selectedTodosCount.toString()})',
                                         style: kInter.copyWith(
-                                            fontSize: 35, fontWeight: FontWeight.w600),
+                                            fontSize: 35, fontWeight: FontWeight.w500),
                                       ),
                                     );
                                   } else {
