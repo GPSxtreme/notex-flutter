@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:notex/presentation/widgets/note_tile.dart';
 import '../blocs/notes/notes_bloc.dart';
 import '../styles/app_styles.dart';
 import '../styles/size_config.dart';
@@ -13,7 +14,8 @@ class NotesPage extends StatefulWidget {
   State<NotesPage> createState() => _NotesPageState();
 }
 
-class _NotesPageState extends State<NotesPage> with AutomaticKeepAliveClientMixin<NotesPage> {
+class _NotesPageState extends State<NotesPage>
+    with AutomaticKeepAliveClientMixin<NotesPage> {
   @override
   bool get wantKeepAlive => true;
   late NotesBloc notesBloc; // Declare the NotesBloc variable
@@ -28,6 +30,7 @@ class _NotesPageState extends State<NotesPage> with AutomaticKeepAliveClientMixi
   Widget build(BuildContext context) {
     super.build(context);
     SizeConfig().init(context);
+    int numberOfColumns = SizeConfig.screenWidth! > 400 ? 2 : 1;
     return BlocConsumer(
       bloc: notesBloc,
       listenWhen: (previous, current) => current is NotesActionState,
@@ -113,7 +116,8 @@ class _NotesPageState extends State<NotesPage> with AutomaticKeepAliveClientMixi
                       children: [
                         Text(
                           'Failed to load notes',
-                          style: kInter.copyWith(fontSize: 22,fontWeight: FontWeight.w600),
+                          style: kInter.copyWith(
+                              fontSize: 22, fontWeight: FontWeight.w600),
                         ),
                         SizedBox(
                           height: SizeConfig.blockSizeVertical! * 2,
@@ -139,18 +143,35 @@ class _NotesPageState extends State<NotesPage> with AutomaticKeepAliveClientMixi
                         child: Column(
                           children: [
                             // note widgets go here if present
-                            ListView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              padding: EdgeInsets.zero,
-                              itemCount: state.notes.length, itemBuilder: (BuildContext context, int notesIndex) {
-                                final notes = state.notes;
-                                return ListTile(
-                                  title: Text(notes[notesIndex].title,style: kInter,),
-                                  subtitle: Text(notes[notesIndex].body,style: kInter,),
-                                );
-                            },
-
+                            SizedBox(
+                              height: SizeConfig.blockSizeVertical! * 4,
+                            ),
+                            SizedBox(
+                              height: SizeConfig.screenHeight,
+                              width: SizeConfig.screenWidth,
+                              child: AnimatedGrid(
+                                physics: const NeverScrollableScrollPhysics(),
+                                padding: EdgeInsets.zero,
+                                initialItemCount: state.notes.length,
+                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: numberOfColumns,
+                                  crossAxisSpacing: 10, // Adjust the spacing between items
+                                  mainAxisSpacing: 10,  // Adjust the spacing between rows
+                                ),
+                                itemBuilder:
+                                    (BuildContext context, int notesIndex , Animation<double> animation) {
+                                  final notes = state.notes;
+                                  final note = notes[notesIndex];
+                                  return Padding(
+                                    key: ValueKey<String>(note.id),
+                                    // This key is important for item identity
+                                    padding: EdgeInsets.symmetric(
+                                        vertical:
+                                            SizeConfig.blockSizeVertical! * 0.8),
+                                    child: NoteTile(note: note),
+                                  );
+                                },
+                              ),
                             )
                           ],
                         ),
