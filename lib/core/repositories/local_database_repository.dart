@@ -78,7 +78,6 @@ class LocalDatabaseRepository {
 
   Future<void> insertTodo(TodoDataEntity todo, bool isSynced) async {
     final todoMap = EntityToJson.todoEntityToJson(todo, isSynced);
-
     await _database.insert('todos', todoMap,
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
