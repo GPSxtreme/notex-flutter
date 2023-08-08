@@ -67,6 +67,14 @@ class _TodoTileState extends State<TodoTile> {
           splashColor: kPink,
           borderRadius: BorderRadius.circular(20.0),
           onLongPress: widget.onLongPress,
+          onTap: (){
+            if(widget.isInEditMode){
+              widget.onSelect(!widget.isSelected);
+              setState(() {
+                widget.isSelected = !widget.isSelected;
+              });
+            }
+          },
           child: Padding(
             padding: EdgeInsets.symmetric(
                 vertical: SizeConfig.blockSizeVertical! * 0.5),
