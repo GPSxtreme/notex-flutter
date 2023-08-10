@@ -10,14 +10,12 @@ class TodoTile extends StatefulWidget {
       {super.key,
       required this.todo,
       required this.onCheckboxPressed,
-      required this.animation,
       required this.onLongPress,
       required this.isInEditMode,
       required this.isSelected,
       required this.onSelect});
 
   final TodoModel todo;
-  final Animation<double> animation;
   final Function(bool isDone) onCheckboxPressed;
   final Function() onLongPress;
   final Function(bool isSelected) onSelect;
@@ -29,7 +27,6 @@ class TodoTile extends StatefulWidget {
 }
 
 class _TodoTileState extends State<TodoTile> {
-
   Color getColor(Set<MaterialState> states) {
     const Set<MaterialState> interactiveStates = <MaterialState>{
       MaterialState.pressed,
@@ -43,16 +40,7 @@ class _TodoTileState extends State<TodoTile> {
   }
 
   @override
-  Widget build(BuildContext context) => SlideTransition(
-        key: ValueKey(widget.todo.id),
-        position: Tween<Offset>(
-          begin: const Offset(1.0, 0.0),
-          end: const Offset(0.0, 0.0),
-        ).animate(widget.animation),
-        child: buildItem(),
-      );
-
-  Widget buildItem() {
+  Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Container(
       width: double.maxFinite,
@@ -67,8 +55,8 @@ class _TodoTileState extends State<TodoTile> {
           splashColor: kPink,
           borderRadius: BorderRadius.circular(20.0),
           onLongPress: widget.onLongPress,
-          onTap: (){
-            if(widget.isInEditMode){
+          onTap: () {
+            if (widget.isInEditMode) {
               widget.onSelect(!widget.isSelected);
               setState(() {
                 widget.isSelected = !widget.isSelected;
