@@ -57,11 +57,3 @@ class TodosOperationFailedState extends TodosActionState {
 class TodosEnteredEditingState extends TodosActionState {}
 
 class TodosExitedEditingState extends TodosActionState {}
-
-class TodosManageAnimationsOfRemoved extends TodosActionState {
-  final List<TodoModel> removedTodos;
-  final List<TodoModel> doneTodos;
-  final List<TodoModel> notDoneTodos;
-
-  TodosManageAnimationsOfRemoved(this.removedTodos, this.doneTodos, this.notDoneTodos);
-}
