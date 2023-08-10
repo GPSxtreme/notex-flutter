@@ -211,10 +211,6 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
       if (_selectedTodos.isEmpty) {
         return;
       } else {
-        // store previous states of done and not done todo lists
-        List<TodoModel> prevDoneTodos = List.from(_doneTodos);
-        List<TodoModel> prevNotDoneTodos = List.from(_notDoneTodos);
-
         for (var todo in _selectedTodos) {
           if (_doneTodos.contains(todo)) {
             _doneTodos.remove(todo);
@@ -223,22 +219,20 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
           }
         }
         if (_doneTodos.isNotEmpty || _notDoneTodos.isNotEmpty) {
-          emit(TodosExitedEditingState());
-          emit(TodosFetchedState(_doneTodos, _notDoneTodos));
-          emit(TodosManageAnimationsOfRemoved(
-              List.from(_selectedTodos), prevDoneTodos, prevNotDoneTodos));
+          emit(TodosFetchedState(_doneTodos, _notDoneTodos,isInEditState: false));
         } else {
-          emit(TodosExitedEditingState());
           emit(TodosEmptyState());
         }
         // start removing each to-do in selectedTodos list from local database
         for (var todo in _selectedTodos) {
           await TodosRepository.removeTodo(todo.id);
         }
-        // Notify the stream listeners about the changes in _selectedTodos
-        _selectedTodosController.add(_selectedTodos);
-        // finally clear selectedTodos list
+        emit(TodosExitedEditingState());
+        // reset _selectedTodos list
         _selectedTodos.clear();
+        // Notify the stream listeners about the changes in _selectedTodos
+        _selectedTodosController.close();
+
       }
     } catch (error) {
       emit(TodosOperationFailedState(error.toString()));
