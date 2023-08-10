@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:notex/data/models/note_model.dart';
-
+import '../../router/app_route_constants.dart';
 import '../styles/app_styles.dart';
 import '../styles/size_config.dart';
 
 // ignore: must_be_immutable
 class NoteTile extends StatefulWidget {
-  NoteTile(
-      {super.key,
-      required this.note});
+  NoteTile({super.key, required this.note});
 
   final NoteModel note;
+
   // final Animation<double> animation;
   // final Function() onLongPress;
   // final Function(bool isSelected) onSelect;
@@ -23,6 +23,7 @@ class NoteTile extends StatefulWidget {
 }
 
 class _NoteTileState extends State<NoteTile> {
+
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -38,56 +39,75 @@ class _NoteTileState extends State<NoteTile> {
           splashColor: kPink,
           borderRadius: BorderRadius.circular(20.0),
           // onLongPress: widget.onLongPress,
-          onTap: (){
-            // if(widget.isInEditMode){
-            //   widget.onSelect(!widget.isSelected);
-            //   setState(() {
-            //     widget.isSelected = !widget.isSelected;
-            //   });
-            // }
+          onTap: () {
+            GoRouter.of(context).pushNamed(
+                AppRouteConstants
+                    .noteViewRouteName,
+                pathParameters: {
+                  'noteId': widget.note.id
+                });
           },
           child: Stack(
             children: [
-              Align(
-                alignment: Alignment.topRight,
+              Positioned(
+                right: 0,
+                top: 0,
                 child: IconButton(
-                  icon: const Icon(Icons.star_border,color: kPink,), onPressed: () {  },
-                  color: kWhite,
+                  icon: const Icon(Icons.star_border, color: kWhite),
+                  onPressed: () {},
                   splashRadius: 15,
                 ),
               ),
               Padding(
                 padding: EdgeInsets.symmetric(
-                    vertical: SizeConfig.blockSizeVertical! * 2,horizontal: SizeConfig.blockSizeHorizontal! * 5),
+                  vertical: SizeConfig.blockSizeVertical! * 2,
+                  horizontal: SizeConfig.blockSizeHorizontal! * 5,
+                ),
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      widget.note.title,
-                      style: kInter.copyWith(color: kWhite,fontSize: 20),
+                    SizedBox(
+                      height: SizeConfig.blockSizeVertical! * 3,
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Flexible(
+                          // Add Flexible widget here
+                          child: Text(
+                            widget.note.title,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: kInter.copyWith(color: kWhite, fontSize: 18),
+                          ),
+                        ),
+                      ],
                     ),
                     SizedBox(height: SizeConfig.blockSizeVertical! * 0.5),
                     Text(
                       widget.note.body,
-                      style: kInter.copyWith(color: kWhite24,fontSize: 16),
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                      style: kInter.copyWith(color: kWhite24, fontSize: 12),
                     ),
                     SizedBox(
                       height: SizeConfig.blockSizeVertical! * 2,
                     ),
                     Text(
                       'created on : ${DateFormat('d MMMM, h:mm a').format(widget.note.createdTime).toString()}',
-                      style: kInter.copyWith(color: kWhite75, fontSize: 12),
+                      style: kInter.copyWith(color: kWhite75, fontSize: 10),
                     ),
                     SizedBox(
                       height: SizeConfig.blockSizeVertical! * 0.5,
                     ),
                     Text(
                       'last edited : ${DateFormat('d MMMM, h:mm a').format(widget.note.editedTime).toString()}',
-                      style: kInter.copyWith(color: kWhite75, fontSize: 12),
+                      style: kInter.copyWith(color: kWhite75, fontSize: 10),
                     ),
                     Text(
                       'is synced : ${widget.note.isSynced}',
-                      style: kInter.copyWith(color: kWhite75, fontSize: 12),
+                      style: kInter.copyWith(color: kWhite75, fontSize: 10),
                     ),
                   ],
                 ),
