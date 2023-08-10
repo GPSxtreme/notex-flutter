@@ -6,6 +6,8 @@ import 'package:notex/presentation/widgets/note_tile.dart';
 import '../blocs/notes/notes_bloc.dart';
 import '../styles/app_styles.dart';
 import '../styles/size_config.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
 class NotesPage extends StatefulWidget {
   const NotesPage({super.key});
@@ -15,7 +17,11 @@ class NotesPage extends StatefulWidget {
 }
 
 class _NotesPageState extends State<NotesPage>
-    with AutomaticKeepAliveClientMixin<NotesPage> {
+    with
+        AutomaticKeepAliveClientMixin<NotesPage>,
+        SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+
   @override
   bool get wantKeepAlive => true;
   late NotesBloc notesBloc; // Declare the NotesBloc variable
@@ -24,19 +30,43 @@ class _NotesPageState extends State<NotesPage>
   void initState() {
     super.initState();
     notesBloc = BlocProvider.of<NotesBloc>(context);
+    _animationController = AnimationController(
+      vsync: this,
+      duration:
+          const Duration(milliseconds: 300), // Adjust the duration as needed
+    );
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  int calculateMaxWordsPerLine(double fontSize) {
+    final screenWidth = SizeConfig.screenWidth!;
+    final avgWordWidth = 4.5 * (SizeConfig.blockSizeHorizontal! + fontSize);
+    return (screenWidth ~/ avgWordWidth) ~/ 1.3;
+  }
+
+  bool isTextLong(String text, double fontSize) {
+    int maxWordsPerLine = calculateMaxWordsPerLine(fontSize);
+    List<String> words = text.split(' ');
+    return words.length >= 2.5 * maxWordsPerLine;
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
     SizeConfig().init(context);
-    int numberOfColumns = SizeConfig.screenWidth! > 400 ? 2 : 1;
+
     return BlocConsumer(
       bloc: notesBloc,
       listenWhen: (previous, current) => current is NotesActionState,
       buildWhen: (previous, current) => current is! NotesActionState,
       listener: (context, state) {},
       builder: (context, state) {
+        int numberOfColumns = SizeConfig.screenWidth! > 600 ? 3 : 2;
         return Scaffold(
           appBar: null,
           body: Container(
@@ -146,32 +176,30 @@ class _NotesPageState extends State<NotesPage>
                             SizedBox(
                               height: SizeConfig.blockSizeVertical! * 4,
                             ),
-                            SizedBox(
-                              height: SizeConfig.screenHeight,
-                              width: SizeConfig.screenWidth,
-                              child: AnimatedGrid(
-                                physics: const NeverScrollableScrollPhysics(),
-                                padding: EdgeInsets.zero,
-                                initialItemCount: state.notes.length,
-                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: numberOfColumns,
-                                  crossAxisSpacing: 10, // Adjust the spacing between items
-                                  mainAxisSpacing: 10,  // Adjust the spacing between rows
-                                ),
-                                itemBuilder:
-                                    (BuildContext context, int notesIndex , Animation<double> animation) {
-                                  final notes = state.notes;
-                                  final note = notes[notesIndex];
-                                  return Padding(
-                                    key: ValueKey<String>(note.id),
-                                    // This key is important for item identity
-                                    padding: EdgeInsets.symmetric(
-                                        vertical:
-                                            SizeConfig.blockSizeVertical! * 0.8),
-                                    child: NoteTile(note: note),
-                                  );
-                                },
-                              ),
+                            MasonryGridView.count(
+                              crossAxisCount: numberOfColumns,
+                              mainAxisSpacing: 10,
+                              crossAxisSpacing: 10,
+                              physics: const NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: state.notes.length,
+                              itemBuilder:
+                                  (BuildContext context, int notesIndex) {
+                                final notes = state.notes;
+                                final note = notes[notesIndex];
+                                // not being used as staggeredTileBuilder is not provided for this widget
+                                bool isLongText = isTextLong(note.title, 18);
+                                return AnimationConfiguration.staggeredGrid(
+                                  position: notesIndex,
+                                  duration: const Duration(milliseconds: 375),
+                                  columnCount: isLongText ? 1 : numberOfColumns,
+                                  child: ScaleAnimation(
+                                    child: FadeInAnimation(
+                                      child: NoteTile(note: note),
+                                    ),
+                                  ),
+                                );
+                              },
                             )
                           ],
                         ),
