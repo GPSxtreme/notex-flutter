@@ -5,5 +5,6 @@ class AppRouteConstants {
   static const String homeRouteName = 'home';
   static const String createUserProfileName = 'createUserProfile';
   static const String notesRouteName = 'notes';
+  static const String noteViewRouteName = 'view-note';
   static const String todosRouteName = 'todos';
 }
