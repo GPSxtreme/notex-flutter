@@ -76,11 +76,21 @@ class LocalDatabaseRepository {
     });
   }
 
+  Future<NoteModel> getNote(String noteId) async{
+    final dbNote = await _database.query(
+      'notes',
+      where: '_id = ?',
+      whereArgs: [noteId]
+    );
+    return NoteModel.fromJsonOfLocalDb(dbNote.first);
+  }
+
   Future<void> insertTodo(TodoDataEntity todo, bool isSynced) async {
     final todoMap = EntityToJson.todoEntityToJson(todo, isSynced);
     await _database.insert('todos', todoMap,
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
+
 
   Future<void> removeTodo(String todoId) async {
     await _database.delete(
