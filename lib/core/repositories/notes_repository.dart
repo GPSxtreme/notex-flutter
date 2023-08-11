@@ -63,4 +63,30 @@ class NotesRepository {
     return updatedOfflineNotesList;
   }
 
+  static Future<void> addNote(NoteModel note) async {
+    try {
+      await LOCAL_DB.insertNote(
+          ModelToEntityRepository.mapToNoteEntity(model: note), false);
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  static Future<void> removeNote(String noteId) async {
+    try {
+      await LOCAL_DB.removeNote(noteId);
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  static Future<void> updateNote(NoteModel note) async{
+    try{
+      LOCAL_DB
+          .updateNote(ModelToEntityRepository.mapToNoteEntity(model: note));
+    }catch(error){
+      rethrow;
+    }
+  }
+
 }
