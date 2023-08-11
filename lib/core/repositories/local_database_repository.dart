@@ -1,5 +1,5 @@
 import 'package:notex/data/models/todo_model.dart';
-import 'package:notex/data/repositories/entitiy_to_json_repository..dart';
+import 'package:notex/data/repositories/entitiy_to_json_repository.dart';
 import 'package:sqflite/sqflite.dart';
 import '../../data/models/note_model.dart';
 import 'package:path/path.dart';
@@ -83,6 +83,14 @@ class LocalDatabaseRepository {
       whereArgs: [noteId]
     );
     return NoteModel.fromJsonOfLocalDb(dbNote.first);
+  }
+
+  Future<void> removeNote(String noteId) async {
+    await _database.delete(
+      'notes',
+      where: '_id = ?',
+      whereArgs: [noteId],
+    );
   }
 
   Future<void> insertTodo(TodoDataEntity todo, bool isSynced) async {
