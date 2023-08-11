@@ -2,7 +2,7 @@ import 'package:notex/core/repositories/shared_preferences_repository.dart';
 import 'package:http/http.dart' as http;
 import 'package:notex/data/models/get_todos_response_model.dart';
 import 'package:notex/data/models/todo_model.dart';
-import 'package:notex/data/repositories/entitiy_to_json_repository..dart';
+import 'package:notex/data/repositories/entitiy_to_json_repository.dart';
 import 'package:notex/data/repositories/model_to_entity_repository.dart';
 import '../config/api_routes.dart';
 import '../../main.dart';
