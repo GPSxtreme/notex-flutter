@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:notex/data/models/note_model.dart';
+import 'package:notex/presentation/blocs/notes/notes_bloc.dart';
 import '../../router/app_route_constants.dart';
 import '../styles/app_styles.dart';
 import '../styles/size_config.dart';
 
 // ignore: must_be_immutable
 class NoteTile extends StatefulWidget {
-  NoteTile({super.key, required this.note});
+  const NoteTile({super.key, required this.note, required this.notesBloc});
 
   final NoteModel note;
+  final NotesBloc notesBloc;
 
   // final Animation<double> animation;
   // final Function() onLongPress;
@@ -23,7 +25,6 @@ class NoteTile extends StatefulWidget {
 }
 
 class _NoteTileState extends State<NoteTile> {
-
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -40,12 +41,9 @@ class _NoteTileState extends State<NoteTile> {
           borderRadius: BorderRadius.circular(20.0),
           // onLongPress: widget.onLongPress,
           onTap: () {
-            GoRouter.of(context).pushNamed(
-                AppRouteConstants
-                    .noteViewRouteName,
-                pathParameters: {
-                  'noteId': widget.note.id
-                });
+            GoRouter.of(context).pushNamed(AppRouteConstants.noteViewRouteName,
+                pathParameters: {'noteId': widget.note.id},
+                extra: widget.notesBloc);
           },
           child: Stack(
             children: [
@@ -87,7 +85,7 @@ class _NoteTileState extends State<NoteTile> {
                     SizedBox(height: SizeConfig.blockSizeVertical! * 0.5),
                     Text(
                       widget.note.body,
-                      maxLines: 3,
+                      maxLines: 6,
                       overflow: TextOverflow.ellipsis,
                       style: kInter.copyWith(color: kWhite24, fontSize: 12),
                     ),
