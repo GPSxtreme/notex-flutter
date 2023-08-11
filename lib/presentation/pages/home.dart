@@ -2,11 +2,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:notex/presentation/blocs/notes/notes_bloc.dart';
 import 'package:notex/presentation/blocs/todos/todos_bloc.dart';
 import 'package:notex/presentation/pages/notes.dart';
 import 'package:notex/presentation/pages/todos.dart';
 import 'package:notex/presentation/styles/app_styles.dart';
+import '../../router/app_route_constants.dart';
 import '../styles/size_config.dart';
 
 class HomePage extends StatefulWidget {
@@ -234,7 +236,12 @@ class _HomePageState extends State<HomePage> {
                       onPressed: () {
                         switch (_currentPageIndex) {
                           case 0: // notes page
-
+                            GoRouter.of(context).pushNamed(
+                                AppRouteConstants
+                                    .noteViewRouteName,
+                                pathParameters: {
+                                  'noteId': 'new'
+                                },extra: notesBloc);
                             break;
                           case 1: // todos page
                             todosBloc.add(TodosShowAddTodoDialogBoxEvent());
