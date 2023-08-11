@@ -5,6 +5,7 @@ import 'package:notex/presentation/pages/register.dart';
 import 'package:notex/presentation/pages/splash.dart';
 import 'package:notex/presentation/pages/view_note.dart';
 import 'package:notex/router/app_route_constants.dart';
+import '../presentation/blocs/notes/notes_bloc.dart';
 import '../presentation/pages/home.dart';
 import '../presentation/pages/login.dart';
 import '../presentation/pages/notes.dart';
@@ -16,7 +17,7 @@ class MyAppRouter {
     final rootNavigatorKey = GlobalKey<NavigatorState>();
 
     return GoRouter(
-        initialLocation: '/home',
+        initialLocation: '/',
         navigatorKey: rootNavigatorKey,
         routes: [
           GoRoute(
@@ -61,13 +62,14 @@ class MyAppRouter {
                     name: AppRouteConstants.noteViewRouteName,
                     path: 'view_note/:noteId',
                     pageBuilder: (BuildContext context, GoRouterState state) {
-                      final noteId = state.pathParameters['noteId']; // Obtain the noteId from the GoRouterState
+                      String? noteId;
+                      noteId = state.pathParameters['noteId'] == 'new' ? null : state.pathParameters['noteId']; // Obtain the noteId from the GoRouterState if passed
+                      final notesBloc = state.extra! as NotesBloc;
                       return MaterialPage(
-                        child: ViewNotePage(noteId: noteId!), // Pass the noteId as a parameter to the ViewNotePage
+                        child: ViewNotePage(noteId: noteId,notesBloc: notesBloc), // Pass the noteId as a parameter to the ViewNotePage
                       );
                     },
                   ),
-
                 ]
               ),
               GoRoute(
