@@ -20,8 +20,6 @@ class _NotesPageState extends State<NotesPage>
     with
         AutomaticKeepAliveClientMixin<NotesPage>,
         SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-
   @override
   bool get wantKeepAlive => true;
   late NotesBloc notesBloc; // Declare the NotesBloc variable
@@ -30,17 +28,6 @@ class _NotesPageState extends State<NotesPage>
   void initState() {
     super.initState();
     notesBloc = BlocProvider.of<NotesBloc>(context);
-    _animationController = AnimationController(
-      vsync: this,
-      duration:
-          const Duration(milliseconds: 300), // Adjust the duration as needed
-    );
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
   }
 
   int calculateMaxWordsPerLine(double fontSize) {
@@ -195,7 +182,7 @@ class _NotesPageState extends State<NotesPage>
                                   columnCount: isLongText ? 1 : numberOfColumns,
                                   child: ScaleAnimation(
                                     child: FadeInAnimation(
-                                      child: NoteTile(note: note),
+                                      child: NoteTile(note: note, notesBloc: notesBloc,),
                                     ),
                                   ),
                                 );
