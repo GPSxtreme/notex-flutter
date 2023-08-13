@@ -50,7 +50,7 @@ class NotesLoadingState extends NotesState {}
 
 class NotesLoadedState extends NotesState {}
 
-class NotesEmptyState extends NotesState {}
+class NotesEmptyState extends NotesHomeState {}
 
 class NotesEnteredEditingState extends NotesHomeState {}
 
