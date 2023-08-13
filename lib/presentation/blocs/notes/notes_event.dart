@@ -10,3 +10,30 @@ class NotesRefetchNotesEvent extends NotesEvent {
 
   NotesRefetchNotesEvent(this.note);
 }
+
+class NotesEnteredEditingEvent extends NotesEvent {
+}
+
+class NotesExitedEditingEvent extends NotesEvent {}
+
+class NotesDeleteSelectedNotesEvent extends NotesEvent {}
+
+class NotesHideSelectedNotesEvent extends NotesEvent{}
+
+class NotesAreAllNotesSelectedEvent extends NotesEvent {
+  final bool areAllSelected;
+  NotesAreAllNotesSelectedEvent(this.areAllSelected);
+}
+
+class NotesSetAllNotesSelectedCheckBoxEvent extends NotesEvent {
+  final bool flag;
+
+  NotesSetAllNotesSelectedCheckBoxEvent(this.flag);
+}
+
+class NotesIsNoteSelectedEvent extends NotesEvent{
+  final bool isSelected;
+  final NoteModel note;
+
+  NotesIsNoteSelectedEvent(this.isSelected, this.note);
+}
