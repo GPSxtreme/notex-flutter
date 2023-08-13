@@ -26,13 +26,11 @@ class _HomePageState extends State<HomePage> {
   final TodosBloc todosBloc = TodosBloc();
   bool _selectAllTodos = false;
   bool _selectAllNotes = false;
-
   @override
-  void dispose(){
+  void dispose() {
     todosBloc.close();
     super.dispose();
   }
-
 
   Color getColor(Set<MaterialState> states) {
     const Set<MaterialState> interactiveStates = <MaterialState>{
@@ -54,14 +52,20 @@ class _HomePageState extends State<HomePage> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           SizedBox.fromSize(
-            size: const Size(kBottomNavigationBarHeight, kBottomNavigationBarHeight), // button width and height
+            size: const Size(
+                kBottomNavigationBarHeight, kBottomNavigationBarHeight),
+            // button width and height
             child: ClipOval(
               child: Material(
                 color: Colors.transparent, // button color
                 child: InkWell(
                   splashColor: kPinkD2, // splash color
                   onTap: () {
-                    todosBloc.add(TodosDeleteSelectedTodosEvent());
+                    if (_currentPageIndex == 1) {
+                      todosBloc.add(TodosDeleteSelectedTodosEvent());
+                    } else if (_currentPageIndex == 0) {
+                      notesBloc.add(NotesDeleteSelectedNotesEvent());
+                    }
                   }, // button pressed
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -89,7 +93,13 @@ class _HomePageState extends State<HomePage> {
                 color: Colors.transparent, // button color
                 child: InkWell(
                   splashColor: kPinkD2, // splash color
-                  onTap: () {}, // button pressed
+                  onTap: () {
+                    if (_currentPageIndex == 1) {
+                      todosBloc.add(TodosHideSelectedTodosEvent());
+                    } else if (_currentPageIndex == 0) {
+                      notesBloc.add(NotesHideSelectedNotesEvent());
+                    }
+                  }, // button pressed
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
@@ -150,21 +160,42 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    return BlocBuilder(
+    return BlocConsumer(
       bloc: notesBloc,
       buildWhen: (previous, current) =>
-          current is NotesActionState || (previous == null || current == null),
+          current is NotesHomeState ,
+      listener: (context,notesState){
+        if(notesState is NotesSetAllNotesSelectedCheckBoxState){
+          setState(() {
+            _selectAllNotes = notesState.flag;
+          });
+        } else if(notesState is NotesExitedEditingState){
+          setState(() {
+            _selectAllNotes = false;
+          });
+        }
+      },
       builder: (context, notesState) {
-        return BlocBuilder(
+        return BlocConsumer(
           bloc: todosBloc,
           buildWhen: (previous, current) =>
-              current is TodosActionState ||
-              (previous == null || current == null),
+              current is TodosHomeState ,
+            listener: (context,todosState){
+              if(todosState is TodosSetAllTodosSelectedCheckBoxState){
+                setState(() {
+                  _selectAllTodos = todosState.flag;
+                });
+              } else if(todosState is TodosExitedEditingState){
+                setState(() {
+                  _selectAllTodos = false;
+                });
+              }
+            },
           builder: (context, todosState) {
-
             bool isInEditing = (todosState is TodosEnteredEditingState ||
                 notesState is NotesEnteredEditingState);
-            bool isFetching = (todosState is TodosFetchingState || notesState is NotesFetchingState);
+            bool isFetching = (todosState is TodosFetchingState ||
+                notesState is NotesFetchingState);
             return Scaffold(
               key: _scaffoldKey,
               backgroundColor: kPageBgEnd,
@@ -195,7 +226,10 @@ class _HomePageState extends State<HomePage> {
                                 ),
                                 onPressed: () {
                                   // emit cancel event,
-                                  todosBloc.add(TodosExitedEditingEvent());
+                                  _currentPageIndex == 0
+                                      ? notesBloc.add(NotesExitedEditingEvent())
+                                      : todosBloc
+                                          .add(TodosExitedEditingEvent());
                                 },
                               ),
                             ),
@@ -205,7 +239,9 @@ class _HomePageState extends State<HomePage> {
                               child: Transform.scale(
                                 scale: 1.3,
                                 child: Checkbox(
-                                    value: _selectAllTodos,
+                                    value: _currentPageIndex == 0
+                                        ? _selectAllNotes
+                                        : _selectAllTodos,
                                     checkColor: kPinkD1,
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
@@ -217,11 +253,17 @@ class _HomePageState extends State<HomePage> {
                                       if (value != null) {
                                         // select / unselect all tiles.
                                         setState(() {
-                                          _selectAllTodos = value;
+                                          _currentPageIndex == 0
+                                              ? _selectAllNotes = value
+                                              : _selectAllTodos = value;
                                         });
-                                        todosBloc.add(
-                                            TodosAreAllTodosSelectedEvent(
-                                                value));
+                                        _currentPageIndex == 0
+                                            ? notesBloc.add(
+                                                NotesAreAllNotesSelectedEvent(
+                                                    value))
+                                            : todosBloc.add(
+                                                TodosAreAllTodosSelectedEvent(
+                                                    value));
                                       }
                                     }),
                               ),
@@ -237,11 +279,9 @@ class _HomePageState extends State<HomePage> {
                         switch (_currentPageIndex) {
                           case 0: // notes page
                             GoRouter.of(context).pushNamed(
-                                AppRouteConstants
-                                    .noteViewRouteName,
-                                pathParameters: {
-                                  'noteId': 'new'
-                                },extra: notesBloc);
+                                AppRouteConstants.noteViewRouteName,
+                                pathParameters: {'noteId': 'new'},
+                                extra: notesBloc);
                             break;
                           case 1: // todos page
                             todosBloc.add(TodosShowAddTodoDialogBoxEvent());
