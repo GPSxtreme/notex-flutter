@@ -29,6 +29,7 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
 
   late List<TodoModel> _doneTodos;
   late List<TodoModel> _notDoneTodos;
+  List<TodoModel> _temp = [];
   final List<TodoModel> _selectedTodos = [];
 
   StreamController<List<TodoModel>> _selectedTodosController =
@@ -154,7 +155,7 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
   FutureOr<void> handleEditingEnter(
       TodosEnteredEditingEvent event, Emitter<TodosState> emit) async {
     emit(TodosEnteredEditingState());
-    emit(TodosFetchedState(_doneTodos, _notDoneTodos, isInEditState: true));
+    emit(TodosEditingState(_doneTodos, _notDoneTodos, areAllSelected: false));
     // Notify the stream listeners about the changes in _selectedTodos
     if (isSelectedTodoStreamClosed) {
       // start stream again
@@ -165,24 +166,37 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
 
   FutureOr<void> handleAreAllTodosSelected(
       TodosAreAllTodosSelectedEvent event, Emitter<TodosState> emit) async {
-    if (event.areSelected) {
-      _selectedTodos.addAll([
-        ..._doneTodos,
+    if (event.areAllSelected) {
+      _temp = [
+        ..._doneTodos.where((todo) => !_selectedTodos.contains(todo)).toList(),
         ..._notDoneTodos
-      ]); // add items of both done and undone lists.
+            .where((todo) => !_selectedTodos.contains(todo))
+            .toList(),
+      ];
+      _selectedTodos.addAll(_temp); // add items of both done and undone lists.
     } else {
-      _selectedTodos.clear();
+      // similarly remove todos which are added due to event and not added before hand
+      if (_temp.length < _selectedTodos.length &&
+          _selectedTodos.length == _doneTodos.length + _notDoneTodos.length) {
+        _selectedTodos.clear();
+        emit(TodosEditingState(_doneTodos, _notDoneTodos,
+            selectedTodoIds: null, areAllSelected: false));
+      }
+      _selectedTodos.removeWhere((todo) => _temp.contains(todo));
     }
-    emit(TodosFetchedState(_doneTodos, _notDoneTodos,
-        isInEditState: true, areAllSelected: event.areSelected));
+    emit(TodosEditingState(_doneTodos, _notDoneTodos,
+        selectedTodoIds: [..._selectedTodos.map((e) => e.id).toList()],
+        areAllSelected: event.areAllSelected));
   }
 
   FutureOr<void> handleEditingExit(
       TodosExitedEditingEvent event, Emitter<TodosState> emit) async {
     emit(TodosExitedEditingState());
-    emit(TodosFetchedState(_doneTodos, _notDoneTodos, isInEditState: false));
+    emit(TodosFetchedState(_doneTodos, _notDoneTodos));
     // reset _selectedTodos list
     _selectedTodos.clear();
+    // reset _temp list
+    _temp.clear();
     // Notify the stream listeners about the changes in _selectedTodos
     _selectedTodosController.close();
   }
@@ -197,8 +211,17 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
         // remove from _selectedTodos list
         _selectedTodos.remove(event.todo);
       }
+      if (_selectedTodos.length == _doneTodos.length + _notDoneTodos.length) {
+        emit(TodosSetAllTodosSelectedCheckBoxState(true));
+      } else {
+        // emit all notes note selected to home page checkbox;
+        emit(TodosSetAllTodosSelectedCheckBoxState(false));
+      }
       // Notify the stream listeners about the changes in _selectedTodos
       _selectedTodosController.add(_selectedTodos);
+      // rebuild to show changes
+      emit(TodosEditingState(_doneTodos, _notDoneTodos,
+          selectedTodoIds: [..._selectedTodos.map((e) => e.id).toList()]));
     } catch (error) {
       emit(TodosOperationFailedState(error.toString()));
     }
@@ -218,21 +241,20 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
             _notDoneTodos.remove(todo);
           }
         }
-        if (_doneTodos.isNotEmpty || _notDoneTodos.isNotEmpty) {
-          emit(TodosFetchedState(_doneTodos, _notDoneTodos,isInEditState: false));
-        } else {
-          emit(TodosEmptyState());
-        }
         // start removing each to-do in selectedTodos list from local database
         for (var todo in _selectedTodos) {
           await TodosRepository.removeTodo(todo.id);
         }
-        emit(TodosExitedEditingState());
-        // reset _selectedTodos list
+        _temp.clear();
         _selectedTodos.clear();
+        if (_doneTodos.isNotEmpty || _notDoneTodos.isNotEmpty) {
+          emit(TodosFetchedState(_doneTodos, _notDoneTodos));
+        } else {
+          emit(TodosEmptyState());
+        }
+        emit(TodosExitedEditingState());
         // Notify the stream listeners about the changes in _selectedTodos
         _selectedTodosController.close();
-
       }
     } catch (error) {
       emit(TodosOperationFailedState(error.toString()));
