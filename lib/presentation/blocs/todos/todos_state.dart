@@ -11,9 +11,9 @@ abstract  class TodosHomeActionState extends TodosActionState {}
 
 class TodosInitialState extends TodosState {}
 
-class TodosFetchingState extends TodosState {}
+class TodosFetchingState extends TodosHomeState{}
 
-class TodosFetchedState extends TodosState {
+class TodosFetchedState extends TodosHomeState {
   final List<TodoModel> doneTodos;
   final List<TodoModel> notDoneTodos;
 
