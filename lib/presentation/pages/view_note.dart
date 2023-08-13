@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:notex/core/repositories/auth_repository.dart';
 import 'package:notex/data/models/note_model.dart';
-import 'package:notex/data/repositories/model_to_entity_repository.dart';
 import 'package:notex/presentation/blocs/notes/notes_bloc.dart';
 import 'package:notex/presentation/styles/app_styles.dart';
 import 'package:uuid/uuid.dart';
+import '../../core/repositories/notes_repository.dart';
 import '../../main.dart';
 import '../styles/size_config.dart';
 
@@ -121,12 +121,17 @@ class _ViewNotePageState extends State<ViewNotePage> {
   }
 
   Future<void> _saveChanges() async {
-    await LOCAL_DB
-        .updateNote(ModelToEntityRepository.mapToNoteEntity(model: note))
-        .then((_) {
-      widget.notesBloc.add(NotesRefetchNotesEvent(note));
+    if(widget.noteId == null){
+      //create new note
+      widget.notesBloc.add(NotesAddNoteEvent(note));
       Navigator.of(context).pop();
-    });
+    }else{
+      await NotesRepository.updateNote(note)
+          .then((_) {
+        widget.notesBloc.add(NotesRefetchNotesEvent(note));
+        Navigator.of(context).pop();
+      });
+    }
   }
 
   @override
