@@ -40,7 +40,7 @@ class TodosLoadingState extends TodosState {}
 
 class TodosLoadedState extends TodosState {}
 
-class TodosEmptyState extends TodosState {}
+class TodosEmptyState extends TodosHomeState {}
 
 class TodosTodoDoneState extends TodosState {}
 
