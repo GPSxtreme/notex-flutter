@@ -3,7 +3,11 @@ part of 'todos_bloc.dart';
 @immutable
 abstract class TodosState {}
 
+abstract class TodosHomeState extends TodosState{}
+
 abstract class TodosActionState extends TodosState {}
+
+abstract  class TodosHomeActionState extends TodosActionState {}
 
 class TodosInitialState extends TodosState {}
 
@@ -12,15 +16,18 @@ class TodosFetchingState extends TodosState {}
 class TodosFetchedState extends TodosState {
   final List<TodoModel> doneTodos;
   final List<TodoModel> notDoneTodos;
-  final bool isInEditState;
-  final bool areAllSelected;
+
 
   TodosFetchedState(
     this.doneTodos,
-    this.notDoneTodos, {
-    this.isInEditState = false,
-    this.areAllSelected = false,
-  });
+    this.notDoneTodos);
+}
+
+class TodosEditingState extends TodosFetchedState {
+  TodosEditingState(super.doneTodos, super.notDoneTodos,
+      {this.areAllSelected = false, this.selectedTodoIds});
+  final bool areAllSelected;
+  final List<String>? selectedTodoIds;
 }
 
 class TodosFetchingFailedState extends TodosState {
@@ -54,6 +61,11 @@ class TodosOperationFailedState extends TodosActionState {
   TodosOperationFailedState(this.reason);
 }
 
-class TodosEnteredEditingState extends TodosActionState {}
+class TodosEnteredEditingState extends TodosHomeState {}
 
-class TodosExitedEditingState extends TodosActionState {}
+class TodosExitedEditingState extends TodosHomeState {}
+
+class TodosSetAllTodosSelectedCheckBoxState extends TodosHomeActionState{
+  final bool flag;
+  TodosSetAllTodosSelectedCheckBoxState(this.flag);
+}
