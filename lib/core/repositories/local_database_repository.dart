@@ -62,6 +62,15 @@ class LocalDatabaseRepository {
     }
   }
 
+  Future<void> updateNoteId(String oldId, String newId)async{
+    await _database.update(
+      'notes',
+      {'_id': newId},
+      where: '_id = ?',
+      whereArgs: [oldId],
+    );
+  }
+
   Future<void> insertNote(NoteDataEntity note, bool isSynced) async {
     final noteMap = EntityToJson.noteEntityToJson(note, isSynced);
 
@@ -90,6 +99,15 @@ class LocalDatabaseRepository {
       'notes',
       where: '_id = ?',
       whereArgs: [noteId],
+    );
+  }
+
+  Future<void> updateTodoId(String oldId, String newId)async{
+    await _database.update(
+      'todos',
+      {'_id': newId},
+      where: '_id = ?',
+      whereArgs: [oldId],
     );
   }
 
