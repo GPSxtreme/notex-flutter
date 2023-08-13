@@ -5,6 +5,11 @@ abstract class TodosEvent {}
 
 class TodosInitialEvent extends TodosEvent {}
 
+class TodosRefetchTodosEvent extends TodosEvent{
+  final TodoModel? todo;
+  TodosRefetchTodosEvent(this.todo);
+}
+
 class TodosMarkTodoDoneEvent extends TodosEvent {
   final TodoModel todo;
 
@@ -28,9 +33,15 @@ class TodosAddTodoEvent extends TodosEvent {
 class TodosEnteredEditingEvent extends TodosEvent {}
 
 class TodosAreAllTodosSelectedEvent extends TodosEvent {
-  final bool areSelected;
+  final bool areAllSelected;
 
-  TodosAreAllTodosSelectedEvent(this.areSelected);
+  TodosAreAllTodosSelectedEvent(this.areAllSelected);
+}
+
+class TodosSetAllTodosSelectedCheckBoxEvent extends TodosEvent {
+  final bool flag;
+
+  TodosSetAllTodosSelectedCheckBoxEvent(this.flag);
 }
 
 class TodosIsTodoSelectedEvent extends TodosEvent {
