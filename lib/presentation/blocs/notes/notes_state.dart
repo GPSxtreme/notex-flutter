@@ -11,9 +11,9 @@ abstract class NotesHomeActionState extends NotesActionState {}
 
 class NotesInitialState extends NotesState {}
 
-class NotesFetchingState extends NotesState {}
+class NotesFetchingState extends NotesHomeState {}
 
-class NotesFetchedState extends NotesState {
+class NotesFetchedState extends NotesHomeState {
   final List<NoteModel> notes;
   NotesFetchedState(
     this.notes,
