@@ -58,4 +58,18 @@ class NoteModel {
     "editedTime": editedTime.toIso8601String(),
     "__v": v,
   };
+  Map<String, dynamic> toJsonToServerAdd() => {
+    "title": title,
+    "body": body,
+    "createdTime": createdTime.toIso8601String(),
+    "editedTime": editedTime.toIso8601String(),
+  };
+  Map<String, dynamic> toJsonToServerUpdate() => {
+    "_id": id,
+    "title": title,
+    "body": body,
+    "createdTime": createdTime.toIso8601String(),
+    "editedTime": editedTime.toIso8601String(),
+    "__v": v,
+  };
 }
