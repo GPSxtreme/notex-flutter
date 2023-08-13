@@ -14,6 +14,13 @@ class NotesRefetchNotesEvent extends NotesEvent {
 class NotesEnteredEditingEvent extends NotesEvent {
 }
 
+class NotesAddNoteEvent extends NotesEvent{
+  final NoteModel newNote;
+
+  NotesAddNoteEvent(this.newNote);
+
+}
+
 class NotesExitedEditingEvent extends NotesEvent {}
 
 class NotesDeleteSelectedNotesEvent extends NotesEvent {}
