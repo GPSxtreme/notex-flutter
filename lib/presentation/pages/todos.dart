@@ -25,10 +25,29 @@ class _TodosPageState extends State<TodosPage>
   final _doneTodosListKey = GlobalKey<AnimatedListState>();
   final _notDoneTodosListKey = GlobalKey<AnimatedListState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  late List<TodoModel> doneTodos;
+  late List<TodoModel> notDoneTodos;
 
   @override
   bool get wantKeepAlive => true;
   late TodosBloc todosBloc; // Declare the NotesBloc variable
+
+  commonTodoTile(int todoIndex, TodoModel todo) =>
+      AnimationConfiguration.staggeredGrid(
+        position: todoIndex,
+        duration: const Duration(milliseconds: ANIMATION_DURATION),
+        columnCount: 1,
+        child: FlipAnimation(
+          child: FadeInAnimation(
+            child: Padding(
+              key: ValueKey<int>(todoIndex),
+              padding: EdgeInsets.symmetric(
+                  vertical: SizeConfig.blockSizeVertical! * 0.8),
+              child: TodoTile(todo: todo, todosBloc: todosBloc),
+            ),
+          ),
+        ),
+      );
 
   @override
   void initState() {
@@ -62,6 +81,13 @@ class _TodosPageState extends State<TodosPage>
         }
       },
       builder: (context, state) {
+        if(state is TodosFetchedState){
+          doneTodos = state.doneTodos;
+          notDoneTodos = state.notDoneTodos;
+        }else if(state is TodosEditingState){
+          doneTodos = state.doneTodos;
+          notDoneTodos = state.notDoneTodos;
+        }
         return Scaffold(
           key: _scaffoldKey,
           appBar: null,
@@ -155,7 +181,7 @@ class _TodosPageState extends State<TodosPage>
                       ],
                     ),
                   )
-                ] else if (state is TodosFetchedState) ...[
+                ] else if (state is TodosFetchedState || state is TodosEditingState) ...[
                   Padding(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 25, vertical: 0),
@@ -169,38 +195,41 @@ class _TodosPageState extends State<TodosPage>
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            if(!todosBloc.isSelectedTodoStreamClosed)
-                            StreamBuilder<List<TodoModel>>(
-                              stream: todosBloc.selectedTodosStream,
-                              builder: (context, snapshot) {
-                                if (snapshot.hasData) {
-                                  final selectedTodos = snapshot.data;
-                                  if(selectedTodos != null ){
-                                    final selectedTodosCount = selectedTodos.length;
-                                    return Padding(
-                                      padding: const EdgeInsets.symmetric(vertical: 20),
-                                      child: Text(
-                                        'Selected (${selectedTodosCount.toString()})',
-                                        style: kInter.copyWith(
-                                            fontSize: 35, fontWeight: FontWeight.w500),
-                                      ),
-                                    );
+                            if (!todosBloc.isSelectedTodoStreamClosed)
+                              StreamBuilder<List<TodoModel>>(
+                                stream: todosBloc.selectedTodosStream,
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData) {
+                                    final selectedTodos = snapshot.data;
+                                    if (selectedTodos != null) {
+                                      final selectedTodosCount =
+                                          selectedTodos.length;
+                                      return Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 20),
+                                        child: Text(
+                                          'Selected (${selectedTodosCount.toString()})',
+                                          style: kInter.copyWith(
+                                              fontSize: 35,
+                                              fontWeight: FontWeight.w500),
+                                        ),
+                                      );
+                                    } else {
+                                      return const SizedBox.shrink();
+                                    }
                                   } else {
+                                    // Handle the case when the snapshot doesn't have data yet
                                     return const SizedBox.shrink();
                                   }
-                                } else {
-                                  // Handle the case when the snapshot doesn't have data yet
-                                  return const SizedBox.shrink();
-                                }
-                              },
-                            ),
+                                },
+                              ),
                             // to-do widgets go here if present
-                            if (state.notDoneTodos.isNotEmpty) ...[
+                            if (notDoneTodos.isNotEmpty) ...[
                               Padding(
                                 padding: EdgeInsets.symmetric(
                                     vertical: SizeConfig.blockSizeVertical!),
                                 child: Text(
-                                  "Todo (${state.notDoneTodos.length})",
+                                  "Todo (${notDoneTodos.length})",
                                   style: kInter.copyWith(color: kWhite75),
                                 ),
                               ),
@@ -208,49 +237,15 @@ class _TodosPageState extends State<TodosPage>
                                 key: _notDoneTodosListKey,
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
-                                itemCount: state.notDoneTodos.length,
-                                itemBuilder: (BuildContext context,
-                                    int todoIndex) {
-                                  final todo = state.notDoneTodos[todoIndex];
-                                  return AnimationConfiguration.staggeredGrid(
-                                    position: todoIndex,
-                                    duration: const Duration(milliseconds: ANIMATION_DURATION),
-                                    columnCount: 1,
-                                    child: FlipAnimation(
-                                      child: FadeInAnimation(
-                                        child: Padding(
-                                          key: ValueKey<String>(todo.id),
-                                          // This key is important for item identity
-                                          padding: EdgeInsets.symmetric(
-                                              vertical:
-                                              SizeConfig.blockSizeVertical! *
-                                                  0.8),
-                                          child: TodoTile(
-                                            todo: todo,
-                                            onCheckboxPressed: (bool isDone){
-                                              if(isDone){
-                                                todosBloc.add(TodosMarkTodoDoneEvent(todo));
-                                              }
-                                            },
-                                            onLongPress: () {
-                                              todosBloc
-                                                  .add(TodosEnteredEditingEvent());
-                                            },
-                                            isInEditMode: state.isInEditState,
-                                            isSelected: state.areAllSelected,
-                                            onSelect: (bool isSelected) {
-                                              todosBloc.add(TodosIsTodoSelectedEvent(
-                                                  isSelected, todo));
-                                            },
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  );
+                                itemCount: notDoneTodos.length,
+                                itemBuilder:
+                                    (BuildContext context, int todoIndex) {
+                                  final todo = notDoneTodos[todoIndex];
+                                  return commonTodoTile(todoIndex, todo);
                                 },
                               ),
                             ],
-                            if (state.doneTodos.isNotEmpty) ...[
+                            if (doneTodos.isNotEmpty) ...[
                               SizedBox(
                                 height: SizeConfig.blockSizeVertical! * 2,
                               ),
@@ -258,7 +253,7 @@ class _TodosPageState extends State<TodosPage>
                                 padding: EdgeInsets.symmetric(
                                     vertical: SizeConfig.blockSizeVertical!),
                                 child: Text(
-                                  "Done (${state.doneTodos.length})",
+                                  "Done (${doneTodos.length})",
                                   style: kInter.copyWith(color: kWhite75),
                                 ),
                               ),
@@ -266,48 +261,13 @@ class _TodosPageState extends State<TodosPage>
                                 key: _doneTodosListKey,
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
-                                itemCount: state.doneTodos.length,
-                                itemBuilder: (BuildContext context,
-                                    int todoIndex,
-                                    ) {
-                                  final todo = state.doneTodos[todoIndex];
-                                  return AnimationConfiguration.staggeredGrid(
-                                    position: todoIndex,
-                                    duration: const Duration(milliseconds: ANIMATION_DURATION),
-                                    columnCount: 1,
-                                    child: FlipAnimation(
-                                      child: FadeInAnimation(
-                                        child: Padding(
-                                          key: ValueKey<int>(todoIndex),
-                                          padding: EdgeInsets.symmetric(
-                                              vertical:
-                                              SizeConfig.blockSizeVertical! *
-                                                  0.8),
-                                          child: TodoTile(
-                                              todo: todo,
-                                              onCheckboxPressed: (bool isDone) {
-                                                if(!isDone) {
-                                                  todosBloc.add(TodosMarkTodoNotDoneEvent(todo));
-                                                }
-                                              },
-                                              onLongPress: () {
-                                                todosBloc.add(
-                                                    TodosIsTodoSelectedEvent(
-                                                        true, todo));
-                                                todosBloc
-                                                    .add(TodosEnteredEditingEvent());
-                                              },
-                                              isInEditMode: state.isInEditState,
-                                              isSelected: state.areAllSelected,
-                                              onSelect: (bool isSelected) {
-                                                todosBloc.add(
-                                                    TodosIsTodoSelectedEvent(
-                                                        isSelected, todo));
-                                              }),
-                                        ),
-                                      ),
-                                    ),
-                                  );
+                                itemCount: doneTodos.length,
+                                itemBuilder: (
+                                  BuildContext context,
+                                  int todoIndex,
+                                ) {
+                                  final todo = doneTodos[todoIndex];
+                                  return commonTodoTile(todoIndex, todo);
                                 },
                               )
                             ]
