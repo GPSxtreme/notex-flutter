@@ -171,7 +171,7 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
       } else {
         for (var note in _selectedNotes) {
           _notes.remove(note);
-          await NotesRepository.removeNote(note.id);
+          NotesRepository.removeNote(note.id);
         }
         _temp.clear();
         _selectedNotes.clear();
