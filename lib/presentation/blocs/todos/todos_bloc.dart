@@ -247,12 +247,12 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
         }
         _temp.clear();
         _selectedTodos.clear();
+        emit(TodosExitedEditingState());
         if (_doneTodos.isNotEmpty || _notDoneTodos.isNotEmpty) {
           emit(TodosFetchedState(_doneTodos, _notDoneTodos));
         } else {
           emit(TodosEmptyState());
         }
-        emit(TodosExitedEditingState());
         // Notify the stream listeners about the changes in _selectedTodos
         _selectedTodosController.close();
       }
