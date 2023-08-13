@@ -13,6 +13,7 @@ part 'notes_state.dart';
 class NotesBloc extends Bloc<NotesEvent, NotesState> {
   NotesBloc() : super(NotesInitialState()) {
     on<NotesInitialEvent>(handleFetchNotes);
+    on<NotesAddNoteEvent>(handleAddNote);
     on<NotesRefetchNotesEvent>(handleRefetchNotes);
     on<NotesEnteredEditingEvent>(handleEnterEditing);
     on<NotesExitedEditingEvent>(handleExitedEditing);
@@ -83,26 +84,39 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
     }
   }
 
+  FutureOr<void> handleAddNote(NotesAddNoteEvent event , Emitter<NotesState> emit)async{
+    try{
+      _notes.insert(0, event.newNote);
+      emit(NotesFetchedState(_notes));
+      // insert new note in local database.
+      await NotesRepository.addNote(event.newNote);
+    } catch(error){
+      emit(NotesOperationFailedState(error.toString()));
+    }
+  }
+
   FutureOr<void> handleRefetchNotes(
       NotesRefetchNotesEvent event, Emitter<NotesState> emit) async {
-    if (event.note != null) {
+    final note = event.note;
+    if (note != null) {
       // Check if the note is new or already existing in _notes list
-      final existingIndex = _notes.indexOf(event.note!);
+      int existingIndex = _notes.indexWhere((element) => element.id == note.id);
 
       if (existingIndex != -1) {
-        // Replace the existing note with the new note
-        _notes.replaceRange(existingIndex, existingIndex + 1, [event.note!]);
+        // Remove the existing note
+        _notes.removeAt(existingIndex);
         // update note in local db
-        await NotesRepository.updateNote(event.note!);
+        await NotesRepository.updateNote(note);
       } else {
-        // Push new note at the starting index
-        _notes.insert(0, event.note!);
         // add note in local db
-        await NotesRepository.addNote(event.note!);
+        await NotesRepository.addNote(note);
       }
+      // Push new note at the starting index
+      _notes.insert(0, note);
     }
     emit(NotesFetchedState(_notes));
   }
+
 
   FutureOr<void> handleEnterEditing(
       NotesEnteredEditingEvent event, Emitter emit) async {
