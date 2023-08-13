@@ -26,6 +26,7 @@ class _HomePageState extends State<HomePage> {
   final TodosBloc todosBloc = TodosBloc();
   bool _selectAllTodos = false;
   bool _selectAllNotes = false;
+
   @override
   void dispose() {
     todosBloc.close();
@@ -162,14 +163,13 @@ class _HomePageState extends State<HomePage> {
     SizeConfig().init(context);
     return BlocConsumer(
       bloc: notesBloc,
-      buildWhen: (previous, current) =>
-          current is NotesHomeState ,
-      listener: (context,notesState){
-        if(notesState is NotesSetAllNotesSelectedCheckBoxState){
+      buildWhen: (previous, current) => current is NotesHomeState,
+      listener: (context, notesState) {
+        if (notesState is NotesSetAllNotesSelectedCheckBoxState) {
           setState(() {
             _selectAllNotes = notesState.flag;
           });
-        } else if(notesState is NotesExitedEditingState){
+        } else if (notesState is NotesExitedEditingState) {
           setState(() {
             _selectAllNotes = false;
           });
@@ -178,24 +178,29 @@ class _HomePageState extends State<HomePage> {
       builder: (context, notesState) {
         return BlocConsumer(
           bloc: todosBloc,
-          buildWhen: (previous, current) =>
-              current is TodosHomeState ,
-            listener: (context,todosState){
-              if(todosState is TodosSetAllTodosSelectedCheckBoxState){
-                setState(() {
-                  _selectAllTodos = todosState.flag;
-                });
-              } else if(todosState is TodosExitedEditingState){
-                setState(() {
-                  _selectAllTodos = false;
-                });
-              }
-            },
+          buildWhen: (previous, current) => current is TodosHomeState,
+          listener: (context, todosState) {
+            if (todosState is TodosSetAllTodosSelectedCheckBoxState) {
+              setState(() {
+                _selectAllTodos = todosState.flag;
+              });
+            } else if (todosState is TodosExitedEditingState) {
+              setState(() {
+                _selectAllTodos = false;
+              });
+            }
+          },
           builder: (context, todosState) {
             bool isInEditing = (todosState is TodosEditingState ||
-                notesState is NotesEditingState) ? true : false;
+                        notesState is NotesEditingState) &&
+                    (notesState is! NotesEmptyState ||
+                        todosState is! TodosEmptyState)
+                ? true
+                : false;
             bool isFetching = (todosState is TodosFetchingState ||
-                notesState is NotesFetchingState) ? true : false;
+                    notesState is NotesFetchingState)
+                ? true
+                : false;
             return Scaffold(
               key: _scaffoldKey,
               backgroundColor: kPageBgEnd,
