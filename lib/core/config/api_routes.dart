@@ -22,6 +22,7 @@ final TODO_DELETE_ROUTE = '$_apiEndPoint/todo/deleteTodo';
 /*start of note routes */
 final NOTE_ADD_ROUTE = '$_apiEndPoint/note/addNote';
 final NOTE_GET_ROUTE = '$_apiEndPoint/note/getNotes';
+final NOTE_UPDATE_ROUTE = '$_apiEndPoint/note/updateNote';
 /// Required noteId in params
 final NOTE_DELETE_ROUTE = '$_apiEndPoint/note/deleteNote';
 /*end of note routes */
