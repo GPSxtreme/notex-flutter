@@ -3,7 +3,11 @@ part of 'notes_bloc.dart';
 @immutable
 abstract class NotesState {}
 
+abstract class NotesHomeState extends NotesState {}
+
 abstract class NotesActionState extends NotesState {}
+
+abstract class NotesHomeActionState extends NotesActionState {}
 
 class NotesInitialState extends NotesState {}
 
@@ -11,7 +15,17 @@ class NotesFetchingState extends NotesState {}
 
 class NotesFetchedState extends NotesState {
   final List<NoteModel> notes;
-  NotesFetchedState(this.notes);
+  NotesFetchedState(
+    this.notes,
+  );
+}
+
+class NotesEditingState extends NotesFetchedState {
+  NotesEditingState(
+      super.notes, {this.selectedNotesIds, this.areAllSelected = false});
+
+  final List<String>? selectedNotesIds;
+  final bool areAllSelected;
 }
 
 class NotesFetchingFailedState extends NotesState {
@@ -20,11 +34,24 @@ class NotesFetchingFailedState extends NotesState {
   NotesFetchingFailedState(this.reason);
 }
 
-class NotesLoadingState extends NotesState{}
+class NotesOperationFailedState extends NotesActionState {
+  final String reason;
 
-class NotesLoadedState extends NotesState{}
+  NotesOperationFailedState(this.reason);
+}
+
+class NotesSetAllNotesSelectedCheckBoxState extends NotesHomeActionState {
+  final bool flag;
+
+  NotesSetAllNotesSelectedCheckBoxState(this.flag);
+}
+
+class NotesLoadingState extends NotesState {}
+
+class NotesLoadedState extends NotesState {}
 
 class NotesEmptyState extends NotesState {}
 
+class NotesEnteredEditingState extends NotesHomeState {}
 
-class NotesEnteredEditingState extends NotesState {}
+class NotesExitedEditingState extends NotesHomeState {}
