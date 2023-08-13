@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:notex/data/models/note_model.dart';
 import 'package:notex/presentation/widgets/note_tile.dart';
 import '../blocs/notes/notes_bloc.dart';
 import '../styles/app_styles.dart';
@@ -20,6 +21,9 @@ class _NotesPageState extends State<NotesPage>
     with
         AutomaticKeepAliveClientMixin<NotesPage>,
         SingleTickerProviderStateMixin {
+
+  late List<NoteModel> _notes;
+
   @override
   bool get wantKeepAlive => true;
   late NotesBloc notesBloc; // Declare the NotesBloc variable
@@ -53,6 +57,11 @@ class _NotesPageState extends State<NotesPage>
       buildWhen: (previous, current) => current is! NotesActionState,
       listener: (context, state) {},
       builder: (context, state) {
+        if(state is NotesFetchedState) {
+          _notes = state.notes;
+        } else if(state is NotesEditingState){
+          _notes = state.notes;
+        }
         int numberOfColumns = SizeConfig.screenWidth! > 600 ? 3 : 2;
         return Scaffold(
           appBar: null,
@@ -146,7 +155,7 @@ class _NotesPageState extends State<NotesPage>
                       ],
                     ),
                   )
-                ] else if (state is NotesFetchedState) ...[
+                ] else if (state is NotesFetchedState || state is NotesEditingState) ...[
                   Padding(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 25, vertical: 0),
@@ -158,7 +167,33 @@ class _NotesPageState extends State<NotesPage>
                       },
                       child: SingleChildScrollView(
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            if(!notesBloc.isSelectedNotesStreamClosed)
+                              StreamBuilder<List<NoteModel>>(
+                                stream: notesBloc.selectedNotesStream,
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData) {
+                                    final selectedNotes = snapshot.data;
+                                    if(selectedNotes != null ){
+                                      final selectedNotesCount = selectedNotes.length;
+                                      return Padding(
+                                        padding: const EdgeInsets.symmetric(vertical: 20),
+                                        child: Text(
+                                          'Selected (${selectedNotesCount.toString()})',
+                                          style: kInter.copyWith(
+                                              fontSize: 35, fontWeight: FontWeight.w500),
+                                        ),
+                                      );
+                                    } else {
+                                      return const SizedBox.shrink();
+                                    }
+                                  } else {
+                                    // Handle the case when the snapshot doesn't have data yet
+                                    return const SizedBox.shrink();
+                                  }
+                                },
+                              ),
                             // note widgets go here if present
                             SizedBox(
                               height: SizeConfig.blockSizeVertical! * 4,
@@ -169,10 +204,10 @@ class _NotesPageState extends State<NotesPage>
                               crossAxisSpacing: 10,
                               physics: const NeverScrollableScrollPhysics(),
                               shrinkWrap: true,
-                              itemCount: state.notes.length,
+                              itemCount: _notes.length,
                               itemBuilder:
                                   (BuildContext context, int notesIndex) {
-                                final notes = state.notes;
+                                final notes = _notes;
                                 final note = notes[notesIndex];
                                 // not being used as staggeredTileBuilder is not provided for this widget
                                 bool isLongText = isTextLong(note.title, 18);
