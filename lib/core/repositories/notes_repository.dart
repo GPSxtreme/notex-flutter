@@ -1,6 +1,7 @@
 import 'package:notex/core/repositories/shared_preferences_repository.dart';
 import 'package:notex/data/models/get_notes_response_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:notex/data/repositories/entitiy_to_json_repository.dart';
 import 'package:notex/data/repositories/model_to_entity_repository.dart';
 import '../../data/models/note_model.dart';
 import '../config/api_routes.dart';
@@ -38,7 +39,10 @@ class NotesRepository {
     for (final onlineNote in onlineNotes) {
       if (!offlineNotesMap.containsKey(onlineNote.id)) {
         // Note doesn't exist offline, insert it
-        offlineNotesMap[onlineNote.id] = onlineNote;
+        offlineNotesMap[onlineNote.id] = NoteModel.fromJsonOfLocalDb(
+            EntityToJson.noteEntityToJson(
+                ModelToEntityRepository.mapToNoteEntity(model: onlineNote,synced: true),
+                true));
         await LOCAL_DB.insertNote(
           ModelToEntityRepository.mapToNoteEntity(model: onlineNote),
           true,
@@ -80,13 +84,11 @@ class NotesRepository {
     }
   }
 
-  static Future<void> updateNote(NoteModel note) async{
-    try{
-      LOCAL_DB
-          .updateNote(ModelToEntityRepository.mapToNoteEntity(model: note));
-    }catch(error){
+  static Future<void> updateNote(NoteModel note) async {
+    try {
+      LOCAL_DB.updateNote(ModelToEntityRepository.mapToNoteEntity(model: note));
+    } catch (error) {
       rethrow;
     }
   }
-
 }
