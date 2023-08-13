@@ -192,10 +192,10 @@ class _HomePageState extends State<HomePage> {
               }
             },
           builder: (context, todosState) {
-            bool isInEditing = (todosState is TodosEnteredEditingState ||
-                notesState is NotesEnteredEditingState);
+            bool isInEditing = (todosState is TodosEditingState ||
+                notesState is NotesEditingState) ? true : false;
             bool isFetching = (todosState is TodosFetchingState ||
-                notesState is NotesFetchingState);
+                notesState is NotesFetchingState) ? true : false;
             return Scaffold(
               key: _scaffoldKey,
               backgroundColor: kPageBgEnd,
