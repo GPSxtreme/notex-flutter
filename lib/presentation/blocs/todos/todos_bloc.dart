@@ -83,6 +83,8 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
         final offlineFetchedNotes = await LOCAL_DB.getTodos();
 
         if (offlineFetchedNotes.isEmpty) {
+          _notDoneTodos = [];
+          _doneTodos = [];
           emit(TodosEmptyState());
         } else {
           _doneTodos =
