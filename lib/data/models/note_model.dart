@@ -26,7 +26,7 @@ class NoteModel {
     required this.createdTime,
     required this.editedTime,
     required this.v,
-    this.isSynced
+    this.isSynced = false
   });
 
   factory NoteModel.fromJson(Map<String, dynamic> json) => NoteModel(
