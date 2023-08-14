@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:notex/core/repositories/shared_preferences_repository.dart';
 import 'package:notex/data/models/generic_server_response.dart';
 import 'package:notex/data/models/get_notes_response_model.dart';
@@ -72,85 +73,151 @@ class NotesRepository {
 
   static Future<void> addNote(NoteModel note) async {
     try {
-      // add note to local db
+      // Add note to local storage immediately
       await LOCAL_DB.insertNote(
-          ModelToEntityRepository.mapToNoteEntity(model: note), false);
-      // add note on server
-      if (true) {
-        // if user enables auto sync.
+        ModelToEntityRepository.mapToNoteEntity(model: note),
+        false,
+      );
+      // Trigger the cloud addition asynchronously without waiting for response
+      _addNoteToCloud(note);
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  static Future<void> _addNoteToCloud(NoteModel note) async {
+    try {
+      // Check if user has enabled auto sync
+      final isAutoSyncEnabled =
+          await SharedPreferencesRepository.getAutoSyncStatus();
+
+      if (isAutoSyncEnabled == true) {
         final url = Uri.parse(NOTE_ADD_ROUTE);
         final body = jsonEncode(note.toJsonToServerAdd());
         final authToken = await SharedPreferencesRepository.getJwtToken();
+
         final response = await http.post(
           url,
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer $authToken'
+            'Authorization': 'Bearer $authToken',
           },
           body: body,
         );
+
         final GenericServerResponse serverResponse =
             genericServerResponseFromJson(response.body);
         if (serverResponse.success) {
           final AddNoteResponseModel fetchResponse =
               addNoteResponseModelFromJson(response.body);
-          // update local note id with the fetchResponse's
-          await LOCAL_DB.updateNoteId(note.id, fetchResponse.noteId);
+
+          // Update local note id with the fetchResponse's asynchronously
+          _updateLocalNoteId(note.id, fetchResponse.noteId);
         }
       }
     } catch (error) {
+      // Handle any errors that might occur during cloud addition
+      if (kDebugMode) {
+        print("Error during cloud addition: $error");
+      }
+      rethrow;
+    }
+  }
+
+  static Future<void> _updateLocalNoteId(String oldId, String newId) async {
+    try {
+      // Perform the update of the local note id
+      await LOCAL_DB.updateNoteId(oldId, newId);
+    } catch (error) {
+      // Handle any errors that might occur during the update
+      if (kDebugMode) {
+        print("Error during local note id update: $error");
+      }
       rethrow;
     }
   }
 
   static Future<void> removeNote(String noteId) async {
     try {
+      // Remove note from local storage immediately
       await LOCAL_DB.removeNote(noteId);
-      // remove note on server
-      if (true) {
-        // if user enables auto sync.
+
+      // Trigger the cloud removal asynchronously without waiting for response
+      _removeNoteFromCloud(noteId);
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  static Future<void> _removeNoteFromCloud(String noteId) async {
+    try {
+      // Check if user has enabled auto sync
+      final isAutoSyncEnabled = await SharedPreferencesRepository.getAutoSyncStatus();
+
+      if (isAutoSyncEnabled == true) {
         final url = Uri.parse("$NOTE_DELETE_ROUTE?noteId=$noteId");
         final authToken = await SharedPreferencesRepository.getJwtToken();
+
         await http.get(
           url,
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer $authToken'
+            'Authorization': 'Bearer $authToken',
           },
         );
       }
     } catch (error) {
+      // Handle any errors that might occur during cloud removal
+      if (kDebugMode) {
+        print("Error during cloud removal: $error");
+      }
       rethrow;
     }
   }
 
   static Future<void> updateNote(NoteModel note) async {
     try {
-      LOCAL_DB.updateNote(ModelToEntityRepository.mapToNoteEntity(model: note));
-      // update note on server
-      if (true) {
-        // if user enables auto sync.
-        final url = Uri.parse(NOTE_UPDATE_ROUTE);
-        final body = jsonEncode(note.toJsonToServerUpdate());
-        final authToken = await SharedPreferencesRepository.getJwtToken();
-        final response = await http.post(
-          url,
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $authToken'
-          },
-          body: body,
-        );
-        final GenericServerResponse fetchResponse =
-            genericServerResponseFromJson(response.body);
-        if (fetchResponse.success) {
-          await LOCAL_DB.setNoteSynced(note.id, true);
-        } else {
-          await LOCAL_DB.setNoteSynced(note.id, false);
-        }
-      }
+      // Update note in local storage immediately
+      await LOCAL_DB.updateNote(ModelToEntityRepository.mapToNoteEntity(model: note));
+
+      // Trigger the cloud update asynchronously without waiting for response
+      _updateNoteInCloud(note);
     } catch (error) {
       rethrow;
     }
   }
+
+  static Future<void> _updateNoteInCloud(NoteModel note) async {
+    try {
+      // Check if user has enabled auto sync
+      final isAutoSyncEnabled = await SharedPreferencesRepository.getAutoSyncStatus();
+
+      if (isAutoSyncEnabled == true) {
+        final url = Uri.parse(NOTE_UPDATE_ROUTE);
+        final body = jsonEncode(note.toJsonToServerUpdate());
+        final authToken = await SharedPreferencesRepository.getJwtToken();
+
+        final response = await http.post(
+          url,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $authToken',
+          },
+          body: body,
+        );
+
+        final GenericServerResponse fetchResponse =
+        genericServerResponseFromJson(response.body);
+
+        // Set note synced status based on server response
+        await LOCAL_DB.setNoteSynced(note.id, fetchResponse.success);
+      }
+    } catch (error) {
+      // Handle any errors that might occur during cloud update
+      if (kDebugMode) {
+        print("Error during cloud update: $error");
+      }
+    }
+  }
+
 }
