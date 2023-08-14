@@ -2,7 +2,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPreferencesRepository {
   static const String _jwtKey = 'jwt_token';
-
+  static const String _enableAutoSync = 'enableAutoSync';
   // Method to save the JWT token to shared preferences
   static Future<void> saveJwtToken(String token) async {
     final preferences = await SharedPreferences.getInstance();
@@ -19,5 +19,17 @@ class SharedPreferencesRepository {
   static Future<void> removeJwtToken() async {
     final preferences = await SharedPreferences.getInstance();
     await preferences.remove(_jwtKey);
+  }
+
+  // Method to set auto-sync
+  static Future<void> setAutoSyncStatus(bool value)async{
+    final preferences = await SharedPreferences.getInstance();
+    await preferences.setBool(_enableAutoSync, value);
+  }
+
+  // Method to get if user enabled auto-sync
+  static Future<bool?> getAutoSyncStatus()async{
+    final preferences = await SharedPreferences.getInstance();
+    return preferences.getBool(_enableAutoSync);
   }
 }
