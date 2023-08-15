@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:notex/presentation/pages/create_user_profile.dart';
 import 'package:notex/presentation/pages/register.dart';
+import 'package:notex/presentation/pages/settings.dart';
 import 'package:notex/presentation/pages/splash.dart';
 import 'package:notex/presentation/pages/view_note.dart';
 import 'package:notex/router/app_route_constants.dart';
@@ -17,7 +18,7 @@ class MyAppRouter {
     final rootNavigatorKey = GlobalKey<NavigatorState>();
 
     return GoRouter(
-        initialLocation: '/',
+        initialLocation: '/home',
         navigatorKey: rootNavigatorKey,
         routes: [
           GoRoute(
@@ -81,6 +82,12 @@ class MyAppRouter {
               ),
             ]
               ),
+          GoRoute(
+              name: AppRouteConstants.settingsRouteName,
+              path: '/settings',
+              pageBuilder: (BuildContext context, GoRouterState state) {
+                return const MaterialPage(child: SettingsPage());
+              }),
         ],);
   }
 }
