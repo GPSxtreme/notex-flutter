@@ -56,7 +56,11 @@ class _NotesPageState extends State<NotesPage>
       bloc: notesBloc,
       listenWhen: (previous, current) => current is NotesActionState,
       buildWhen: (previous, current) => current is! NotesActionState,
-      listener: (context, state) {},
+      listener: (context, state) {
+        if(state is NotesOperationFailedState){
+          kSnackBar(context, state.reason);
+        }
+      },
       builder: (context, state) {
         if(state is NotesFetchedState) {
           _notes = state.notes;
