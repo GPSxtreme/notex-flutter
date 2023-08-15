@@ -12,11 +12,22 @@ import '../../data/models/login_response_model.dart';
 
 class AuthRepository {
 
-  static Future<UserDataModel?> getUserData()async{
+  static late String userToken;
+
+  static Future<void> initUserToken()async{
     try{
       final token = await SharedPreferencesRepository.getJwtToken();
-      if(token != null){
-        return UserDataModel.fromJson(JwtDecoderRepository.decodeJwtToken(token)!);
+      userToken = 'Bearer $token';
+    }catch(e){
+      throw Exception(e);
+    }
+  }
+
+  static Future<UserDataModel?> getUserData()async{
+    try{
+      final userToken = await SharedPreferencesRepository.getJwtToken();
+      if(userToken != null){
+        return UserDataModel.fromJson(JwtDecoderRepository.decodeJwtToken(userToken)!);
       }
     }catch(e){
       rethrow;
