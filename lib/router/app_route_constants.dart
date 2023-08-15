@@ -7,4 +7,5 @@ class AppRouteConstants {
   static const String notesRouteName = 'notes';
   static const String noteViewRouteName = 'view-note';
   static const String todosRouteName = 'todos';
+  static const String settingsRouteName = 'settings';
 }
