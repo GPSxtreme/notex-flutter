@@ -1,6 +1,6 @@
 import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
+import 'package:notex/core/repositories/auth_repository.dart';
 import 'package:notex/core/repositories/shared_preferences_repository.dart';
 import 'package:notex/data/models/generic_server_response.dart';
 import 'package:notex/data/models/get_notes_response_model.dart';
@@ -16,12 +16,11 @@ class NotesRepository {
   static Future<GetNotesResponseModel> fetchNotes() async {
     final url = Uri.parse(NOTE_GET_ROUTE);
     try {
-      final authToken = await SharedPreferencesRepository.getJwtToken();
       final response = await http.get(
         url,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $authToken'
+          'Authorization': AuthRepository.userToken
         },
       );
       final GetNotesResponseModel fetchResponse =
@@ -94,13 +93,12 @@ class NotesRepository {
       if (isAutoSyncEnabled == true) {
         final url = Uri.parse(NOTE_ADD_ROUTE);
         final body = jsonEncode(note.toJsonToServerAdd());
-        final authToken = await SharedPreferencesRepository.getJwtToken();
 
         final response = await http.post(
           url,
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer $authToken',
+            'Authorization': AuthRepository.userToken,
           },
           body: body,
         );
@@ -156,13 +154,12 @@ class NotesRepository {
 
       if (isAutoSyncEnabled == true) {
         final url = Uri.parse("$NOTE_DELETE_ROUTE?noteId=$noteId");
-        final authToken = await SharedPreferencesRepository.getJwtToken();
 
         await http.get(
           url,
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer $authToken',
+            'Authorization': AuthRepository.userToken,
           },
         );
       }
@@ -195,13 +192,12 @@ class NotesRepository {
       if (isAutoSyncEnabled == true) {
         final url = Uri.parse(NOTE_UPDATE_ROUTE);
         final body = jsonEncode(note.toJsonToServerUpdate());
-        final authToken = await SharedPreferencesRepository.getJwtToken();
 
         final response = await http.post(
           url,
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer $authToken',
+            'Authorization': AuthRepository.userToken,
           },
           body: body,
         );
