@@ -19,9 +19,12 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     try{
       emit(RegisterLoadingState());
       await AuthRepository.registerUser(event.email, event.password, event.rememberDevice).then(
-              (response) {
+              (response) async{
             if(response.success){
-              emit(RegisterSuccessState());
+              await AuthRepository.initUserToken().then(
+                  (_) =>
+                      emit(RegisterSuccessState())
+              );
             } else{
               emit(RegisterFailedState(response.message));
             }
