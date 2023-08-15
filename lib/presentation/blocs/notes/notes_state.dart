@@ -15,14 +15,15 @@ class NotesFetchingState extends NotesHomeState {}
 
 class NotesFetchedState extends NotesHomeState {
   final List<NoteModel> notes;
+  final List<String>? syncingNotes;
   NotesFetchedState(
-    this.notes,
+    this.notes, {this.syncingNotes}
   );
 }
 
 class NotesEditingState extends NotesFetchedState {
   NotesEditingState(
-      super.notes, {this.selectedNotesIds, this.areAllSelected = false});
+      super.notes, { super.syncingNotes ,this.selectedNotesIds, this.areAllSelected = false});
 
   final List<String>? selectedNotesIds;
   final bool areAllSelected;
