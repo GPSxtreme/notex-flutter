@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:notex/data/models/note_model.dart';
@@ -21,6 +22,7 @@ class NoteTile extends StatefulWidget {
 class _NoteTileState extends State<NoteTile> {
   bool _isSelected = false;
   bool _areAllSelected = false;
+  bool _isSyncing = false;
 
   Color getColor(Set<MaterialState> states) {
     const Set<MaterialState> interactiveStates = <MaterialState>{
@@ -74,6 +76,15 @@ class _NoteTileState extends State<NoteTile> {
           }
           if (!_isSelected && state.areAllSelected) {
             _areAllSelected = true;
+          }
+        }
+        if (state is NotesFetchedState) {
+          if (state.syncingNotes != null) {
+            if (state.syncingNotes!.contains(widget.note.id)) {
+              _isSyncing = true;
+            }
+          } else {
+            _isSyncing = false;
           }
         }
         return Container(
@@ -174,10 +185,30 @@ class _NoteTileState extends State<NoteTile> {
                           'last edited : ${DateFormat('d MMMM, h:mm a').format(widget.note.editedTime).toString()}',
                           style: kInter.copyWith(color: kWhite75, fontSize: 10),
                         ),
-                        Text(
-                          'is synced : ${widget.note.isSynced}',
-                          style: kInter.copyWith(color: kWhite75, fontSize: 10),
-                        ),
+                        if (!_isSyncing) ...[
+                          Text(
+                            'is synced : ${widget.note.isSynced}',
+                            style:
+                                kInter.copyWith(color: kWhite75, fontSize: 10),
+                          ),
+                        ] else ...[
+                          Row(
+                            children: [
+                              Text(
+                                'syncing',
+                                style: kInter.copyWith(
+                                    color: kWhite75, fontSize: 10),
+                              ),
+                              SizedBox(
+                                width: SizeConfig.blockSizeHorizontal! * 2,
+                              ),
+                              const SpinKitChasingDots(
+                                color: kWhite,
+                                size: 15,
+                              )
+                            ],
+                          )
+                        ]
                       ],
                     ),
                   ),
