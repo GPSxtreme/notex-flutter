@@ -87,9 +87,11 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
   FutureOr<void> handleAddNote(NotesAddNoteEvent event , Emitter<NotesState> emit)async{
     try{
       _notes.insert(0, event.newNote);
-      emit(NotesFetchedState(_notes));
+      emit(NotesFetchedState(_notes,syncingNotes: [event.newNote.id]));
       // insert new note in local database.
-      await NotesRepository.addNote(event.newNote);
+      await NotesRepository.addNote(event.newNote).then(
+          (_) => emit(NotesFetchedState(_notes,syncingNotes: null))
+      );
     } catch(error){
       emit(NotesOperationFailedState(error.toString()));
     }
