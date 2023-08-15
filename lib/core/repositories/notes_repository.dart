@@ -70,7 +70,7 @@ class NotesRepository {
     return updatedOfflineNotesList;
   }
 
-  static Future<void> addNote(NoteModel note) async {
+  static Future<bool> addNote(NoteModel note) async {
     try {
       // Add note to local storage immediately
       await LOCAL_DB.insertNote(
@@ -78,17 +78,17 @@ class NotesRepository {
         false,
       );
       // Trigger the cloud addition asynchronously without waiting for response
-      await _addNoteToCloud(note);
+      bool response =  await _addNoteToCloud(note);
+      return response;
     } catch (error) {
       rethrow;
     }
   }
 
-  static Future<void> _addNoteToCloud(NoteModel note) async {
+  static Future<bool> _addNoteToCloud(NoteModel note) async {
     try {
       // Check if user has enabled auto sync
-      final isAutoSyncEnabled =
-          await SharedPreferencesRepository.getAutoSyncStatus();
+      final isAutoSyncEnabled = await SharedPreferencesRepository.getAutoSyncStatus();
 
       if (isAutoSyncEnabled == true) {
         final url = Uri.parse(NOTE_ADD_ROUTE);
@@ -104,13 +104,20 @@ class NotesRepository {
         );
 
         final GenericServerResponse serverResponse =
-            genericServerResponseFromJson(response.body);
+        genericServerResponseFromJson(response.body);
+
         if (serverResponse.success) {
           final AddNoteResponseModel fetchResponse =
-              addNoteResponseModelFromJson(response.body);
+          addNoteResponseModelFromJson(response.body);
 
           // Update local note id with the fetchResponse's asynchronously
-          _updateLocalNoteId(note.id, fetchResponse.noteId);
+          await LOCAL_DB.updateNoteId(note.id, fetchResponse.noteId);
+
+          // Set note synced and return the result
+          final success = await LOCAL_DB.setNoteSynced(fetchResponse.noteId, true);
+          return success;
+        } else {
+          return false;
         }
       }
     } catch (error) {
@@ -118,22 +125,10 @@ class NotesRepository {
       if (kDebugMode) {
         print("Error during cloud addition: $error");
       }
-      rethrow;
     }
+    return false;
   }
 
-  static Future<void> _updateLocalNoteId(String oldId, String newId) async {
-    try {
-      // Perform the update of the local note id
-      await LOCAL_DB.updateNoteId(oldId, newId);
-    } catch (error) {
-      // Handle any errors that might occur during the update
-      if (kDebugMode) {
-        print("Error during local note id update: $error");
-      }
-      rethrow;
-    }
-  }
 
   static Future<void> removeNote(String noteId) async {
     try {
