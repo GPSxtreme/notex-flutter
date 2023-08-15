@@ -78,7 +78,7 @@ class NotesRepository {
         false,
       );
       // Trigger the cloud addition asynchronously without waiting for response
-      _addNoteToCloud(note);
+      await _addNoteToCloud(note);
     } catch (error) {
       rethrow;
     }
