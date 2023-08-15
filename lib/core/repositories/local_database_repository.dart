@@ -63,12 +63,17 @@ class LocalDatabaseRepository {
   }
 
   Future<void> updateNoteId(String oldId, String newId)async{
-    await _database.update(
-      'notes',
-      {'_id': newId},
-      where: '_id = ?',
-      whereArgs: [oldId],
-    );
+    try{
+      await _database.update(
+        'notes',
+        {'_id': newId},
+        where: '_id = ?',
+        whereArgs: [oldId],
+        conflictAlgorithm: ConflictAlgorithm.replace
+      );
+    }catch(e){
+      throw Exception(e);
+    }
   }
 
   Future<void> insertNote(NoteDataEntity note, bool isSynced) async {
@@ -151,12 +156,13 @@ class LocalDatabaseRepository {
     }
   }
 
-  Future<void> setNoteSynced(String noteId, bool status) async {
+  Future<bool> setNoteSynced(String noteId, bool status) async {
     try {
       await _database.update('notes', {"isSynced": status ? 1 : 0},
           where: '_id = ?', whereArgs: [noteId]);
+      return true;
     } catch (error) {
-      rethrow;
+      return false;
     }
   }
 
