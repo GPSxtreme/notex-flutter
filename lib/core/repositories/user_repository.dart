@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:notex/core/repositories/auth_repository.dart';
 import 'package:notex/core/repositories/shared_preferences_repository.dart';
 import 'package:notex/data/models/updatable_user_data_model.dart';
 import 'package:notex/data/models/update_user_data_reponse_model.dart';
@@ -12,11 +13,10 @@ class UserRepository{
     final url = Uri.parse(USER_UPDATE_USER_DATA);
     final body = jsonEncode(data.toJson());
     try{
-      final authToken = await SharedPreferencesRepository.getJwtToken();
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json',
-          'Authorization' : 'Bearer $authToken'},
+          'Authorization' : AuthRepository.userToken},
         body: body,
       );
       final UpdateUserDataResponseModel updateResponse = updateUserDataResponseModelFromJson(response.body);
@@ -30,11 +30,10 @@ class UserRepository{
     }
   }
   static Future<bool> updateUserProfilePicture(File image) async{
-    final url = Uri.parse(USER_UPLOAD_PROFILE_PIC);
+    final url = Uri.parse(USER_PROFILE_PICTURE_UPLOAD_ROUTE);
     final request = http.MultipartRequest('POST',url);
     try{
-      final authToken = await SharedPreferencesRepository.getJwtToken();
-      request.headers["Authorization"] = 'Bearer $authToken';
+      request.headers["Authorization"] = AuthRepository.userToken;
       final imageFile = await http.MultipartFile.fromPath('profilePicture', image.path);
       request.files.add(imageFile);
       final response = await request.send();
