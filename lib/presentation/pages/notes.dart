@@ -23,7 +23,8 @@ class _NotesPageState extends State<NotesPage>
         SingleTickerProviderStateMixin {
 
   late List<NoteModel> _notes;
-
+  bool _isSyncing = false;
+  int _noOfNotesSyncing = 0;
   @override
   bool get wantKeepAlive => true;
   late NotesBloc notesBloc; // Declare the NotesBloc variable
@@ -59,6 +60,12 @@ class _NotesPageState extends State<NotesPage>
       builder: (context, state) {
         if(state is NotesFetchedState) {
           _notes = state.notes;
+          if (state.syncingNotes != null) {
+              _isSyncing = true;
+              _noOfNotesSyncing = state.syncingNotes!.length;
+          } else {
+            _isSyncing = false;
+          }
         } else if(state is NotesEditingState){
           _notes = state.notes;
         }
@@ -169,6 +176,45 @@ class _NotesPageState extends State<NotesPage>
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            if(_isSyncing) ...[
+                              SizedBox(
+                                height: SizeConfig.blockSizeVertical! * 3,
+                              ),
+                              AnimationConfiguration.synchronized(
+                                duration: const Duration(milliseconds: 375),
+                                child: FlipAnimation(
+                                  child: FadeInAnimation(
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 10),
+                                      decoration: BoxDecoration(
+                                        color: kPinkD2,
+                                        borderRadius: BorderRadius.circular(15),
+                                        border: Border.all(color: kPinkD1,width: 1.0)
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text('$_noOfNotesSyncing ${_noOfNotesSyncing == 1 ? 'note is' : "notes are"} syncing',style: kInter.copyWith(fontSize: 15),),
+                                                const SizedBox(height: 5,),
+                                                Text('Please do not quit',style: kInter.copyWith(fontSize: 15),)
+                                              ],
+                                            ),
+                                          ),
+                                          const SpinKitRing(
+                                            color: kWhite,
+                                            lineWidth: 3.0,
+                                            size: 20,
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
                             if(!notesBloc.isSelectedNotesStreamClosed)
                               StreamBuilder<List<NoteModel>>(
                                 stream: notesBloc.selectedNotesStream,
