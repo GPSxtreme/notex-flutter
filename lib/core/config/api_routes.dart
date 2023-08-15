@@ -7,9 +7,8 @@ final _apiEndPoint = dotenv.env["API_ENDPOINT"];
 final USER_LOGIN_ROUTE = '$_apiEndPoint/user/login';
 final USER_REGISTER_ROUTE = '$_apiEndPoint/user/registration';
 final USER_PROFILE_PICTURE_UPLOAD_ROUTE = '$_apiEndPoint/user/uploadProfilePicture';
-final USER_PROFILE_PICTURE_GET_ROUTE = '$_apiEndPoint/user/getProfilePicture';
+final USER_PROFILE_PICTURE_GET_ROUTE = '$_apiEndPoint/data/getProfilePicture';
 final USER_UPDATE_USER_DATA = '$_apiEndPoint/user/updateUserData';
-final USER_UPLOAD_PROFILE_PIC = '$_apiEndPoint/user/uploadProfilePicture';
 /* end of user routes */
 
 /* start of todo_routes */
