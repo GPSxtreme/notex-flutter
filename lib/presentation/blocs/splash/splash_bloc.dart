@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
+import 'package:notex/core/repositories/auth_repository.dart';
 import 'package:notex/core/repositories/jwt_decoder_repository.dart';
 import 'package:notex/core/repositories/shared_preferences_repository.dart';
 import 'package:notex/main.dart';
@@ -20,10 +21,14 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
     await LOCAL_DB.init();
     String? userToken = await SharedPreferencesRepository.getJwtToken();
     if (userToken != null) {
-      bool isValid = JwtDecoderRepository.verifyJwtToken(userToken);
-      if (isValid) {
-        emit(SplashUserAuthenticatedState());
-      }
+      await AuthRepository.initUserToken().then(
+          (_){
+            bool isValid = JwtDecoderRepository.verifyJwtToken(userToken);
+            if (isValid) {
+              emit(SplashUserAuthenticatedState());
+            }
+          }
+      );
     } else {
       emit(SplashUserNotAuthenticatedState());
     }
