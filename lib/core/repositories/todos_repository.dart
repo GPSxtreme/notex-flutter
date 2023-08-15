@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:notex/core/repositories/auth_repository.dart';
 import 'package:notex/core/repositories/shared_preferences_repository.dart';
 import 'package:http/http.dart' as http;
 import 'package:notex/data/models/add_todo_response_model.dart';
@@ -15,12 +16,11 @@ class TodosRepository {
   static Future<GetTodosResponseModel> fetchTodos() async {
     final url = Uri.parse(TODO_GET_ROUTE);
     try {
-      final authToken = await SharedPreferencesRepository.getJwtToken();
       final response = await http.get(
         url,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $authToken'
+          'Authorization': AuthRepository.userToken
         },
       );
       final GetTodosResponseModel fetchResponse =
@@ -86,13 +86,12 @@ class TodosRepository {
       if (isAutoSyncEnabled == true) {
         final url = Uri.parse(TODO_ADD_ROUTE);
         final body = jsonEncode(todo.toJsonToServerAdd());
-        final authToken = await SharedPreferencesRepository.getJwtToken();
 
         final response = await http.post(
           url,
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer $authToken',
+            'Authorization': AuthRepository.userToken,
           },
           body: body,
         );
@@ -126,13 +125,12 @@ class TodosRepository {
 
       if (isAutoSyncEnabled == true) {
         final url = Uri.parse("$TODO_DELETE_ROUTE?todoId=$todoId");
-        final authToken = await SharedPreferencesRepository.getJwtToken();
 
         await http.get(
           url,
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer $authToken'
+            'Authorization': AuthRepository.userToken
           },
         );
       }
