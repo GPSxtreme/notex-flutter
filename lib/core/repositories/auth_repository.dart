@@ -83,4 +83,8 @@ class AuthRepository {
       return LoginResponseModel(success: false, message: "An unexpected error occurred, $e");
     }
   }
+  static Future<bool> logoutUser()async{
+    await SharedPreferencesRepository.removeJwtToken();
+    return true;
+  }
 }
