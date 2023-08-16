@@ -240,68 +240,74 @@ class _HomePageState extends State<HomePage> {
                 ],
                 borderRadius: BorderRadius.all(Radius.circular(16)),
               ),
-              drawer: SafeArea(
-                child: ListTileTheme(
-                  textColor: kWhite,
-                  iconColor: kPinkD1,
-                  contentPadding: EdgeInsets.zero,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Container(
-                        width: 128.0,
-                        height: 128.0,
-                        margin: const EdgeInsets.only(
-                          top: 24.0,
-                          bottom: 64.0,
-                        ),
-                        clipBehavior: Clip.antiAlias,
-                        decoration: const BoxDecoration(
-                          color: Colors.black26,
-                          shape: BoxShape.circle,
-                        ),
-                        child: CachedNetworkImage(
-                          imageUrl: USER_PROFILE_PICTURE_GET_ROUTE,
-                          httpHeaders: {
-                            'Content-Type': 'application/json',
-                            'Authorization': AuthRepository.userToken
-                          },
+              drawer: Material(
+                color: Colors.transparent,
+                child: SafeArea(
+                  child: ListTileTheme(
+                    textColor: kWhite,
+                    iconColor: kPinkD1,
+                    contentPadding: EdgeInsets.zero,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Container(
                           width: 128.0,
                           height: 128.0,
-                        ),
-                      ),
-                      ListTile(
-                        onTap: () {},
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 30),
-                        leading: const Icon(Icons.account_circle_rounded),
-                        title: Text('Profile',style: kInter,),
-                      ),
-                      ListTile(
-                        onTap: () {},
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 30),
-                        leading: const Icon(Icons.favorite),
-                        title: Text('Favourites',style: kInter,),
-                      ),
-                      ListTile(
-                        onTap: () {
-                          _advancedDrawerController.hideDrawer();
-                          GoRouter.of(context).pushNamed(AppRouteConstants.settingsRouteName);
-                        },
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 30),
-                        leading: const Icon(Icons.settings),
-                        title: Text('Settings',style: kInter,),
-                      ),
-                      const Spacer(),
-                      DefaultTextStyle(
-                        style: kInter.copyWith(color: kWhite75,fontSize: 12),
-                        child: Container(
-                          margin: const EdgeInsets.symmetric(
-                            vertical: 16.0,
+                          margin: const EdgeInsets.only(
+                            top: 24.0,
+                            bottom: 64.0,
                           ),
-                          child: const Text('Terms of Service | Privacy Policy'),
+                          clipBehavior: Clip.antiAlias,
+                          decoration: const BoxDecoration(
+                            color: Colors.black26,
+                            shape: BoxShape.circle,
+                          ),
+                          child: CachedNetworkImage(
+                            imageUrl: USER_PROFILE_PICTURE_GET_ROUTE,
+                            httpHeaders: {
+                              'Content-Type': 'application/json',
+                              'Authorization': AuthRepository.userToken
+                            },
+                            width: 128.0,
+                            height: 128.0,
+                          ),
                         ),
-                      ),
-                    ],
+                        ListTile(
+                          splashColor: kPinkD1,
+                          onTap: () {},
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 30),
+                          leading: const Icon(Icons.account_circle_rounded),
+                          title: Text('Profile',style: kInter,),
+                        ),
+                        ListTile(
+                          splashColor: kPinkD1,
+                          onTap: () {},
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 30),
+                          leading: const Icon(Icons.favorite),
+                          title: Text('Favourites',style: kInter,),
+                        ),
+                        ListTile(
+                          splashColor: kPinkD1,
+                          onTap: () {
+                            _advancedDrawerController.hideDrawer();
+                            GoRouter.of(context).pushNamed(AppRouteConstants.settingsRouteName);
+                          },
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 30),
+                          leading: const Icon(Icons.settings),
+                          title: Text('Settings',style: kInter,),
+                        ),
+                        const Spacer(),
+                        DefaultTextStyle(
+                          style: kInter.copyWith(color: kWhite75,fontSize: 12),
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(
+                              vertical: 16.0,
+                            ),
+                            child: const Text('Terms of Service | Privacy Policy'),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
