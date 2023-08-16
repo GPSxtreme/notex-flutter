@@ -224,7 +224,11 @@ class _ViewNotePageState extends State<ViewNotePage> {
                 splashRadius: 20,
                 onPressed: () async {
                   // perform save operation
-                  await _saveChanges();
+                  if(_headingController.text.isNotEmpty && _bodyController.text.isNotEmpty) {
+                    await _saveChanges();
+                  } else{
+                    kSnackBar(context, "Please fill in heading and body");
+                  }
                 },
                 icon: const Icon(
                   Icons.check,
