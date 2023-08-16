@@ -4,6 +4,7 @@ import 'package:connectivity/connectivity.dart';
 import 'package:meta/meta.dart';
 import 'package:notex/core/repositories/notes_repository.dart';
 import 'package:notex/main.dart';
+import '../../../core/repositories/shared_preferences_repository.dart';
 import '../../../data/models/note_model.dart';
 
 part 'notes_event.dart';
@@ -89,6 +90,7 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
     try {
       _notes.insert(0, event.newNote);
       emit(NotesFetchedState(_notes, syncingNotes: [event.newNote.id]));
+      final isAutoSyncEnabled = await SharedPreferencesRepository.getAutoSyncStatus();
       // insert new note in local database.
       bool response = await NotesRepository.addNote(event.newNote);
       if (response) {
@@ -96,7 +98,7 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
         final modNote = event.newNote;
         modNote.isSynced = true;
         _notes.insert(0, modNote);
-      } else {
+      } else if(isAutoSyncEnabled ?? false){
         emit(NotesOperationFailedState('Failed syncing note'));
       }
       emit(NotesFetchedState(_notes, syncingNotes: null));
@@ -172,25 +174,32 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
         areAllSelected: event.areAllSelected));
   }
 
-  FutureOr<void> handleDeleteNotes(
+  Future<void> handleDeleteNotes(
       NotesDeleteSelectedNotesEvent event, Emitter emit) async {
     try {
       if (_selectedNotes.isEmpty) {
         return;
       } else {
-        for (var note in _selectedNotes) {
-          _notes.remove(note);
-          NotesRepository.removeNote(note.id);
-        }
-        _temp.clear();
-        _selectedNotes.clear();
-        emit(NotesExitedEditingState());
-        if (_notes.isNotEmpty) {
-          emit(NotesFetchedState(_notes));
-        } else {
-          emit(NotesEmptyState());
-        }
         _selectedNotesController.close();
+        emit(NotesExitedEditingState());
+        var selectedNotesCopy = List.from(_selectedNotes);
+        emit(NotesFetchedState(_notes,syncingNotes: [..._selectedNotes.map((e) => e.id).toList()])); // emit that notes are being synced/being deleted
+        await Future.forEach(selectedNotesCopy, (note) async {
+          _selectedNotes.remove(note);
+          _notes.remove(note);
+          await NotesRepository.removeNote(note.id); // should go to next iteration until this operation is completed
+        }).then(
+            (_){
+              // after all the iterations of the for loop the remaining code should execute
+              _selectedNotes.clear();
+              _temp.clear();
+              if (_notes.isNotEmpty) {
+                emit(NotesFetchedState(_notes,syncingNotes: null));
+              } else {
+                emit(NotesEmptyState());
+              }
+            }
+        );
       }
     } catch (error) {
       emit(NotesOperationFailedState(error.toString()));
