@@ -130,19 +130,19 @@ class NotesRepository {
   }
 
 
-  static Future<void> removeNote(String noteId) async {
+  static Future<bool> removeNote(String noteId) async {
     try {
       // Remove note from local storage immediately
       await LOCAL_DB.removeNote(noteId);
-
       // Trigger the cloud removal asynchronously without waiting for response
-      _removeNoteFromCloud(noteId);
+      final response = _removeNoteFromCloud(noteId);
+      return response;
     } catch (error) {
-      rethrow;
+      return false;
     }
   }
 
-  static Future<void> _removeNoteFromCloud(String noteId) async {
+  static Future<bool> _removeNoteFromCloud(String noteId) async {
     try {
       // Check if user has enabled auto sync
       final isAutoSyncEnabled = await SharedPreferencesRepository.getAutoSyncStatus();
@@ -150,20 +150,24 @@ class NotesRepository {
       if (isAutoSyncEnabled == true) {
         final url = Uri.parse("$NOTE_DELETE_ROUTE?noteId=$noteId");
 
-        await http.get(
+       final response =  await http.get(
           url,
           headers: {
             'Content-Type': 'application/json',
             'Authorization': AuthRepository.userToken,
           },
         );
+       final GenericServerResponse serverResponse = genericServerResponseFromJson(response.body);
+       return serverResponse.success;
+      } else {
+        return false;
       }
     } catch (error) {
       // Handle any errors that might occur during cloud removal
       if (kDebugMode) {
         print("Error during cloud removal: $error");
       }
-      rethrow;
+      return false;
     }
   }
 
