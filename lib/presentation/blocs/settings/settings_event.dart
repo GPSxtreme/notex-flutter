@@ -15,4 +15,13 @@ class SettingsSetAutoSyncEvent extends SettingsEvent{
   SettingsSetAutoSyncEvent(this.value);
 }
 
-class SettingsUserLogoutEvent extends SettingsEvent{}
+class SettingsUserLogoutEvent extends SettingsEvent{
+  final String? title;
+  final String? body;
+  SettingsUserLogoutEvent({this.title, this.body});
+
+}
+
+class SettingsUserAccountVerifyEvent extends SettingsEvent{}
+
+class SettingsUserPasswordResetEvent extends SettingsEvent{}
