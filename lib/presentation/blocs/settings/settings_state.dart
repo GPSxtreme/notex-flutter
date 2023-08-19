@@ -20,9 +20,17 @@ class SettingsFetchedState extends SettingsState{
   SettingsFetchedState(this.isAutoSyncEnabled);
 }
 
-class SettingsOperationFailedState extends SettingsActionState{
+class SettingsSnackBarState extends SettingsActionState{
   final String reason;
-  SettingsOperationFailedState(this.reason);
+  SettingsSnackBarState(this.reason);
 }
 
-class SettingsUserLogoutState extends SettingsActionState{}
+class SettingsUserLogoutState extends SettingsActionState{
+  final String? title;
+  final String? body;
+  final String? agreeLabel;
+  final String? disagreeLabel;
+  final bool isSingleButton;
+  final bool isBarrierDismissible;
+  SettingsUserLogoutState({this.title, this.body,this.agreeLabel, this.disagreeLabel, this.isSingleButton = false,this.isBarrierDismissible = true});
+}
