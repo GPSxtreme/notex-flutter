@@ -3,6 +3,8 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:notex/core/repositories/auth_repository.dart';
 
+import '../../../main.dart';
+
 part 'login_event.dart';
 
 part 'login_state.dart';
@@ -22,8 +24,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
               event.email, event.password, event.rememberDevice)
           .then((response) async {
         if (response.success) {
-          await AuthRepository.initUserToken()
-              .then((_) => emit(LoginSuccessState()));
+          await AuthRepository.initUserToken().then((_) async {
+            await USER.init();
+            emit(LoginSuccessState());
+          });
         } else {
           emit(LoginFailedState(response.message));
         }
