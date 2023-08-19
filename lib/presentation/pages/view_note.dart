@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:notex/core/repositories/auth_repository.dart';
 import 'package:notex/data/models/note_model.dart';
 import 'package:notex/presentation/blocs/notes/notes_bloc.dart';
 import 'package:notex/presentation/styles/app_styles.dart';
@@ -41,7 +40,7 @@ class _ViewNotePageState extends State<ViewNotePage> {
       _bodyController.text = note.body;
     } else {
       // create new note
-      final user = await AuthRepository.getUserData();
+      final user = USER.data;
       note = NoteModel(
           id: const Uuid().v4(),
           userId: user!.userId,
