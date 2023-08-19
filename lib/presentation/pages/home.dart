@@ -10,8 +10,10 @@ import 'package:notex/presentation/blocs/todos/todos_bloc.dart';
 import 'package:notex/presentation/pages/notes.dart';
 import 'package:notex/presentation/pages/todos.dart';
 import 'package:notex/presentation/styles/app_styles.dart';
+import 'package:path/path.dart';
 import '../../core/config/api_routes.dart';
 import '../../core/repositories/auth_repository.dart';
+import '../../main.dart';
 import '../../router/app_route_constants.dart';
 import '../styles/size_config.dart';
 import 'package:flutter_advanced_drawer/flutter_advanced_drawer.dart';
@@ -253,13 +255,13 @@ class _HomePageState extends State<HomePage> {
                         Container(
                           width: 128.0,
                           height: 128.0,
-                          margin: const EdgeInsets.only(
+                          margin: EdgeInsets.only(
                             top: 24.0,
-                            bottom: 64.0,
+                            bottom: !USER.data!.isEmailVerified ? 20 : 64
                           ),
                           clipBehavior: Clip.antiAlias,
                           decoration: const BoxDecoration(
-                            color: Colors.black26,
+                            color: kPink,
                             shape: BoxShape.circle,
                           ),
                           child: CachedNetworkImage(
@@ -268,8 +270,22 @@ class _HomePageState extends State<HomePage> {
                               'Content-Type': 'application/json',
                               'Authorization': AuthRepository.userToken
                             },
+                            progressIndicatorBuilder: (context, url, downloadProgress) =>
+                                CircularProgressIndicator(value: downloadProgress.progress,color: kPink,),
+                            errorWidget: (context, url, error) => const Icon(Icons.person,size: 70,color: kWhite,),
                             width: 128.0,
                             height: 128.0,
+                          ),
+                        ),
+                        if(!USER.data!.isEmailVerified)
+                        Container(
+                          margin: const EdgeInsets.only(bottom: 30),
+                          child: ListTile(
+                            splashColor: kPinkD1,
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 30),
+                            leading: const Icon(Ionicons.alert_circle_outline,color: Colors.yellow,size: 35,),
+                            title: Text('Account not verified',style: kInter.copyWith(fontSize: 16),),
+                            subtitle: Text('Go to settings to start verification',style: kInter.copyWith(fontSize: 12),),
                           ),
                         ),
                         ListTile(
