@@ -3,6 +3,7 @@ import 'package:notex/data/repositories/entitiy_to_json_repository.dart';
 import 'package:sqflite/sqflite.dart';
 import '../../data/models/note_model.dart';
 import 'package:path/path.dart';
+import '../../main.dart';
 import '../entities/note_data_entity.dart';
 import '../entities/todo_data_entity.dart';
 
@@ -62,16 +63,13 @@ class LocalDatabaseRepository {
     }
   }
 
-  Future<void> updateNoteId(String oldId, String newId)async{
-    try{
-      await _database.update(
-        'notes',
-        {'_id': newId},
-        where: '_id = ?',
-        whereArgs: [oldId],
-        conflictAlgorithm: ConflictAlgorithm.replace
-      );
-    }catch(e){
+  Future<void> updateNoteId(String oldId, String newId) async {
+    try {
+      await _database.update('notes', {'_id': newId},
+          where: '_id = ?',
+          whereArgs: [oldId],
+          conflictAlgorithm: ConflictAlgorithm.replace);
+    } catch (e) {
       throw Exception(e);
     }
   }
@@ -84,18 +82,16 @@ class LocalDatabaseRepository {
   }
 
   Future<List<NoteModel>> getNotes() async {
-    final List<Map<String, dynamic>> maps = await _database.query('notes');
+    final List<Map<String, dynamic>> maps = await _database
+        .query('notes', where: 'userId = ?', whereArgs: [USER.data!.userId]);
     return List.generate(maps.length, (i) {
       return NoteModel.fromJsonOfLocalDb(maps[i]);
     });
   }
 
-  Future<NoteModel> getNote(String noteId) async{
-    final dbNote = await _database.query(
-      'notes',
-      where: '_id = ?',
-      whereArgs: [noteId]
-    );
+  Future<NoteModel> getNote(String noteId) async {
+    final dbNote =
+        await _database.query('notes', where: '_id = ?', whereArgs: [noteId]);
     return NoteModel.fromJsonOfLocalDb(dbNote.first);
   }
 
@@ -107,7 +103,7 @@ class LocalDatabaseRepository {
     );
   }
 
-  Future<void> updateTodoId(String oldId, String newId)async{
+  Future<void> updateTodoId(String oldId, String newId) async {
     await _database.update(
       'todos',
       {'_id': newId},
@@ -122,7 +118,6 @@ class LocalDatabaseRepository {
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-
   Future<void> removeTodo(String todoId) async {
     await _database.delete(
       'todos',
@@ -130,7 +125,6 @@ class LocalDatabaseRepository {
       whereArgs: [todoId],
     );
   }
-
 
   Future<void> updateTodo(TodoDataEntity todo) async {
     try {
@@ -182,7 +176,8 @@ class LocalDatabaseRepository {
   }
 
   Future<List<TodoModel>> getTodos() async {
-    final List<Map<String, dynamic>> todos = await _database.query('todos');
+    final List<Map<String, dynamic>> todos = await _database
+        .query('todos', where: 'userId = ?', whereArgs: [USER.data!.userId]);
     return List.generate(todos.length, (i) {
       return TodoModel.fromJsonOfLocalDb(todos[i]);
     });
