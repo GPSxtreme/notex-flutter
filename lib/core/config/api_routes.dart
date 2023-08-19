@@ -9,6 +9,8 @@ final USER_REGISTER_ROUTE = '$_apiEndPoint/user/registration';
 final USER_PROFILE_PICTURE_UPLOAD_ROUTE = '$_apiEndPoint/user/uploadProfilePicture';
 final USER_PROFILE_PICTURE_GET_ROUTE = '$_apiEndPoint/data/getProfilePicture';
 final USER_UPDATE_USER_DATA = '$_apiEndPoint/user/updateUserData';
+final USER_ACCOUNT_VERIFY_ROUTE = '$_apiEndPoint/user/sendVerificationLink';
+final USER_PASSWORD_RESET_ROUTE = '$_apiEndPoint/user/sendPasswordResetLink';
 /* end of user routes */
 
 /* start of todo_routes */
