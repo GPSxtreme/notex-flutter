@@ -3,10 +3,12 @@ import 'package:http/http.dart' as http;
 import 'package:notex/core/config/api_routes.dart';
 import 'package:notex/core/repositories/jwt_decoder_repository.dart';
 import 'package:notex/core/repositories/shared_preferences_repository.dart';
+import 'package:notex/data/models/generic_server_response.dart';
 import 'package:notex/data/models/register_response_model.dart';
 import 'package:notex/data/models/user_model.dart';
 
 import '../../data/models/login_response_model.dart';
+import '../../main.dart';
 
 
 
@@ -86,5 +88,27 @@ class AuthRepository {
   static Future<bool> logoutUser()async{
     await SharedPreferencesRepository.removeJwtToken();
     return true;
+  }
+  static Future<GenericServerResponse> sendAccountVerificationEmail()async{
+    final url = Uri.parse(USER_ACCOUNT_VERIFY_ROUTE);
+    final response = await http.get(
+        url,
+        headers: {'Content-Type': 'application/json','Authorization':AuthRepository.userToken},
+      );
+    return genericServerResponseFromJson(response.body);
+  }
+  static Future<GenericServerResponse> sendPasswordResetLink()async{
+    final url = Uri.parse(USER_PASSWORD_RESET_ROUTE);
+    final body = json.encode(
+      {
+        'email' : USER.data!.email
+      }
+    );
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: body
+    );
+    return genericServerResponseFromJson(response.body);
   }
 }
