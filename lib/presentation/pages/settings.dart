@@ -1,10 +1,16 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:notex/presentation/blocs/settings/settings_bloc.dart';
 import 'package:notex/presentation/styles/app_styles.dart';
+import 'package:notex/presentation/widgets/common_widgets.dart';
 import 'package:notex/router/app_route_constants.dart';
+
+import '../../main.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -34,11 +40,22 @@ class _SettingsPageState extends State<SettingsPage> {
       bloc: settingsBloc,
       listenWhen: (previous, current) => current is SettingsActionState,
       buildWhen: (previous, current) => current is! SettingsActionState,
-      listener: (context, state) {
-        if (state is SettingsOperationFailedState) {
+      listener: (context, state) async {
+        if (state is SettingsSnackBarState) {
           kSnackBar(context, state.reason);
-        } else if(state is SettingsUserLogoutState){
-          GoRouter.of(context).goNamed(AppRouteConstants.loginRouteName);
+        } else if (state is SettingsUserLogoutState) {
+          bool? response = await CommonWidgets.commonAlertDialog(
+            context,
+            title: state.title ?? "Logout?",
+            body: state.body ?? "you will be redirected to login page.",
+            agreeLabel: state.agreeLabel ?? 'Logout',
+            denyLabel:  state.disagreeLabel ??'Cancel',
+            isBarrierDismissible: state.isBarrierDismissible,
+            isSingleBtn: state.isSingleButton
+          );
+          if (response == true) {
+            GoRouter.of(context).goNamed(AppRouteConstants.loginRouteName);
+          }
         }
       },
       builder: (context, state) {
@@ -68,7 +85,9 @@ class _SettingsPageState extends State<SettingsPage> {
             child: Material(
               color: Colors.transparent,
               child: Column(
-                mainAxisAlignment: state is! SettingsFetchedState ? MainAxisAlignment.center : MainAxisAlignment.start,
+                mainAxisAlignment: state is! SettingsFetchedState
+                    ? MainAxisAlignment.center
+                    : MainAxisAlignment.start,
                 children: [
                   if (state is SettingsFetchingState) ...[
                     const Center(
@@ -89,9 +108,32 @@ class _SettingsPageState extends State<SettingsPage> {
                     ListTileTheme(
                       textColor: kWhite,
                       iconColor: kPinkD1,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+                      horizontalTitleGap: 5,
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 5),
                       child: Column(
                         children: [
+                          if (!USER.data!.isEmailVerified)
+                            ListTile(
+                              splashColor: kPinkD1,
+                              leading: const Icon(
+                                Ionicons.alert_circle_outline,
+                                color: Colors.yellow,
+                                size: 30,
+                              ),
+                              onTap: () {
+                                settingsBloc.add(SettingsUserAccountVerifyEvent());
+                              },
+                              title: Text(
+                                'Verify account',
+                                style: kInter.copyWith(fontSize: 15),
+                              ),
+                              subtitle: Text(
+                                'Secure your account by verifying your email.\nPassword can only be reset if the account is verified.',
+                                style: kInter.copyWith(
+                                    color: kWhite75, fontSize: 12),
+                              ),
+                            ),
                           ListTile(
                             leading: const Icon(
                               Icons.sync,
@@ -104,8 +146,8 @@ class _SettingsPageState extends State<SettingsPage> {
                             ),
                             subtitle: Text(
                               'This enables auto-sync for both notes and todos.',
-                              style:
-                                  kInter.copyWith(color: kWhite75, fontSize: 12),
+                              style: kInter.copyWith(
+                                  color: kWhite75, fontSize: 12),
                             ),
                             trailing: Switch(
                               activeColor: kPink,
@@ -114,8 +156,29 @@ class _SettingsPageState extends State<SettingsPage> {
                               inactiveTrackColor: kPinkD2,
                               value: state.isAutoSyncEnabled,
                               onChanged: (value) async {
-                                settingsBloc.add(SettingsSetAutoSyncEvent(value));
+                                settingsBloc
+                                    .add(SettingsSetAutoSyncEvent(value));
                               },
+                            ),
+                          ),
+                          ListTile(
+                            splashColor: kPinkD1,
+                            leading: const Icon(
+                              Icons.lock_reset,
+                              color: kPinkD1,
+                              size: 30,
+                            ),
+                            onTap: () {
+                              settingsBloc.add(SettingsUserPasswordResetEvent());
+                            },
+                            title: Text(
+                              'Reset password',
+                              style: kInter.copyWith(fontSize: 15),
+                            ),
+                            subtitle: Text(
+                              'You will be sent a password reset link to your registered email.',
+                              style: kInter.copyWith(
+                                  color: kWhite75, fontSize: 12),
                             ),
                           ),
                           ListTile(
@@ -125,7 +188,7 @@ class _SettingsPageState extends State<SettingsPage> {
                               color: kPinkD1,
                               size: 30,
                             ),
-                            onTap: (){
+                            onTap: () {
                               settingsBloc.add(SettingsUserLogoutEvent());
                             },
                             title: Text(
@@ -134,8 +197,8 @@ class _SettingsPageState extends State<SettingsPage> {
                             ),
                             subtitle: Text(
                               'You will be redirected to login screen',
-                              style:
-                              kInter.copyWith(color: kWhite75, fontSize: 12),
+                              style: kInter.copyWith(
+                                  color: kWhite75, fontSize: 12),
                             ),
                           ),
                         ],
