@@ -1,11 +1,11 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:notex/core/repositories/auth_repository.dart';
 import 'package:notex/data/models/todo_model.dart';
 import 'package:notex/presentation/blocs/todos/todos_bloc.dart';
 import 'package:notex/presentation/styles/app_styles.dart';
 import 'package:uuid/uuid.dart';
+import '../../main.dart';
 import '../styles/size_config.dart';
 
 class AddTodoDialogBox extends StatefulWidget {
@@ -70,7 +70,7 @@ class _AddTodoDialogBoxState extends State<AddTodoDialogBox> {
                     kSnackBar(context, "please fill in required fields");
                   } else {
                     // add task
-                    final userData = await AuthRepository.getUserData();
+                    final userData = USER.data;
                     final todo = TodoModel(id: const Uuid().v4(),
                         userId: userData!.userId,
                         body: _todoController.text,
