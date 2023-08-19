@@ -161,6 +161,7 @@ class _SettingsPageState extends State<SettingsPage> {
                               },
                             ),
                           ),
+                          if(USER.data!.isEmailVerified)
                           ListTile(
                             splashColor: kPinkD1,
                             leading: const Icon(
