@@ -141,12 +141,13 @@ class LocalDatabaseRepository {
     }
   }
 
-  Future<void> setTodoSynced(String todoId, bool status) async {
+  Future<bool> setTodoSynced(String todoId, bool status) async {
     try {
       await _database.update('todos', {"isSynced": status ? 1 : 0},
           where: '_id = ?', whereArgs: [todoId]);
+      return true;
     } catch (error) {
-      rethrow;
+      return false;
     }
   }
 
