@@ -137,10 +137,13 @@ class _TodoTileState extends State<TodoTile> {
                             }),
                       ),
                     ] else if(state is! TodosEditingState && _isSyncing)...[
-                      const SizedBox(
-                          width: 25,
-                          height: 25,
-                          child: SpinKitRing(color: kPinkD1, lineWidth: 4.0))
+                      const Padding(
+                        padding: EdgeInsets.only(left: 10),
+                        child: SizedBox(
+                            width: 25,
+                            height: 25,
+                            child: SpinKitRing(color: kPinkD1, lineWidth: 4.0)),
+                      )
                     ],
                     SizedBox(
                       width: SizeConfig.blockSizeHorizontal! * 2,
