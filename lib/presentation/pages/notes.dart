@@ -10,6 +10,9 @@ import '../styles/size_config.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
+// ignore: constant_identifier_names
+const ANIMATION_DURATION = 375;
+
 class NotesPage extends StatefulWidget {
   const NotesPage({super.key});
 
@@ -21,13 +24,13 @@ class _NotesPageState extends State<NotesPage>
     with
         AutomaticKeepAliveClientMixin<NotesPage>,
         SingleTickerProviderStateMixin {
-
+  late NotesBloc notesBloc; // Declare the todosBloc variable
   late List<NoteModel> _notes;
   bool _isSyncing = false;
   int _noOfNotesSyncing = 0;
+
   @override
   bool get wantKeepAlive => true;
-  late NotesBloc notesBloc; // Declare the NotesBloc variable
 
   @override
   void initState() {
@@ -57,20 +60,20 @@ class _NotesPageState extends State<NotesPage>
       listenWhen: (previous, current) => current is NotesActionState,
       buildWhen: (previous, current) => current is! NotesActionState,
       listener: (context, state) {
-        if(state is NotesOperationFailedState){
+        if (state is NotesOperationFailedState) {
           kSnackBar(context, state.reason);
         }
       },
       builder: (context, state) {
-        if(state is NotesFetchedState) {
+        if (state is NotesFetchedState) {
           _notes = state.notes;
           if (state.syncingNotes != null) {
-              _isSyncing = true;
-              _noOfNotesSyncing = state.syncingNotes!.length;
+            _isSyncing = true;
+            _noOfNotesSyncing = state.syncingNotes!.length;
           } else {
             _isSyncing = false;
           }
-        } else if(state is NotesEditingState){
+        } else if (state is NotesEditingState) {
           _notes = state.notes;
         }
         int numberOfColumns = SizeConfig.screenWidth! > 600 ? 3 : 2;
@@ -166,7 +169,8 @@ class _NotesPageState extends State<NotesPage>
                       ],
                     ),
                   )
-                ] else if (state is NotesFetchedState || state is NotesEditingState) ...[
+                ] else if (state is NotesFetchedState ||
+                    state is NotesEditingState) ...[
                   Padding(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 25, vertical: 0),
@@ -180,7 +184,7 @@ class _NotesPageState extends State<NotesPage>
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            if(_isSyncing) ...[
+                            if (_isSyncing) ...[
                               SizedBox(
                                 height: SizeConfig.blockSizeVertical! * 3,
                               ),
@@ -189,21 +193,34 @@ class _NotesPageState extends State<NotesPage>
                                 child: FlipAnimation(
                                   child: FadeInAnimation(
                                     child: Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 10),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 15, vertical: 15),
                                       decoration: BoxDecoration(
-                                        color: kPinkD2,
-                                        borderRadius: BorderRadius.circular(15),
-                                        border: Border.all(color: kPinkD1,width: 1.0)
-                                      ),
+                                          color: kPinkD2,
+                                          borderRadius:
+                                              BorderRadius.circular(15),
+                                          border: Border.all(
+                                              color: kPinkD1, width: 1.0)),
                                       child: Row(
                                         children: [
                                           Expanded(
                                             child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
-                                                Text('$_noOfNotesSyncing ${_noOfNotesSyncing == 1 ? 'note is' : "notes are"} syncing',style: kInter.copyWith(fontSize: 15),),
-                                                const SizedBox(height: 5,),
-                                                Text('Please do not quit',style: kInter.copyWith(fontSize: 15),)
+                                                Text(
+                                                  '$_noOfNotesSyncing ${_noOfNotesSyncing == 1 ? 'note is' : "notes are"} syncing',
+                                                  style: kInter.copyWith(
+                                                      fontSize: 15),
+                                                ),
+                                                const SizedBox(
+                                                  height: 5,
+                                                ),
+                                                Text(
+                                                  'Please do not quit',
+                                                  style: kInter.copyWith(
+                                                      fontSize: 15),
+                                                )
                                               ],
                                             ),
                                           ),
@@ -219,20 +236,23 @@ class _NotesPageState extends State<NotesPage>
                                 ),
                               )
                             ],
-                            if(!notesBloc.isSelectedNotesStreamClosed)
+                            if (!notesBloc.isSelectedNotesStreamClosed)
                               StreamBuilder<List<NoteModel>>(
                                 stream: notesBloc.selectedNotesStream,
                                 builder: (context, snapshot) {
                                   if (snapshot.hasData) {
                                     final selectedNotes = snapshot.data;
-                                    if(selectedNotes != null ){
-                                      final selectedNotesCount = selectedNotes.length;
+                                    if (selectedNotes != null) {
+                                      final selectedNotesCount =
+                                          selectedNotes.length;
                                       return Padding(
-                                        padding: const EdgeInsets.symmetric(vertical: 20),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 20),
                                         child: Text(
                                           'Selected (${selectedNotesCount.toString()})',
                                           style: kInter.copyWith(
-                                              fontSize: 35, fontWeight: FontWeight.w500),
+                                              fontSize: 35,
+                                              fontWeight: FontWeight.w500),
                                         ),
                                       );
                                     } else {
@@ -244,9 +264,11 @@ class _NotesPageState extends State<NotesPage>
                                   }
                                 },
                               ),
-                            // note widgets go here if present
                             SizedBox(
-                              height: SizeConfig.blockSizeVertical! * 4,
+                              height: !_isSyncing ||
+                                      !notesBloc.isSelectedNotesStreamClosed
+                                  ? SizeConfig.blockSizeVertical! * 3
+                                  : SizeConfig.blockSizeVertical! * 2,
                             ),
                             MasonryGridView.count(
                               crossAxisCount: numberOfColumns,
@@ -263,11 +285,14 @@ class _NotesPageState extends State<NotesPage>
                                 bool isLongText = isTextLong(note.title, 18);
                                 return AnimationConfiguration.staggeredGrid(
                                   position: notesIndex,
-                                  duration: const Duration(milliseconds: 375),
+                                  duration: const Duration(milliseconds: ANIMATION_DURATION),
                                   columnCount: isLongText ? 1 : numberOfColumns,
                                   child: ScaleAnimation(
                                     child: FadeInAnimation(
-                                      child: NoteTile(note: note, notesBloc: notesBloc,),
+                                      child: NoteTile(
+                                        note: note,
+                                        notesBloc: notesBloc,
+                                      ),
                                     ),
                                   ),
                                 );
