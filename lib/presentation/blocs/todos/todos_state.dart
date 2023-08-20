@@ -16,11 +16,11 @@ class TodosFetchingState extends TodosHomeState{}
 class TodosFetchedState extends TodosHomeState {
   final List<TodoModel> doneTodos;
   final List<TodoModel> notDoneTodos;
-
+  final List<String>? syncingTodos;
 
   TodosFetchedState(
     this.doneTodos,
-    this.notDoneTodos);
+    this.notDoneTodos,{this.syncingTodos});
 }
 
 class TodosEditingState extends TodosFetchedState {
