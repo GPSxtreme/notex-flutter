@@ -70,7 +70,7 @@ class NotesRepository {
     return updatedOfflineNotesList;
   }
 
-  static Future<bool> addNote(NoteModel note) async {
+  static Future<Map<String,dynamic>> addNote(NoteModel note) async {
     try {
       // Add note to local storage immediately
       await LOCAL_DB.insertNote(
@@ -78,14 +78,14 @@ class NotesRepository {
         false,
       );
       // Trigger the cloud addition asynchronously without waiting for response
-      bool response =  await _addNoteToCloud(note);
+      final response =  await _addNoteToCloud(note);
       return response;
     } catch (error) {
       rethrow;
     }
   }
 
-  static Future<bool> _addNoteToCloud(NoteModel note) async {
+  static Future<Map<String,dynamic>> _addNoteToCloud(NoteModel note) async {
     try {
       // Check if user has enabled auto sync
       final isAutoSyncEnabled = await SharedPreferencesRepository.getAutoSyncStatus();
@@ -115,9 +115,14 @@ class NotesRepository {
 
           // Set note synced and return the result
           final success = await LOCAL_DB.setNoteSynced(fetchResponse.noteId, true);
-          return success;
+          return {
+            'success' : success,
+            'id' : fetchResponse.noteId
+          };
         } else {
-          return false;
+          return {
+            'success' : false,
+          };
         }
       }
     } catch (error) {
@@ -126,7 +131,9 @@ class NotesRepository {
         print("Error during cloud addition: $error");
       }
     }
-    return false;
+    return {
+      'success' : false,
+    };
   }
 
 
