@@ -120,7 +120,9 @@ class _NoteTileState extends State<NoteTile> {
                     child: state is! NotesEditingState
                         ? IconButton(
                             icon: const Icon(Icons.star_border, color: kWhite),
-                            onPressed: () {},
+                            onPressed: () {
+                              //add to favourites
+                            },
                             splashRadius: 15,
                           )
                         : Transform.scale(
