@@ -91,7 +91,7 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
       _notes.insert(0, event.newNote);
       emit(NotesFetchedState(_notes, syncingNotes: [event.newNote.id]));
       final isAutoSyncEnabled = await SharedPreferencesRepository.getAutoSyncStatus();
-      // insert new note in local database.
+      // insert new note.
       final response = await NotesRepository.addNote(event.newNote);
       if (response["success"] == true) {
         _notes.removeWhere((e) => e.id == event.newNote.id);
