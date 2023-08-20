@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:notex/core/repositories/todos_repository.dart';
 import 'package:notex/data/models/todo_model.dart';
 import 'package:notex/data/repositories/model_to_entity_repository.dart';
+import '../../../core/repositories/shared_preferences_repository.dart';
 import '../../../main.dart';
 
 part 'todos_event.dart';
@@ -145,10 +146,20 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
       TodosAddTodoEvent event, Emitter<TodosState> emit) async {
     try {
       _notDoneTodos.insert(0, event.todo);
-      emit(TodosFetchedState(_doneTodos, _notDoneTodos));
-      await TodosRepository.addTodo(event.todo).then((_) {
-        emit(TodosAddTodoSuccessState());
-      });
+      emit(TodosFetchedState(_doneTodos, _notDoneTodos,syncingTodos: [event.todo.id]));
+      final isAutoSyncEnabled = await SharedPreferencesRepository.getAutoSyncStatus();
+      //insert new to-do
+      final response = await TodosRepository.addTodo(event.todo);
+      if(response['success'] == true){
+        _notDoneTodos.removeWhere((e) => e.id == event.todo.id);
+        final modTodo = event.todo;
+        modTodo.updateId(response['id']);
+        modTodo.isSynced = true;
+        _notDoneTodos.insert(0, modTodo);
+      }else if(isAutoSyncEnabled ?? false){
+        emit(TodosOperationFailedState('Failed syncing todo'));
+      }
+      emit(TodosFetchedState(_doneTodos, _notDoneTodos,syncingTodos: null));
     } catch (error) {
       emit(TodosAddTodoFailedState('An unexpected error occurred \n $error'));
     }
@@ -236,27 +247,30 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
       if (_selectedTodos.isEmpty) {
         return;
       } else {
-        for (var todo in _selectedTodos) {
+        _selectedTodosController.close();
+        emit(TodosExitedEditingState());
+        var selectedTodosCopy = List.from(_selectedTodos);
+        emit(TodosFetchedState(_doneTodos, _notDoneTodos,syncingTodos: [..._selectedTodos.map((e) => e.id).toList()]));
+        await Future.forEach(selectedTodosCopy, (todo) async{
+          _selectedTodos.remove(todo);
           if (_doneTodos.contains(todo)) {
             _doneTodos.remove(todo);
           } else if (_notDoneTodos.contains(todo)) {
             _notDoneTodos.remove(todo);
           }
-        }
-        // start removing each to-do in selectedTodos list from local database
-        for (var todo in _selectedTodos) {
           await TodosRepository.removeTodo(todo.id);
-        }
-        _temp.clear();
-        _selectedTodos.clear();
-        emit(TodosExitedEditingState());
-        if (_doneTodos.isNotEmpty || _notDoneTodos.isNotEmpty) {
-          emit(TodosFetchedState(_doneTodos, _notDoneTodos));
-        } else {
-          emit(TodosEmptyState());
-        }
-        // Notify the stream listeners about the changes in _selectedTodos
-        _selectedTodosController.close();
+        }).then(
+            (_){
+              _temp.clear();
+              _selectedTodos.clear();
+              emit(TodosExitedEditingState());
+              if (_doneTodos.isNotEmpty || _notDoneTodos.isNotEmpty) {
+                emit(TodosFetchedState(_doneTodos, _notDoneTodos));
+              } else {
+                emit(TodosEmptyState());
+              }
+            }
+        );
       }
     } catch (error) {
       emit(TodosOperationFailedState(error.toString()));
