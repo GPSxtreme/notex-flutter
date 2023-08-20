@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:notex/data/models/todo_model.dart';
 import 'package:notex/presentation/styles/app_styles.dart';
@@ -20,6 +21,7 @@ class TodoTile extends StatefulWidget {
 class _TodoTileState extends State<TodoTile> {
   bool _isSelected = false;
   bool _areAllSelected = false;
+  bool _isSyncing = false;
 
   Color getColor(Set<MaterialState> states) {
     const Set<MaterialState> interactiveStates = <MaterialState>{
@@ -34,16 +36,16 @@ class _TodoTileState extends State<TodoTile> {
   }
 
   _isEditOnTap() {
-    if(_areAllSelected){
+    if (_areAllSelected) {
       widget.todosBloc.add(TodosSetAllTodosSelectedCheckBoxEvent(false));
       _areAllSelected = false;
-      if(_areAllSelected && !_isSelected){
+      if (_areAllSelected && !_isSelected) {
         _isSelected = true;
-      }else{
+      } else {
         _isSelected = false;
       }
       widget.todosBloc.add(TodosIsTodoSelectedEvent(_isSelected, widget.todo));
-    }else{
+    } else {
       _isSelected = !_isSelected;
       widget.todosBloc.add(TodosIsTodoSelectedEvent(_isSelected, widget.todo));
     }
@@ -75,6 +77,15 @@ class _TodoTileState extends State<TodoTile> {
             _areAllSelected = true;
           }
         }
+        if (state is TodosFetchedState) {
+          if (state.syncingTodos != null) {
+            if (state.syncingTodos!.contains(widget.todo.id)) {
+              _isSyncing = true;
+            }
+          } else {
+            _isSyncing = false;
+          }
+        }
         return Container(
           width: double.maxFinite,
           decoration: BoxDecoration(
@@ -103,7 +114,7 @@ class _TodoTileState extends State<TodoTile> {
                     vertical: SizeConfig.blockSizeVertical! * 0.5),
                 child: Row(
                   children: [
-                    if (state is! TodosEditingState)
+                    if (state is! TodosEditingState && !_isSyncing) ...[
                       Transform.scale(
                         scale: 1.3,
                         child: Checkbox(
@@ -125,6 +136,12 @@ class _TodoTileState extends State<TodoTile> {
                               }
                             }),
                       ),
+                    ] else if(state is! TodosEditingState && _isSyncing)...[
+                      const SizedBox(
+                          width: 25,
+                          height: 25,
+                          child: SpinKitRing(color: kPinkD1, lineWidth: 4.0))
+                    ],
                     SizedBox(
                       width: SizeConfig.blockSizeHorizontal! * 2,
                     ),
