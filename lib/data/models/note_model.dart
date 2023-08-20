@@ -9,7 +9,7 @@ NoteModel noteModelFromJson(String str) => NoteModel.fromJson(json.decode(str));
 String noteModelToJson(NoteModel data) => json.encode(data.toJson());
 
 class NoteModel {
-  final String id;
+  String id;
   final String userId;
   String title;
   String body;
@@ -28,6 +28,8 @@ class NoteModel {
     required this.v,
     this.isSynced = false
   });
+
+  void updateId(String newId) => id = newId;
 
   factory NoteModel.fromJson(Map<String, dynamic> json) => NoteModel(
     id: json["_id"],
