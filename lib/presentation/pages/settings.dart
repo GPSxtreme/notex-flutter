@@ -21,6 +21,8 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   final SettingsBloc settingsBloc = SettingsBloc();
+  bool _isSendingPasswordResetLink = false;
+  bool _isSendingEmailVerificationLink = false;
 
   @override
   void initState() {
@@ -44,15 +46,13 @@ class _SettingsPageState extends State<SettingsPage> {
         if (state is SettingsSnackBarState) {
           kSnackBar(context, state.reason);
         } else if (state is SettingsUserLogoutState) {
-          bool? response = await CommonWidgets.commonAlertDialog(
-            context,
-            title: state.title ?? "Logout?",
-            body: state.body ?? "you will be redirected to login page.",
-            agreeLabel: state.agreeLabel ?? 'Logout',
-            denyLabel:  state.disagreeLabel ??'Cancel',
-            isBarrierDismissible: state.isBarrierDismissible,
-            isSingleBtn: state.isSingleButton
-          );
+          bool? response = await CommonWidgets.commonAlertDialog(context,
+              title: state.title ?? "Logout?",
+              body: state.body ?? "you will be redirected to login page.",
+              agreeLabel: state.agreeLabel ?? 'Logout',
+              denyLabel: state.disagreeLabel ?? 'Cancel',
+              isBarrierDismissible: state.isBarrierDismissible,
+              isSingleBtn: state.isSingleButton);
           if (response == true) {
             GoRouter.of(context).goNamed(AppRouteConstants.loginRouteName);
           }
@@ -116,14 +116,26 @@ class _SettingsPageState extends State<SettingsPage> {
                           if (!USER.data!.isEmailVerified)
                             ListTile(
                               splashColor: kPinkD1,
-                              leading: const Icon(
-                                Ionicons.alert_circle_outline,
-                                color: Colors.yellow,
-                                size: 30,
-                              ),
-                              onTap: () {
-                                settingsBloc.add(SettingsUserAccountVerifyEvent());
-                              },
+                              leading: !_isSendingEmailVerificationLink
+                                  ? const Icon(
+                                      Ionicons.alert_circle_outline,
+                                      color: Colors.yellow,
+                                      size: 30,
+                                    )
+                                  : const SizedBox(
+                                      width: 25,
+                                      height: 25,
+                                      child: SpinKitRing(
+                                          color: kPinkD1, lineWidth: 4.0)),
+                              onTap: !_isSendingEmailVerificationLink
+                                  ? () {
+                                      setState(() {
+                                        _isSendingEmailVerificationLink = true;
+                                      });
+                                      settingsBloc.add(
+                                          SettingsUserAccountVerifyEvent());
+                                    }
+                                  : null,
                               title: Text(
                                 'Verify account',
                                 style: kInter.copyWith(fontSize: 15),
@@ -161,27 +173,39 @@ class _SettingsPageState extends State<SettingsPage> {
                               },
                             ),
                           ),
-                          if(USER.data!.isEmailVerified)
-                          ListTile(
-                            splashColor: kPinkD1,
-                            leading: const Icon(
-                              Icons.lock_reset,
-                              color: kPinkD1,
-                              size: 30,
+                          if (USER.data!.isEmailVerified)
+                            ListTile(
+                              splashColor: kPinkD1,
+                              leading: !_isSendingPasswordResetLink
+                                  ? const Icon(
+                                      Icons.lock_reset,
+                                      color: kPinkD1,
+                                      size: 30,
+                                    )
+                                  : const SizedBox(
+                                      width: 25,
+                                      height: 25,
+                                      child: SpinKitRing(
+                                          color: kPinkD1, lineWidth: 4.0)),
+                              onTap: !_isSendingPasswordResetLink
+                                  ? () {
+                                      setState(() {
+                                        _isSendingPasswordResetLink = true;
+                                      });
+                                      settingsBloc.add(
+                                          SettingsUserPasswordResetEvent());
+                                    }
+                                  : null,
+                              title: Text(
+                                'Reset password',
+                                style: kInter.copyWith(fontSize: 15),
+                              ),
+                              subtitle: Text(
+                                'You will be sent a password reset link to your registered email.',
+                                style: kInter.copyWith(
+                                    color: kWhite75, fontSize: 12),
+                              ),
                             ),
-                            onTap: () {
-                              settingsBloc.add(SettingsUserPasswordResetEvent());
-                            },
-                            title: Text(
-                              'Reset password',
-                              style: kInter.copyWith(fontSize: 15),
-                            ),
-                            subtitle: Text(
-                              'You will be sent a password reset link to your registered email.',
-                              style: kInter.copyWith(
-                                  color: kWhite75, fontSize: 12),
-                            ),
-                          ),
                           ListTile(
                             splashColor: kPinkD1,
                             leading: const Icon(
