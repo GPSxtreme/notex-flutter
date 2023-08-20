@@ -22,15 +22,17 @@ class TodosPage extends StatefulWidget {
 
 class _TodosPageState extends State<TodosPage>
     with AutomaticKeepAliveClientMixin<TodosPage> {
+  late TodosBloc todosBloc; // Declare the NotesBloc variable
   final _doneTodosListKey = GlobalKey<AnimatedListState>();
   final _notDoneTodosListKey = GlobalKey<AnimatedListState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late List<TodoModel> doneTodos;
   late List<TodoModel> notDoneTodos;
+  bool _isSyncing = false;
+  int _noOfTodosSyncing = 0;
 
   @override
   bool get wantKeepAlive => true;
-  late TodosBloc todosBloc; // Declare the NotesBloc variable
 
   commonTodoTile(int todoIndex, TodoModel todo) =>
       AnimationConfiguration.staggeredGrid(
@@ -84,6 +86,12 @@ class _TodosPageState extends State<TodosPage>
         if(state is TodosFetchedState){
           doneTodos = state.doneTodos;
           notDoneTodos = state.notDoneTodos;
+          if (state.syncingTodos != null) {
+            _isSyncing = true;
+            _noOfTodosSyncing = state.syncingTodos!.length;
+          } else {
+            _isSyncing = false;
+          }
         }else if(state is TodosEditingState){
           doneTodos = state.doneTodos;
           notDoneTodos = state.notDoneTodos;
@@ -195,6 +203,58 @@ class _TodosPageState extends State<TodosPage>
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            if (_isSyncing) ...[
+                              SizedBox(
+                                height: SizeConfig.blockSizeVertical! * 3,
+                              ),
+                              AnimationConfiguration.synchronized(
+                                duration: const Duration(milliseconds: 375),
+                                child: FlipAnimation(
+                                  child: FadeInAnimation(
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 15, vertical: 15),
+                                      decoration: BoxDecoration(
+                                          color: kPinkD2,
+                                          borderRadius:
+                                          BorderRadius.circular(15),
+                                          border: Border.all(
+                                              color: kPinkD1, width: 1.0)),
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  '$_noOfTodosSyncing ${_noOfTodosSyncing == 1 ? 'todo is' : "todos are"} syncing',
+                                                  style: kInter.copyWith(
+                                                      fontSize: 15),
+                                                ),
+                                                const SizedBox(
+                                                  height: 5,
+                                                ),
+                                                Text(
+                                                  'Please do not quit',
+                                                  style: kInter.copyWith(
+                                                      fontSize: 15),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                          const SpinKitRing(
+                                            color: kWhite,
+                                            lineWidth: 3.0,
+                                            size: 20,
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
                             if (!todosBloc.isSelectedTodoStreamClosed)
                               StreamBuilder<List<TodoModel>>(
                                 stream: todosBloc.selectedTodosStream,
@@ -223,7 +283,12 @@ class _TodosPageState extends State<TodosPage>
                                   }
                                 },
                               ),
-                            // to-do widgets go here if present
+                            SizedBox(
+                              height: !_isSyncing ||
+                                  !todosBloc.isSelectedTodoStreamClosed
+                                  ? SizeConfig.blockSizeVertical! * 3
+                                  : SizeConfig.blockSizeVertical! * 2,
+                            ),
                             if (notDoneTodos.isNotEmpty) ...[
                               Padding(
                                 padding: EdgeInsets.symmetric(
