@@ -9,7 +9,7 @@ TodoModel todoModelFromJson(String str) => TodoModel.fromJson(json.decode(str));
 String todoModelToJson(TodoModel data) => json.encode(data.toJson());
 
 class TodoModel {
-  final String id;
+  String id;
   final String userId;
   String body;
   dynamic isCompleted;
@@ -29,6 +29,8 @@ class TodoModel {
       required this.expireTime,
       required this.v,
       this.isSynced = false});
+
+  void updateId(String newId) => id = newId;
 
   factory TodoModel.fromJson(Map<String, dynamic> json) => TodoModel(
         id: json["_id"],
