@@ -66,19 +66,20 @@ class TodosRepository {
     return updatedOfflineTodosList;
   }
 
-  static Future<void> addTodo(TodoModel todo) async {
+  static Future<Map<String,dynamic>> addTodo(TodoModel todo) async {
     try {
       // Add to-do to local storage immediately
       await LOCAL_DB.insertTodo(
           ModelToEntityRepository.mapToTodoEntity(model: todo), false);
       // Trigger the cloud addition asynchronously without waiting for response
-      _addTodoToCloud(todo);
+      final response = await _addTodoToCloud(todo);
+      return response;
     } catch (error) {
       rethrow;
     }
   }
 
-  static Future<void> _addTodoToCloud(TodoModel todo) async {
+  static Future<Map<String,dynamic>> _addTodoToCloud(TodoModel todo) async {
     try {
       // Check if user has enabled auto sync
       final isAutoSyncEnabled = await SharedPreferencesRepository.getAutoSyncStatus();
@@ -105,6 +106,16 @@ class TodosRepository {
 
           // Update local to-do id with the fetchResponse's
           await LOCAL_DB.updateTodoId(todo.id, fetchResponse.todoId);
+
+          final success = await LOCAL_DB.setTodoSynced(fetchResponse.todoId, true);
+          return {
+            'success' : success,
+            'id' : fetchResponse.todoId
+          };
+        }else{
+          return {
+            'success' : false,
+          };
         }
       }
     } catch (error) {
@@ -112,8 +123,10 @@ class TodosRepository {
       if (kDebugMode) {
         print("Error during cloud addition: $error");
       }
-      rethrow;
     }
+    return {
+      'success' : false,
+    };
   }
 
 
@@ -147,7 +160,7 @@ class TodosRepository {
     try {
       await LOCAL_DB.removeTodo(todoId);
       // remove to-do on server
-      _removeTodoFromCloud(todoId);
+     await _removeTodoFromCloud(todoId);
     } catch (error) {
       rethrow;
     }
