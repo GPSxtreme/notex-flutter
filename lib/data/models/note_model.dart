@@ -17,6 +17,7 @@ class NoteModel {
   DateTime editedTime;
   final int v;
   dynamic isSynced;
+  dynamic isFavorite;
 
   NoteModel({
     required this.id,
@@ -26,10 +27,12 @@ class NoteModel {
     required this.createdTime,
     required this.editedTime,
     required this.v,
-    this.isSynced = false
+    this.isSynced = false,
+    this.isFavorite = false
   });
 
   void updateId(String newId) => id = newId;
+  void setIsFavorite(bool value) => isFavorite = value;
 
   factory NoteModel.fromJson(Map<String, dynamic> json) => NoteModel(
     id: json["_id"],
@@ -38,6 +41,7 @@ class NoteModel {
     body: json["body"],
     createdTime: DateTime.parse(json["createdTime"]),
     editedTime: DateTime.parse(json["editedTime"]),
+    isFavorite: json['isFavorite'],
     v: json["__v"],
   );
   factory NoteModel.fromJsonOfLocalDb(Map<String, dynamic> json) => NoteModel(
@@ -48,7 +52,8 @@ class NoteModel {
     createdTime: DateTime.parse(json["createdTime"]),
     editedTime: DateTime.parse(json["editedTime"]),
     v: json["__v"],
-    isSynced: json["isSynced"] == 0 ? false : true
+    isSynced: json["isSynced"] == 0 ? false : true,
+    isFavorite: json['isFavorite'] == 0 ? false : true,
   );
 
   Map<String, dynamic> toJson() => {
@@ -58,6 +63,7 @@ class NoteModel {
     "body": body,
     "createdTime": createdTime.toIso8601String(),
     "editedTime": editedTime.toIso8601String(),
+    'isFavorite' : isFavorite,
     "__v": v,
   };
   Map<String, dynamic> toJsonToServerAdd() => {
@@ -72,6 +78,7 @@ class NoteModel {
     "body": body,
     "createdTime": createdTime.toIso8601String(),
     "editedTime": editedTime.toIso8601String(),
+    'isFavorite' : isFavorite,
     "__v": v,
   };
 }
