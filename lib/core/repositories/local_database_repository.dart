@@ -35,7 +35,8 @@ class LocalDatabaseRepository {
         createdTime TEXT,
         editedTime TEXT,
         __v INTEGER,
-        isSynced INTEGER
+        isSynced INTEGER,
+        isFavorite INTEGER
       )
     ''');
     } catch (error) {
@@ -131,10 +132,10 @@ class LocalDatabaseRepository {
       final todoMap = EntityToJson.todoEntityToJson(todo, false);
       // update record in todos table
       await _database.update(
-        'todos', // Table name
-        todoMap, // Updated values
-        where: '_id = ?', // Condition to match the record
-        whereArgs: [todo.id], // Values to substitute in the WHERE clause
+        'todos',
+        todoMap,
+        where: '_id = ?',
+        whereArgs: [todo.id],
       );
     } catch (error) {
       rethrow;
@@ -161,15 +162,25 @@ class LocalDatabaseRepository {
     }
   }
 
+  Future<bool> setNoteFavorite(String noteId, bool status) async {
+    try {
+      await _database.update('notes', {"isFavorite": status ? 1 : 0},
+          where: '_id = ?', whereArgs: [noteId]);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
   Future<void> updateNote(NoteDataEntity note) async {
     try {
       final todoMap = EntityToJson.noteEntityToJson(note, false);
       // update record in todos table
       await _database.update(
-        'notes', // Table name
-        todoMap, // Updated values
-        where: '_id = ?', // Condition to match the record
-        whereArgs: [note.id], // Values to substitute in the WHERE clause
+        'notes',
+        todoMap,
+        where: '_id = ?',
+        whereArgs: [note.id],
       );
     } catch (error) {
       rethrow;
