@@ -13,6 +13,7 @@ class EntityToJson {
       'editedTime': note.editedTime.toIso8601String(),
       '__v': note.v,
       'isSynced': isSynced ? 1 : 0,
+      'isFavorite' : note.isFavorite
     };
     return noteMap;
   }
