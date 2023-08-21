@@ -119,9 +119,16 @@ class _NoteTileState extends State<NoteTile> {
                     top: 0,
                     child: state is! NotesEditingState
                         ? IconButton(
-                            icon: const Icon(Icons.star_border, color: kWhite),
+                            icon: widget.note.isFavorite
+                                ? const Icon(
+                                    Icons.star,
+                                    color: kPink,
+                                  )
+                                : const Icon(Icons.star_border, color: kWhite),
                             onPressed: () {
                               //add to favourites
+                              widget.notesBloc.add(NotesSetNoteFavoriteEvent(
+                                  !widget.note.isFavorite, widget.note.id));
                             },
                             splashRadius: 15,
                           )
@@ -185,6 +192,10 @@ class _NoteTileState extends State<NoteTile> {
                         ),
                         Text(
                           'last edited : ${DateFormat('d MMMM, h:mm a').format(widget.note.editedTime).toString()}',
+                          style: kInter.copyWith(color: kWhite75, fontSize: 10),
+                        ),
+                        Text(
+                          'is favorite : ${widget.note.isFavorite}',
                           style: kInter.copyWith(color: kWhite75, fontSize: 10),
                         ),
                         if (!_isSyncing) ...[

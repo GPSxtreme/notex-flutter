@@ -44,3 +44,9 @@ class NotesIsNoteSelectedEvent extends NotesEvent{
 
   NotesIsNoteSelectedEvent(this.isSelected, this.note);
 }
+
+class NotesSetNoteFavoriteEvent extends NotesEvent{
+  final String noteId;
+  final bool value;
+  NotesSetNoteFavoriteEvent(this.value, this.noteId);
+}
