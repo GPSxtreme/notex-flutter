@@ -13,7 +13,7 @@ import '../config/api_routes.dart';
 import '../../main.dart';
 
 class NotesRepository {
-  static Future<GetNotesResponseModel> fetchNotes() async {
+  static Future<GetNotesResponseModel> fetchNotesFromOnline() async {
     final url = Uri.parse(NOTE_GET_ROUTE);
     try {
       final response = await http.get(
@@ -222,4 +222,10 @@ class NotesRepository {
     }
   }
 
+  static Future<void> setNoteFavorite(String id,bool value)async{
+    // update favorite field
+    await LOCAL_DB.setNoteFavorite(id, value);
+    // update status
+    await LOCAL_DB.setNoteSynced(id,false);
+  }
 }
