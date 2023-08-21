@@ -14,30 +14,31 @@ class ModelToEntityRepository {
     );
   }
 
-  static NoteDataEntity mapToNoteEntity({required NoteModel model, bool? synced}) {
+  static NoteDataEntity mapToNoteEntity(
+      {required NoteModel model, bool? synced}) {
     return NoteDataEntity(
-      id: model.id,
-      userId: model.userId,
-      title: model.title,
-      body: model.body,
-      createdTime: model.createdTime,
-      editedTime: model.editedTime,
-      v: model.v,
-      isSynced: synced ?? false
-    );
+        id: model.id,
+        userId: model.userId,
+        title: model.title,
+        body: model.body,
+        createdTime: model.createdTime,
+        editedTime: model.editedTime,
+        v: model.v,
+        isSynced: synced ?? false,
+        isFavorite: model.isFavorite);
   }
 
-  static TodoDataEntity mapToTodoEntity({required TodoModel model, bool? synced}) {
+  static TodoDataEntity mapToTodoEntity(
+      {required TodoModel model, bool? synced}) {
     return TodoDataEntity(
-      id: model.id,
-      userId: model.userId,
-      body: model.body,
-      isCompleted: model.isCompleted,
-      createdTime: model.createdTime,
-      editedTime: model.editedTime,
-      expireTime: model.expireTime,
-      v: model.v,
-      isSynced: synced ?? false
-    );
+        id: model.id,
+        userId: model.userId,
+        body: model.body,
+        isCompleted: model.isCompleted,
+        createdTime: model.createdTime,
+        editedTime: model.editedTime,
+        expireTime: model.expireTime,
+        v: model.v,
+        isSynced: synced ?? false);
   }
 }
