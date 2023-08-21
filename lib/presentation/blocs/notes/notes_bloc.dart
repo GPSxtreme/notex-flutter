@@ -23,6 +23,7 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
     on<NotesHideSelectedNotesEvent>(handleHideNotes);
     on<NotesIsNoteSelectedEvent>(handleNoteSelect);
     on<NotesSetAllNotesSelectedCheckBoxEvent>(handleSetAllNotesSelectCheckBox);
+    on<NotesSetNoteFavoriteEvent>(handleSetNoteFavorite);
   }
 
   late List<NoteModel> _notes;
@@ -56,7 +57,7 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
       bool isFetchedNotesEmpty = false;
 
       if (hasInternet) {
-        final fetchResponse = await NotesRepository.fetchNotes();
+        final fetchResponse = await NotesRepository.fetchNotesFromOnline();
         if (fetchResponse.success && fetchResponse.notes!.isNotEmpty) {
           final onlineFetchedNotes = fetchResponse.notes!;
           _notes = await NotesRepository.syncOnlineNotes(onlineFetchedNotes);
@@ -90,7 +91,8 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
     try {
       _notes.insert(0, event.newNote);
       emit(NotesFetchedState(_notes, syncingNotes: [event.newNote.id]));
-      final isAutoSyncEnabled = await SharedPreferencesRepository.getAutoSyncStatus();
+      final isAutoSyncEnabled =
+          await SharedPreferencesRepository.getAutoSyncStatus();
       // insert new note.
       final response = await NotesRepository.addNote(event.newNote);
       if (response["success"] == true) {
@@ -99,7 +101,7 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
         modNote.updateId(response["id"]);
         modNote.isSynced = true;
         _notes.insert(0, modNote);
-      } else if(isAutoSyncEnabled ?? false){
+      } else if (isAutoSyncEnabled ?? false) {
         emit(NotesOperationFailedState('Failed syncing note'));
       }
       emit(NotesFetchedState(_notes, syncingNotes: null));
@@ -184,23 +186,24 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
         _selectedNotesController.close();
         emit(NotesExitedEditingState());
         var selectedNotesCopy = List.from(_selectedNotes);
-        emit(NotesFetchedState(_notes,syncingNotes: [..._selectedNotes.map((e) => e.id).toList()])); // emit that notes are being synced/being deleted
+        emit(NotesFetchedState(_notes, syncingNotes: [
+          ..._selectedNotes.map((e) => e.id).toList()
+        ])); // emit that notes are being synced/being deleted
         await Future.forEach(selectedNotesCopy, (note) async {
           _selectedNotes.remove(note);
           _notes.remove(note);
-          await NotesRepository.removeNote(note.id); // should go to next iteration until this operation is completed
-        }).then(
-            (_){
-              // after all the iterations of the for loop the remaining code should execute
-              _selectedNotes.clear();
-              _temp.clear();
-              if (_notes.isNotEmpty) {
-                emit(NotesFetchedState(_notes,syncingNotes: null));
-              } else {
-                emit(NotesEmptyState());
-              }
-            }
-        );
+          await NotesRepository.removeNote(note
+              .id); // should go to next iteration until this operation is completed
+        }).then((_) {
+          // after all the iterations of the for loop the remaining code should execute
+          _selectedNotes.clear();
+          _temp.clear();
+          if (_notes.isNotEmpty) {
+            emit(NotesFetchedState(_notes, syncingNotes: null));
+          } else {
+            emit(NotesEmptyState());
+          }
+        });
       }
     } catch (error) {
       emit(NotesOperationFailedState(error.toString()));
@@ -243,5 +246,17 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
     emit(NotesEditingState(_notes,
         areAllSelected: false,
         selectedNotesIds: [..._selectedNotes.map((e) => e.id).toList()]));
+  }
+
+  FutureOr<void> handleSetNoteFavorite(
+      NotesSetNoteFavoriteEvent event, Emitter<NotesState> emit) async {
+    try {
+      await NotesRepository.setNoteFavorite(event.noteId, event.value);
+      _notes[_notes.indexWhere((n) => n.id == event.noteId)]
+          .setIsFavorite(event.value);
+      emit(NotesFetchedState(_notes));
+    } catch (error) {
+      emit(NotesOperationFailedState(error.toString()));
+    }
   }
 }
