@@ -7,7 +7,7 @@ class NoteDataEntity {
   final DateTime editedTime;
   final int v;
   final bool? isSynced;
-
+  final bool isFavorite;
   NoteDataEntity({
     required this.id,
     required this.userId,
@@ -16,6 +16,7 @@ class NoteDataEntity {
     required this.createdTime,
     required this.editedTime,
     required this.v,
-    this.isSynced
+    this.isSynced,
+    required this.isFavorite
   });
 }
