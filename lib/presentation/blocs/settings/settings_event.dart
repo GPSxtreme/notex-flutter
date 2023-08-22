@@ -15,6 +15,16 @@ class SettingsSetAutoSyncEvent extends SettingsEvent{
   SettingsSetAutoSyncEvent(this.value);
 }
 
+class SettingsSetPrefetchCloudNotesEvent extends SettingsEvent{
+  final bool value;
+  SettingsSetPrefetchCloudNotesEvent(this.value);
+}
+
+class SettingsSetPrefetchCloudTodosEvent extends SettingsEvent{
+  final bool value;
+  SettingsSetPrefetchCloudTodosEvent(this.value);
+}
+
 class SettingsUserLogoutEvent extends SettingsEvent{
   final String? title;
   final String? body;
