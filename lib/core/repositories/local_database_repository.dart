@@ -36,7 +36,8 @@ class LocalDatabaseRepository {
         editedTime TEXT,
         __v INTEGER,
         isSynced INTEGER,
-        isFavorite INTEGER
+        isFavorite INTEGER,
+        isUploaded INTEGER
       )
     ''');
     } catch (error) {
@@ -56,7 +57,8 @@ class LocalDatabaseRepository {
         editedTime TEXT,
         expireTime TEXT,
         __v INTEGER,
-        isSynced INTEGER
+        isSynced INTEGER,
+        isUploaded INTEGER
       )
     ''');
     } catch (error) {
@@ -152,6 +154,16 @@ class LocalDatabaseRepository {
     }
   }
 
+  Future<bool> setTodoUploaded(String todoId, bool value) async {
+    try {
+      await _database.update('todos', {"isUploaded": value ? 1 : 0},
+          where: '_id = ?', whereArgs: [todoId]);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
   Future<bool> setNoteSynced(String noteId, bool status) async {
     try {
       await _database.update('notes', {"isSynced": status ? 1 : 0},
@@ -161,6 +173,17 @@ class LocalDatabaseRepository {
       return false;
     }
   }
+
+  Future<bool> setNoteUploaded(String noteId, bool value) async {
+    try {
+      await _database.update('notes', {"isUploaded": value ? 1 : 0},
+          where: '_id = ?', whereArgs: [noteId]);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
 
   Future<bool> setNoteFavorite(String noteId, bool status) async {
     try {
