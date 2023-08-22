@@ -195,6 +195,10 @@ class _NoteTileState extends State<NoteTile> {
                           style: kInter.copyWith(color: kWhite75, fontSize: 10),
                         ),
                         Text(
+                          'is uploaded : ${widget.note.isUploaded}',
+                          style: kInter.copyWith(color: kWhite75, fontSize: 10),
+                        ),
+                        Text(
                           'is favorite : ${widget.note.isFavorite}',
                           style: kInter.copyWith(color: kWhite75, fontSize: 10),
                         ),
