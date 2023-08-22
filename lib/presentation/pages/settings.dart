@@ -153,7 +153,7 @@ class _SettingsPageState extends State<SettingsPage> {
                               size: 30,
                             ),
                             title: Text(
-                              'Enable auto-sync',
+                              'Auto sync',
                               style: kInter.copyWith(fontSize: 15),
                             ),
                             subtitle: Text(
@@ -170,6 +170,60 @@ class _SettingsPageState extends State<SettingsPage> {
                               onChanged: (value) async {
                                 settingsBloc
                                     .add(SettingsSetAutoSyncEvent(value));
+                              },
+                            ),
+                          ),
+                          ListTile(
+                            leading: const Icon(
+                              Icons.cloud_download_outlined,
+                              color: kPinkD1,
+                              size: 30,
+                            ),
+                            title: Text(
+                              'Prefetch cloud notes',
+                              style: kInter.copyWith(fontSize: 15),
+                            ),
+                            subtitle: Text(
+                              'This enables prefetch of cloud notes on startup.',
+                              style: kInter.copyWith(
+                                  color: kWhite75, fontSize: 12),
+                            ),
+                            trailing: Switch(
+                              activeColor: kPink,
+                              activeTrackColor: kPinkD1,
+                              inactiveThumbColor: kPinkD1,
+                              inactiveTrackColor: kPinkD2,
+                              value: state.isNotesOnlinePrefetchEnabled,
+                              onChanged: (value) async {
+                                settingsBloc
+                                    .add(SettingsSetPrefetchCloudNotesEvent(value));
+                              },
+                            ),
+                          ),
+                          ListTile(
+                            leading: const Icon(
+                              Icons.cloud_download_outlined,
+                              color: kPinkD1,
+                              size: 30,
+                            ),
+                            title: Text(
+                              'Prefetch cloud todos',
+                              style: kInter.copyWith(fontSize: 15),
+                            ),
+                            subtitle: Text(
+                              'This enables prefetch of cloud todos on startup.',
+                              style: kInter.copyWith(
+                                  color: kWhite75, fontSize: 12),
+                            ),
+                            trailing: Switch(
+                              activeColor: kPink,
+                              activeTrackColor: kPinkD1,
+                              inactiveThumbColor: kPinkD1,
+                              inactiveTrackColor: kPinkD2,
+                              value: state.isTodosOnlinePrefetchEnabled,
+                              onChanged: (value) async {
+                                settingsBloc
+                                    .add(SettingsSetPrefetchCloudTodosEvent(value));
                               },
                             ),
                           ),
