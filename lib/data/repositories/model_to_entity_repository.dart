@@ -25,7 +25,10 @@ class ModelToEntityRepository {
         editedTime: model.editedTime,
         v: model.v,
         isSynced: synced ?? false,
-        isFavorite: model.isFavorite);
+        isUploaded: model.isUploaded,
+        isFavorite: model.isFavorite,
+
+    );
   }
 
   static TodoDataEntity mapToTodoEntity(
