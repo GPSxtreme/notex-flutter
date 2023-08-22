@@ -19,6 +19,8 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
     await Future.delayed(const Duration(seconds: 1));
     //initialize local db
     await LOCAL_DB.init();
+    // initialize local settings
+    await SETTINGS.init();
     String? userToken = await SharedPreferencesRepository.getJwtToken();
     if (userToken != null) {
       await AuthRepository.initUserToken().then(
