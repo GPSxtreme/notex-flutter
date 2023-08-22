@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:notex/core/repositories/auth_repository.dart';
-import 'package:notex/core/repositories/shared_preferences_repository.dart';
 import 'package:notex/data/models/generic_server_response.dart';
 import 'package:notex/data/models/get_notes_response_model.dart';
 import 'package:http/http.dart' as http;
@@ -35,11 +34,12 @@ class NotesRepository {
   static Future<List<NoteModel>> syncOnlineNotes(
       List<NoteModel> onlineNotes) async {
     final List<NoteModel> offlineNotes = await LOCAL_DB.getNotes();
-
     final Map<String, NoteModel> offlineNotesMap = {
       for (var note in offlineNotes) note.id: note
     };
     for (final onlineNote in onlineNotes) {
+      onlineNote.setIsUploaded(true);
+      onlineNote.updateIsSynced(true);
       if (!offlineNotesMap.containsKey(onlineNote.id)) {
         // Note doesn't exist offline, insert it
         offlineNotesMap[onlineNote.id] = NoteModel.fromJsonOfLocalDb(
@@ -56,11 +56,14 @@ class NotesRepository {
         final offlineNote = offlineNotesMap[onlineNote.id]!;
         if (onlineNote.editedTime.isAfter(offlineNote.editedTime)) {
           // Online note is more recent, update the offline note
-          offlineNotesMap[onlineNote.id] = onlineNote;
+          offlineNotesMap[onlineNote.id] = NoteModel.fromJsonOfLocalDb(
+              EntityToJson.noteEntityToJson(
+                  ModelToEntityRepository.mapToNoteEntity(
+                      model: onlineNote, synced: true),
+                  true));
           await LOCAL_DB.updateNote(
             ModelToEntityRepository.mapToNoteEntity(model: onlineNote),
           );
-          await LOCAL_DB.setNoteSynced(onlineNote.id, true);
         }
       }
     }
@@ -88,9 +91,7 @@ class NotesRepository {
   static Future<Map<String,dynamic>> _addNoteToCloud(NoteModel note) async {
     try {
       // Check if user has enabled auto sync
-      final isAutoSyncEnabled = await SharedPreferencesRepository.getAutoSyncStatus();
-
-      if (isAutoSyncEnabled == true) {
+      if (SETTINGS.isAutoSyncEnabled) {
         final url = Uri.parse(NOTE_ADD_ROUTE);
         final body = jsonEncode(note.toJsonToServerAdd());
 
@@ -112,9 +113,11 @@ class NotesRepository {
 
           // Update local note id with the fetchResponse's asynchronously
           await LOCAL_DB.updateNoteId(note.id, fetchResponse.noteId);
-
+          // set note uploaded
+          await LOCAL_DB.setNoteUploaded(fetchResponse.noteId, true);
           // Set note synced and return the result
           final success = await LOCAL_DB.setNoteSynced(fetchResponse.noteId, true);
+
           return {
             'success' : success,
             'id' : fetchResponse.noteId
@@ -152,9 +155,7 @@ class NotesRepository {
   static Future<bool> _removeNoteFromCloud(String noteId) async {
     try {
       // Check if user has enabled auto sync
-      final isAutoSyncEnabled = await SharedPreferencesRepository.getAutoSyncStatus();
-
-      if (isAutoSyncEnabled == true) {
+      if (SETTINGS.isAutoSyncEnabled) {
         final url = Uri.parse("$NOTE_DELETE_ROUTE?noteId=$noteId");
 
        final response =  await http.get(
@@ -193,9 +194,7 @@ class NotesRepository {
   static Future<void> _updateNoteInCloud(NoteModel note) async {
     try {
       // Check if user has enabled auto sync
-      final isAutoSyncEnabled = await SharedPreferencesRepository.getAutoSyncStatus();
-
-      if (isAutoSyncEnabled == true) {
+      if (SETTINGS.isAutoSyncEnabled) {
         final url = Uri.parse(NOTE_UPDATE_ROUTE);
         final body = jsonEncode(note.toJsonToServerUpdate());
 
