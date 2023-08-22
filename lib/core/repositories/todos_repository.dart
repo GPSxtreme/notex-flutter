@@ -82,9 +82,7 @@ class TodosRepository {
   static Future<Map<String,dynamic>> _addTodoToCloud(TodoModel todo) async {
     try {
       // Check if user has enabled auto sync
-      final isAutoSyncEnabled = await SharedPreferencesRepository.getAutoSyncStatus();
-
-      if (isAutoSyncEnabled == true) {
+      if (SETTINGS.isAutoSyncEnabled) {
         final url = Uri.parse(TODO_ADD_ROUTE);
         final body = jsonEncode(todo.toJsonToServerAdd());
 
@@ -133,10 +131,7 @@ class TodosRepository {
   static Future<void> _removeTodoFromCloud(String todoId) async {
     try {
       // Check if user has enabled auto sync
-      final isAutoSyncEnabled =
-          await SharedPreferencesRepository.getAutoSyncStatus();
-
-      if (isAutoSyncEnabled == true) {
+      if (SETTINGS.isAutoSyncEnabled) {
         final url = Uri.parse("$TODO_DELETE_ROUTE?todoId=$todoId");
 
         await http.get(
