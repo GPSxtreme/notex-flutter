@@ -4,7 +4,6 @@ import 'package:connectivity/connectivity.dart';
 import 'package:meta/meta.dart';
 import 'package:notex/core/repositories/notes_repository.dart';
 import 'package:notex/main.dart';
-import '../../../core/repositories/shared_preferences_repository.dart';
 import '../../../data/models/note_model.dart';
 
 part 'notes_event.dart';
@@ -56,7 +55,7 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
 
       bool isFetchedNotesEmpty = false;
 
-      if (hasInternet) {
+      if (hasInternet && SETTINGS.isNotesOnlinePrefetchEnabled) {
         final fetchResponse = await NotesRepository.fetchNotesFromOnline();
         if (fetchResponse.success && fetchResponse.notes!.isNotEmpty) {
           final onlineFetchedNotes = fetchResponse.notes!;
@@ -72,7 +71,7 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
         }
       }
 
-      if (!hasInternet || isFetchedNotesEmpty) {
+      if (!hasInternet || isFetchedNotesEmpty || !SETTINGS.isNotesOnlinePrefetchEnabled) {
         _notes = await LOCAL_DB.getNotes();
 
         if (_notes.isEmpty) {
@@ -91,17 +90,14 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
     try {
       _notes.insert(0, event.newNote);
       emit(NotesFetchedState(_notes, syncingNotes: [event.newNote.id]));
-      final isAutoSyncEnabled =
-          await SharedPreferencesRepository.getAutoSyncStatus();
       // insert new note.
       final response = await NotesRepository.addNote(event.newNote);
       if (response["success"] == true) {
         _notes.removeWhere((e) => e.id == event.newNote.id);
-        final modNote = event.newNote;
-        modNote.updateId(response["id"]);
-        modNote.isSynced = true;
-        _notes.insert(0, modNote);
-      } else if (isAutoSyncEnabled ?? false) {
+        _notes.first.updateId(response["id"]);
+        _notes.first.updateIsSynced(true);
+        _notes.first.setIsUploaded(true);
+      } else if (SETTINGS.isAutoSyncEnabled) {
         emit(NotesOperationFailedState('Failed syncing note'));
       }
       emit(NotesFetchedState(_notes, syncingNotes: null));
@@ -254,6 +250,8 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
       await NotesRepository.setNoteFavorite(event.noteId, event.value);
       _notes[_notes.indexWhere((n) => n.id == event.noteId)]
           .setIsFavorite(event.value);
+      _notes[_notes.indexWhere((n) => n.id == event.noteId)]
+          .updateIsSynced(false);
       emit(NotesFetchedState(_notes));
     } catch (error) {
       emit(NotesOperationFailedState(error.toString()));
