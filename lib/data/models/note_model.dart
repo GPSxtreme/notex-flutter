@@ -18,6 +18,7 @@ class NoteModel {
   final int v;
   dynamic isSynced;
   dynamic isFavorite;
+  dynamic isUploaded;
 
   NoteModel({
     required this.id,
@@ -28,11 +29,14 @@ class NoteModel {
     required this.editedTime,
     required this.v,
     this.isSynced = false,
-    this.isFavorite = false
+    this.isFavorite = false,
+    this.isUploaded = false
   });
 
+  void updateIsSynced(dynamic value) => isSynced = value;
   void updateId(String newId) => id = newId;
   void setIsFavorite(bool value) => isFavorite = value;
+  void setIsUploaded(bool value) => isUploaded = value;
 
   factory NoteModel.fromJson(Map<String, dynamic> json) => NoteModel(
     id: json["_id"],
@@ -54,6 +58,7 @@ class NoteModel {
     v: json["__v"],
     isSynced: json["isSynced"] == 0 ? false : true,
     isFavorite: json['isFavorite'] == 0 ? false : true,
+    isUploaded: json['isUploaded'] == 0 ? false : true,
   );
 
   Map<String, dynamic> toJson() => {
