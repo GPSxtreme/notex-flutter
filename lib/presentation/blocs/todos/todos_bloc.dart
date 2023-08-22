@@ -6,7 +6,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:notex/core/repositories/todos_repository.dart';
 import 'package:notex/data/models/todo_model.dart';
 import 'package:notex/data/repositories/model_to_entity_repository.dart';
-import '../../../core/repositories/shared_preferences_repository.dart';
 import '../../../main.dart';
 
 part 'todos_event.dart';
@@ -59,7 +58,7 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
 
       bool isFetchedNotesEmpty = false;
 
-      if (hasInternet) {
+      if (hasInternet && SETTINGS.isTodosOnlinePrefetchEnabled) {
         final fetchResponse = await TodosRepository.fetchTodos();
         if (fetchResponse.success && fetchResponse.todos!.isNotEmpty) {
           final onlineFetchedNotes = fetchResponse.todos!;
@@ -80,7 +79,7 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
         }
       }
 
-      if (!hasInternet || isFetchedNotesEmpty) {
+      if (!hasInternet || isFetchedNotesEmpty || !SETTINGS.isTodosOnlinePrefetchEnabled) {
         final offlineFetchedNotes = await LOCAL_DB.getTodos();
 
         if (offlineFetchedNotes.isEmpty) {
@@ -147,7 +146,6 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
     try {
       _notDoneTodos.insert(0, event.todo);
       emit(TodosFetchedState(_doneTodos, _notDoneTodos,syncingTodos: [event.todo.id]));
-      final isAutoSyncEnabled = await SharedPreferencesRepository.getAutoSyncStatus();
       //insert new to-do
       final response = await TodosRepository.addTodo(event.todo);
       if(response['success'] == true){
@@ -156,7 +154,7 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
         modTodo.updateId(response['id']);
         modTodo.isSynced = true;
         _notDoneTodos.insert(0, modTodo);
-      }else if(isAutoSyncEnabled ?? false){
+      }else if(SETTINGS.isAutoSyncEnabled){
         emit(TodosOperationFailedState('Failed syncing todo'));
       }
       emit(TodosFetchedState(_doneTodos, _notDoneTodos,syncingTodos: null));
