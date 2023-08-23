@@ -10,7 +10,6 @@ import 'package:notex/presentation/blocs/todos/todos_bloc.dart';
 import 'package:notex/presentation/pages/notes.dart';
 import 'package:notex/presentation/pages/todos.dart';
 import 'package:notex/presentation/styles/app_styles.dart';
-import 'package:path/path.dart';
 import '../../core/config/api_routes.dart';
 import '../../core/repositories/auth_repository.dart';
 import '../../main.dart';
@@ -86,6 +85,40 @@ class _HomePageState extends State<HomePage> {
                         padding: const EdgeInsets.only(top: 5),
                         child: Text(
                           'Delete',
+                          style: kInter.copyWith(color: kWhite, fontSize: 12),
+                        ),
+                      ), // text
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          SizedBox.fromSize(
+            size: const Size(
+                kBottomNavigationBarHeight, kBottomNavigationBarHeight),
+            // button width and height
+            child: ClipOval(
+              child: Material(
+                color: Colors.transparent, // button color
+                child: InkWell(
+                  splashColor: kPinkD2, // splash color
+                  onTap: () {
+                    if (_currentPageIndex == 1) {
+                      // sync to-do
+                    } else if (_currentPageIndex == 0) {
+                      // sync note
+                      notesBloc.add(NotesSyncSelectedNotesEvent());
+                    }
+                  }, // button pressed
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      const Icon(Icons.sync,color: kWhite,size: 30,),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 5),
+                        child: Text(
+                          'sync',
                           style: kInter.copyWith(color: kWhite, fontSize: 12),
                         ),
                       ), // text
