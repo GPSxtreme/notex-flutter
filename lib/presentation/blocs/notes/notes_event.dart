@@ -27,6 +27,8 @@ class NotesDeleteSelectedNotesEvent extends NotesEvent {}
 
 class NotesHideSelectedNotesEvent extends NotesEvent{}
 
+class NotesSyncSelectedNotesEvent extends NotesEvent{}
+
 class NotesAreAllNotesSelectedEvent extends NotesEvent {
   final bool areAllSelected;
   NotesAreAllNotesSelectedEvent(this.areAllSelected);
@@ -49,4 +51,9 @@ class NotesSetNoteFavoriteEvent extends NotesEvent{
   final String noteId;
   final bool value;
   NotesSetNoteFavoriteEvent(this.value, this.noteId);
+}
+
+class NotesUploadNoteToCloudEvent extends NotesEvent{
+  final NoteModel note;
+  NotesUploadNoteToCloudEvent(this.note);
 }
