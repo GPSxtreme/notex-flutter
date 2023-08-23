@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:notex/core/repositories/auth_repository.dart';
-import 'package:notex/core/repositories/shared_preferences_repository.dart';
 import 'package:http/http.dart' as http;
 import 'package:notex/data/models/add_todo_response_model.dart';
 import 'package:notex/data/models/get_todos_response_model.dart';
