@@ -118,19 +118,51 @@ class _NoteTileState extends State<NoteTile> {
                     right: 0,
                     top: 0,
                     child: state is! NotesEditingState
-                        ? IconButton(
-                            icon: widget.note.isFavorite
-                                ? const Icon(
-                                    Icons.star,
-                                    color: kPink,
-                                  )
-                                : const Icon(Icons.star_border, color: kWhite),
-                            onPressed: () {
-                              //add to favourites
-                              widget.notesBloc.add(NotesSetNoteFavoriteEvent(
-                                  !widget.note.isFavorite, widget.note.id));
-                            },
-                            splashRadius: 15,
+                        ? Row(
+                            children: [
+                              if (_isSyncing)
+                                const Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: SpinKitRing(
+                                      color: kPink, lineWidth: 4.0, size: 20),
+                                )
+                              else ...[
+                                if (!widget.note.isUploaded)
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.cloud_upload_outlined,
+                                      color: kWhite,
+                                    ),
+                                    onPressed: () {
+                                      //add note to cloud
+                                      widget.notesBloc.add(
+                                          NotesUploadNoteToCloudEvent(
+                                              widget.note));
+                                    },
+                                    tooltip: "upload to cloud",
+                                    splashRadius: 15,
+                                  ),
+                                if (widget.note.isUploaded)
+                                  IconButton(
+                                    icon: widget.note.isFavorite
+                                        ? const Icon(
+                                            Icons.star,
+                                            color: kPink,
+                                          )
+                                        : const Icon(Icons.star_border,
+                                            color: kWhite),
+                                    onPressed: () {
+                                      //add to favourites
+                                      widget.notesBloc.add(
+                                          NotesSetNoteFavoriteEvent(
+                                              !widget.note.isFavorite,
+                                              widget.note.id));
+                                    },
+                                    tooltip: 'Favorite note',
+                                    splashRadius: 15,
+                                  ),
+                              ],
+                            ],
                           )
                         : Transform.scale(
                             scale: 1.0,
