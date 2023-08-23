@@ -13,8 +13,8 @@ class EntityToJson {
       'editedTime': note.editedTime.toIso8601String(),
       '__v': note.v,
       'isSynced': isSynced ? 1 : 0,
-      'isFavorite' : note.isFavorite,
-      'isUploaded' : note.isUploaded
+      'isFavorite' : note.isFavorite ? 1 : 0,
+      'isUploaded' : note.isUploaded ? 1 : 0
     };
     return noteMap;
   }
@@ -24,7 +24,6 @@ class EntityToJson {
       '_id': todo.id,
       'userId': todo.userId,
       'body': todo.body,
-      // Store as 1 for true, 0 for false
       'isCompleted': todo.isCompleted ? 1 : 0,
       'createdTime': todo.createdTime.toIso8601String(),
       'editedTime': todo.editedTime.toIso8601String(),
