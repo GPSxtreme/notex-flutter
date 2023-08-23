@@ -24,7 +24,7 @@ class ModelToEntityRepository {
         createdTime: model.createdTime,
         editedTime: model.editedTime,
         v: model.v,
-        isSynced: synced ?? false,
+        isSynced: synced ?? model.isSynced,
         isUploaded: model.isUploaded,
         isFavorite: model.isFavorite,
 
