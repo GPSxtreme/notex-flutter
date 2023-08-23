@@ -312,6 +312,7 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
           .setIsFavorite(event.value);
       _notes[_notes.indexWhere((n) => n.id == event.noteId)]
           .updateIsSynced(false);
+      _notes[_notes.indexWhere((n) => n.id == event.noteId)].editedTime = DateTime.now();
       emit(NotesFetchedState(_notes));
     } catch (error) {
       emit(NotesOperationFailedState(error.toString()));
