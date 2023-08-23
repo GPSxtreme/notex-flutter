@@ -125,6 +125,8 @@ class _ViewNotePageState extends State<ViewNotePage> {
       widget.notesBloc.add(NotesAddNoteEvent(note));
       Navigator.of(context).pop();
     }else{
+      // update made changes to note.
+      note.updateIsSynced(false);
       await NotesRepository.updateNote(note)
           .then((_) {
         widget.notesBloc.add(NotesRefetchNotesEvent(note));
