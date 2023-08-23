@@ -39,13 +39,12 @@ class NotesRepository {
     };
     for (final onlineNote in onlineNotes) {
       onlineNote.setIsUploaded(true);
-      onlineNote.updateIsSynced(true);
       if (!offlineNotesMap.containsKey(onlineNote.id)) {
         // Note doesn't exist offline, insert it
         offlineNotesMap[onlineNote.id] = NoteModel.fromJsonOfLocalDb(
             EntityToJson.noteEntityToJson(
                 ModelToEntityRepository.mapToNoteEntity(
-                    model: onlineNote, synced: true),
+                    model: onlineNote),
                 true));
         await LOCAL_DB.insertNote(
           ModelToEntityRepository.mapToNoteEntity(model: onlineNote),
@@ -69,7 +68,7 @@ class NotesRepository {
     }
 
     // Convert the Map values back to a List
-    final updatedOfflineNotesList = offlineNotesMap.values.toList();
+    List<NoteModel> updatedOfflineNotesList = offlineNotesMap.values.toList();
     return updatedOfflineNotesList;
   }
 
@@ -81,17 +80,18 @@ class NotesRepository {
         false,
       );
       // Trigger the cloud addition asynchronously without waiting for response
-      final response =  await _addNoteToCloud(note);
+      final response =  await addNoteToCloud(note);
       return response;
     } catch (error) {
       rethrow;
     }
   }
 
-  static Future<Map<String,dynamic>> _addNoteToCloud(NoteModel note) async {
+  static Future<Map<String,dynamic>> addNoteToCloud(NoteModel note ,
+      {bool? manualUpload}) async {
     try {
       // Check if user has enabled auto sync
-      if (SETTINGS.isAutoSyncEnabled) {
+      if (manualUpload == true || SETTINGS.isAutoSyncEnabled) {
         final url = Uri.parse(NOTE_ADD_ROUTE);
         final body = jsonEncode(note.toJsonToServerAdd());
 
@@ -179,22 +179,24 @@ class NotesRepository {
     }
   }
 
-  static Future<void> updateNote(NoteModel note) async {
+  static Future<GenericServerResponse> updateNote(NoteModel note) async {
     try {
       // Update note in local storage immediately
       await LOCAL_DB.updateNote(ModelToEntityRepository.mapToNoteEntity(model: note));
-
+      // set note un-synced
+      await LOCAL_DB.setNoteSynced(note.id, false);
       // Trigger the cloud update asynchronously without waiting for response
-      _updateNoteInCloud(note);
+      final response =  updateNoteInCloud(note);
+      return response;
     } catch (error) {
       rethrow;
     }
   }
 
-  static Future<void> _updateNoteInCloud(NoteModel note) async {
+  static Future<GenericServerResponse> updateNoteInCloud(NoteModel note ,{bool? manualUpload}) async {
     try {
       // Check if user has enabled auto sync
-      if (SETTINGS.isAutoSyncEnabled) {
+      if (manualUpload == true || SETTINGS.isAutoSyncEnabled) {
         final url = Uri.parse(NOTE_UPDATE_ROUTE);
         final body = jsonEncode(note.toJsonToServerUpdate());
 
@@ -209,15 +211,19 @@ class NotesRepository {
 
         final GenericServerResponse fetchResponse =
         genericServerResponseFromJson(response.body);
-
-        // Set note synced status based on server response
-        await LOCAL_DB.setNoteSynced(note.id, fetchResponse.success);
+        if(fetchResponse.success){
+          // Set note synced status based on server response
+          await LOCAL_DB.setNoteSynced(note.id, fetchResponse.success);
+        }
+        return fetchResponse;
       }
+      return GenericServerResponse(success: false, message: 'auto sync disabled');
     } catch (error) {
       // Handle any errors that might occur during cloud update
       if (kDebugMode) {
         print("Error during cloud update: $error");
       }
+      return  GenericServerResponse(success: false, message: error.toString());
     }
   }
 
