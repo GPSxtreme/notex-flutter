@@ -55,3 +55,10 @@ class TodosDeleteSelectedTodosEvent extends TodosEvent {}
 class TodosHideSelectedTodosEvent extends TodosEvent {}
 
 class TodosExitedEditingEvent extends TodosEvent {}
+
+class TodosUploadTodosToCloudEvent extends TodosEvent {
+  final List<TodoModel> todos;
+  TodosUploadTodosToCloudEvent(this.todos);
+}
+
+class TodosSyncSelectedTodosEvent extends TodosEvent{}
