@@ -18,19 +18,26 @@ class TodoModel {
   DateTime expireTime;
   final int v;
   dynamic isSynced;
+  dynamic isUploaded;
 
-  TodoModel(
-      {required this.id,
-      required this.userId,
-      required this.body,
-      required this.isCompleted,
-      required this.createdTime,
-      required this.editedTime,
-      required this.expireTime,
-      required this.v,
-      this.isSynced = false});
+  TodoModel({
+    required this.id,
+    required this.userId,
+    required this.body,
+    required this.isCompleted,
+    required this.createdTime,
+    required this.editedTime,
+    required this.expireTime,
+    required this.v,
+    this.isUploaded = false,
+    this.isSynced = false,
+  });
 
   void updateId(String newId) => id = newId;
+  void setIsSynced(dynamic value) => isSynced = value;
+  void setIsUploaded(bool value) => isUploaded = value;
+  void setEditedTime(DateTime time) => editedTime = time.toUtc();
+  void setIsCompleted(dynamic value) => isCompleted = value;
 
   factory TodoModel.fromJson(Map<String, dynamic> json) => TodoModel(
         id: json["_id"],
@@ -52,7 +59,9 @@ class TodoModel {
       editedTime: DateTime.parse(json["editedTime"]),
       expireTime: DateTime.parse(json["expireTime"]),
       v: json["__v"],
-      isSynced: json['isSynced'] == 0 ? false : true);
+      isSynced: json['isSynced'] == 0 ? false : true,
+    isUploaded: json['isUploaded'] == 0 ? false : true
+  );
 
   Map<String, dynamic> toJson() => {
         "_id": id,
