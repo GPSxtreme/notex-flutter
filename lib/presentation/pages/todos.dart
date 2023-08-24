@@ -30,6 +30,8 @@ class _TodosPageState extends State<TodosPage>
   late List<TodoModel> notDoneTodos;
   bool _isSyncing = false;
   int _noOfTodosSyncing = 0;
+  int _noOfTodosNotUploaded = 0;
+  bool _areTodosNotUploaded = false;
 
   @override
   bool get wantKeepAlive => true;
@@ -83,7 +85,7 @@ class _TodosPageState extends State<TodosPage>
         }
       },
       builder: (context, state) {
-        if(state is TodosFetchedState){
+        if (state is TodosFetchedState) {
           doneTodos = state.doneTodos;
           notDoneTodos = state.notDoneTodos;
           if (state.syncingTodos != null) {
@@ -92,7 +94,17 @@ class _TodosPageState extends State<TodosPage>
           } else {
             _isSyncing = false;
           }
-        }else if(state is TodosEditingState){
+          if (doneTodos.any(
+              (t) => !t.isUploaded) || notDoneTodos.any((t) => !t.isUploaded)) {
+            _areTodosNotUploaded = true;
+            _noOfTodosNotUploaded = [
+              ...doneTodos.where((e) => !e.isUploaded).toList(),
+              ...notDoneTodos.where((e) => !e.isUploaded).toList()
+            ].length;
+          }else{
+            _areTodosNotUploaded = false;
+          }
+        } else if (state is TodosEditingState) {
           doneTodos = state.doneTodos;
           notDoneTodos = state.notDoneTodos;
         }
@@ -163,11 +175,21 @@ class _TodosPageState extends State<TodosPage>
                         ],
                       )),
                 ] else if (state is TodosFetchingState) ...[
-                  const Center(
-                    child: SpinKitRing(
-                      color: kPinkD1,
-                      size: 35,
-                    ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const SpinKitRing(
+                        color: kPinkD1,
+                        size: 35,
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        'This might take a while',
+                        style: kInter.copyWith(color: kWhite75, fontSize: 15),
+                      )
+                    ],
                   )
                 ] else if (state is TodosFetchingFailedState) ...[
                   Center(
@@ -189,7 +211,8 @@ class _TodosPageState extends State<TodosPage>
                       ],
                     ),
                   )
-                ] else if (state is TodosFetchedState || state is TodosEditingState) ...[
+                ] else if (state is TodosFetchedState ||
+                    state is TodosEditingState) ...[
                   Padding(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 25, vertical: 0),
@@ -203,6 +226,72 @@ class _TodosPageState extends State<TodosPage>
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            if (!_isSyncing && _areTodosNotUploaded) ...[
+                              SizedBox(
+                                height: SizeConfig.blockSizeVertical! * 3,
+                              ),
+                              AnimationConfiguration.synchronized(
+                                duration: const Duration(milliseconds: 375),
+                                child: FlipAnimation(
+                                  child: FadeInAnimation(
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 15, vertical: 15),
+                                      decoration: BoxDecoration(
+                                          color: kPinkD2,
+                                          borderRadius:
+                                              BorderRadius.circular(15),
+                                          border: Border.all(
+                                              color: kPinkD1, width: 1.0)),
+                                      child: Material(
+                                        color: Colors.transparent,
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    '$_noOfTodosNotUploaded ${_noOfTodosNotUploaded == 1 ? 'todo is' : "todos are"} not uploaded',
+                                                    style: kInter.copyWith(
+                                                        fontSize: 15),
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 5,
+                                                  ),
+                                                  Text(
+                                                    'Click on the icon to upload',
+                                                    style: kInter.copyWith(
+                                                        fontSize: 13,color: kWhite24),
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                            IconButton(
+                                                onPressed: () {
+                                                  todosBloc.add(TodosUploadTodosToCloudEvent(
+                                                      [
+                                                        ...doneTodos.where((e) => !e.isUploaded).toList(),
+                                                        ...notDoneTodos.where((e) => !e.isUploaded).toList()
+                                                      ]
+                                                  ));
+                                                },
+                                                icon: const Icon(
+                                                  Icons.cloud_upload_outlined,
+                                                  color: kWhite,
+                                                  size: 30,
+                                                ),
+                                              splashRadius: 20,
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
                             if (_isSyncing) ...[
                               SizedBox(
                                 height: SizeConfig.blockSizeVertical! * 3,
@@ -217,7 +306,7 @@ class _TodosPageState extends State<TodosPage>
                                       decoration: BoxDecoration(
                                           color: kPinkD2,
                                           borderRadius:
-                                          BorderRadius.circular(15),
+                                              BorderRadius.circular(15),
                                           border: Border.all(
                                               color: kPinkD1, width: 1.0)),
                                       child: Row(
@@ -225,7 +314,7 @@ class _TodosPageState extends State<TodosPage>
                                           Expanded(
                                             child: Column(
                                               crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                                  CrossAxisAlignment.start,
                                               children: [
                                                 Text(
                                                   '$_noOfTodosSyncing ${_noOfTodosSyncing == 1 ? 'todo is' : "todos are"} syncing',
@@ -285,7 +374,7 @@ class _TodosPageState extends State<TodosPage>
                               ),
                             SizedBox(
                               height: !_isSyncing ||
-                                  !todosBloc.isSelectedTodoStreamClosed
+                                      !todosBloc.isSelectedTodoStreamClosed
                                   ? SizeConfig.blockSizeVertical! * 3
                                   : SizeConfig.blockSizeVertical! * 2,
                             ),
