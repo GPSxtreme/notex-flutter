@@ -106,6 +106,7 @@ class _HomePageState extends State<HomePage> {
                   onTap: () {
                     if (_currentPageIndex == 1) {
                       // sync to-do
+                      todosBloc.add(TodosSyncSelectedTodosEvent());
                     } else if (_currentPageIndex == 0) {
                       // sync note
                       notesBloc.add(NotesSyncSelectedNotesEvent());
