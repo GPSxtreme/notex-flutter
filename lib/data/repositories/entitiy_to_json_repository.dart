@@ -30,6 +30,7 @@ class EntityToJson {
       'expireTime': todo.expireTime.toIso8601String(),
       '__v': todo.v,
       'isSynced': isSynced ? 1 : 0,
+      'isUploaded' : todo.isUploaded ? 1 : 0
     };
     return todoMap;
   }
