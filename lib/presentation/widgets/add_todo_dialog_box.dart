@@ -19,7 +19,7 @@ class AddTodoDialogBox extends StatefulWidget {
 
 class _AddTodoDialogBoxState extends State<AddTodoDialogBox> {
   final TextEditingController _todoController = TextEditingController();
-  DateTime _expireTime = DateTime.now();
+  DateTime _expireTime = DateTime.now().toUtc();
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -75,8 +75,8 @@ class _AddTodoDialogBoxState extends State<AddTodoDialogBox> {
                         userId: userData!.userId,
                         body: _todoController.text,
                         isCompleted: false,
-                        createdTime: DateTime.now(),
-                        editedTime: DateTime.now(),
+                        createdTime: DateTime.now().toUtc(),
+                        editedTime: DateTime.now().toUtc(),
                         expireTime: _expireTime,
                         v: 0);
                     widget.todosBloc.add(TodosAddTodoEvent(todo));
