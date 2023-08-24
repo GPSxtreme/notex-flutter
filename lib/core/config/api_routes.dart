@@ -18,6 +18,7 @@ final TODO_ADD_ROUTE = '$_apiEndPoint/todo/addTodo';
 final TODO_GET_ROUTE = '$_apiEndPoint/todo/getTodos';
 /// Required todoId in params
 final TODO_DELETE_ROUTE = '$_apiEndPoint/todo/deleteTodo';
+final TODO_UPDATE_ROUTE = '$_apiEndPoint/todo/updateTodo';
 /* end of todo_routes */
 
 /*start of note routes */
