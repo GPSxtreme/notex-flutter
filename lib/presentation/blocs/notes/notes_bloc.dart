@@ -139,9 +139,7 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
           emit(NotesFetchedState(_notes));
           return;
         }
-        emit(NotesFetchedState(_notes, syncingNotes: [
-          ...selectedNotesCopy.map((e) => e.id).toList()
-        ])); // emit that notes are being synced/being deleted
+        emit(NotesFetchedState(_notes, syncingNotes:selectedNotesCopy.map((e) => e.id).toList())); // emit that notes are being synced/being deleted
         await Future.forEach(selectedNotesCopy, (note) async {
           await NotesRepository.updateNoteInCloud(note,manualUpload: true).then(
               (response){
@@ -229,7 +227,7 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
       _selectedNotes.removeWhere((note) => _temp.contains(note));
     }
     emit(NotesEditingState(_notes,
-        selectedNotesIds: [..._selectedNotes.map((note) => note.id).toList()],
+        selectedNotesIds: _selectedNotes.map((note) => note.id).toList(),
         areAllSelected: event.areAllSelected));
   }
 
@@ -242,9 +240,7 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
         _selectedNotesController.close();
         emit(NotesExitedEditingState());
         var selectedNotesCopy = List.from(_selectedNotes);
-        emit(NotesFetchedState(_notes, syncingNotes: [
-          ..._selectedNotes.map((e) => e.id).toList()
-        ])); // emit that notes are being synced/being deleted
+        emit(NotesFetchedState(_notes, syncingNotes:_selectedNotes.map((e) => e.id).toList())); // emit that notes are being synced/being deleted
         await Future.forEach(selectedNotesCopy, (note) async {
           _selectedNotes.remove(note);
           _notes.remove(note);
@@ -290,7 +286,7 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
       _selectedNotesController.add(_selectedNotes);
       // rebuild to show changes
       emit(NotesEditingState(_notes,
-          selectedNotesIds: [..._selectedNotes.map((e) => e.id).toList()]));
+          selectedNotesIds: _selectedNotes.map((e) => e.id).toList()));
     } catch (error) {
       emit(NotesOperationFailedState(error.toString()));
     }
@@ -301,7 +297,7 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
     emit(NotesSetAllNotesSelectedCheckBoxState(event.flag));
     emit(NotesEditingState(_notes,
         areAllSelected: false,
-        selectedNotesIds: [..._selectedNotes.map((e) => e.id).toList()]));
+        selectedNotesIds: _selectedNotes.map((e) => e.id).toList()));
   }
 
   FutureOr<void> handleSetNoteFavorite(
@@ -312,7 +308,7 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
           .setIsFavorite(event.value);
       _notes[_notes.indexWhere((n) => n.id == event.noteId)]
           .updateIsSynced(false);
-      _notes[_notes.indexWhere((n) => n.id == event.noteId)].editedTime = DateTime.now();
+      _notes[_notes.indexWhere((n) => n.id == event.noteId)].setEditedTime(DateTime.now());
       emit(NotesFetchedState(_notes));
     } catch (error) {
       emit(NotesOperationFailedState(error.toString()));
