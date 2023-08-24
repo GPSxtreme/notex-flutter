@@ -46,8 +46,8 @@ class _ViewNotePageState extends State<ViewNotePage> {
           userId: user!.userId,
           title: '',
           body: '',
-          createdTime: DateTime.now(),
-          editedTime: DateTime.now(),
+          createdTime: DateTime.now().toUtc(),
+          editedTime: DateTime.now().toUtc(),
           v: 0);
     }
     _headingFocusNode = FocusNode();
@@ -58,7 +58,7 @@ class _ViewNotePageState extends State<ViewNotePage> {
   }
 
   void _onHeadingTextChanged() {
-    note.editedTime = DateTime.now();
+    note.setEditedTime(DateTime.now());
     note.title = _headingController.text;
     setState(() {
       final newValue = _headingController.value;
@@ -68,7 +68,7 @@ class _ViewNotePageState extends State<ViewNotePage> {
   }
 
   void _onBodyTextChanged() {
-    note.editedTime = DateTime.now();
+    note.setEditedTime(DateTime.now());
     note.body = _bodyController.text;
     setState(() {
       final newValue = _bodyController.value;
