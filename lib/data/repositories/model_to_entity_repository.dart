@@ -17,17 +17,16 @@ class ModelToEntityRepository {
   static NoteDataEntity mapToNoteEntity(
       {required NoteModel model, bool? synced}) {
     return NoteDataEntity(
-        id: model.id,
-        userId: model.userId,
-        title: model.title,
-        body: model.body,
-        createdTime: model.createdTime,
-        editedTime: model.editedTime,
-        v: model.v,
-        isSynced: synced ?? model.isSynced,
-        isUploaded: model.isUploaded,
-        isFavorite: model.isFavorite,
-
+      id: model.id,
+      userId: model.userId,
+      title: model.title,
+      body: model.body,
+      createdTime: model.createdTime,
+      editedTime: model.editedTime,
+      v: model.v,
+      isSynced: synced ?? model.isSynced,
+      isUploaded: model.isUploaded,
+      isFavorite: model.isFavorite,
     );
   }
 
@@ -42,6 +41,7 @@ class ModelToEntityRepository {
         editedTime: model.editedTime,
         expireTime: model.expireTime,
         v: model.v,
-        isSynced: synced ?? false);
+        isSynced: synced ?? model.isSynced,
+        isUploaded: model.isUploaded);
   }
 }
