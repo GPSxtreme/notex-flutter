@@ -205,7 +205,7 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
         emit(TodosFetchedState(_doneTodos, _notDoneTodos,
             syncingTodos: selectedTodosCopy.map((e) => e.id).toList()));
         await Future.forEach(selectedTodosCopy, (todo) async {
-          await TodosRepository.updateTodoInCloud(todo).then(
+          await TodosRepository.updateTodoInCloud(todo,manualUpload: true).then(
                   (response) {
                 if (response.success) {
                   _notDoneTodos.any((t) => t.id == todo.id)
@@ -216,7 +216,9 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
                 }
               }
           );
-        });
+        }).then(
+            (_) => emit(TodosFetchedState(_doneTodos, _notDoneTodos))
+        );
       }
     } catch (error) {
       emit(TodosOperationFailedState(error.toString()));
