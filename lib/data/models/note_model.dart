@@ -37,6 +37,7 @@ class NoteModel {
   void updateId(String newId) => id = newId;
   void setIsFavorite(bool value) => isFavorite = value;
   void setIsUploaded(bool value) => isUploaded = value;
+  void setEditedTime(DateTime time) => editedTime = time.toUtc();
 
   factory NoteModel.fromJson(Map<String, dynamic> json) => NoteModel(
     id: json["_id"],
