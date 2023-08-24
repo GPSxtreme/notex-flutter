@@ -372,12 +372,6 @@ class _TodosPageState extends State<TodosPage>
                                   }
                                 },
                               ),
-                            SizedBox(
-                              height: !_isSyncing ||
-                                      !todosBloc.isSelectedTodoStreamClosed
-                                  ? SizeConfig.blockSizeVertical! * 3
-                                  : SizeConfig.blockSizeVertical! * 2,
-                            ),
                             if (notDoneTodos.isNotEmpty) ...[
                               Padding(
                                 padding: EdgeInsets.symmetric(
@@ -401,7 +395,7 @@ class _TodosPageState extends State<TodosPage>
                             ],
                             if (doneTodos.isNotEmpty) ...[
                               SizedBox(
-                                height: SizeConfig.blockSizeVertical! * 2,
+                                height: SizeConfig.blockSizeVertical!,
                               ),
                               Padding(
                                 padding: EdgeInsets.symmetric(
