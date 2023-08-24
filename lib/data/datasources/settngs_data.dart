@@ -25,7 +25,7 @@ class Settings{
 
   Future<void> init()async{
     _isAutoSyncEnabled = await SharedPreferencesRepository.getAutoSyncStatus() ?? false;
-    _isNotesOnlinePrefetchEnabled = await SharedPreferencesRepository.getNotesOnlinePrefetchStatus() ?? true;
-    _isTodosOnlinePrefetchEnabled = await SharedPreferencesRepository.getTodosOnlinePrefetchStatus() ?? true;
+    _isNotesOnlinePrefetchEnabled = await SharedPreferencesRepository.getNotesOnlinePrefetchStatus() ?? false;
+    _isTodosOnlinePrefetchEnabled = await SharedPreferencesRepository.getTodosOnlinePrefetchStatus() ?? false;
   }
 }
