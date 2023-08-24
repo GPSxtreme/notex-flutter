@@ -162,7 +162,7 @@ class _TodoTileState extends State<TodoTile> {
                               height: SizeConfig.blockSizeVertical! * 0.5,
                             ),
                             Text(
-                              'created on : ${DateFormat('d MMMM, h:mm a').format(widget.todo.createdTime).toString()}',
+                              'created on : ${DateFormat('d MMMM, h:mm a').format(widget.todo.createdTime.toLocal()).toString()}',
                               style: kInter.copyWith(
                                   color: kWhite75, fontSize: 12),
                             ),
@@ -170,7 +170,7 @@ class _TodoTileState extends State<TodoTile> {
                               height: SizeConfig.blockSizeVertical! * 0.5,
                             ),
                             Text(
-                              'last edited : ${DateFormat('d MMMM, h:mm a').format(widget.todo.editedTime).toString()}',
+                              'last edited : ${DateFormat('d MMMM, h:mm a').format(widget.todo.editedTime.toLocal()).toString()}',
                               style: kInter.copyWith(
                                   color: kWhite75, fontSize: 12),
                             ),
@@ -180,12 +180,17 @@ class _TodoTileState extends State<TodoTile> {
                                   color: kWhite75, fontSize: 12),
                             ),
                             Text(
-                              'expires on : ${DateFormat('d MMMM, h:mm a').format(widget.todo.expireTime).toString()}',
+                              'expires on : ${DateFormat('d MMMM, h:mm a').format(widget.todo.expireTime.toLocal()).toString()}',
                               style: kInter.copyWith(
                                   color: kWhite75, fontSize: 12),
                             ),
                             Text(
                               'is completed : ${widget.todo.isCompleted}',
+                              style: kInter.copyWith(
+                                  color: kWhite75, fontSize: 12),
+                            ),
+                            Text(
+                              'is uploaded : ${widget.todo.isUploaded}',
                               style: kInter.copyWith(
                                   color: kWhite75, fontSize: 12),
                             ),
