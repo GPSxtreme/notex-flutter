@@ -25,6 +25,8 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
     on<TodosIsTodoSelectedEvent>(handleTodoSelect);
     on<TodosDeleteSelectedTodosEvent>(handleDeleteSelectedTodos);
     on<TodosHideSelectedTodosEvent>(handleHideSelectedTodos);
+    on<TodosUploadTodosToCloudEvent>(handleUploadTodosToCloud);
+    on<TodosSyncSelectedTodosEvent>(handleSyncSelectedTodos);
   }
 
   late List<TodoModel> _doneTodos;
@@ -33,7 +35,7 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
   final List<TodoModel> _selectedTodos = [];
 
   StreamController<List<TodoModel>> _selectedTodosController =
-      StreamController<List<TodoModel>>.broadcast();
+  StreamController<List<TodoModel>>.broadcast();
 
   Stream<List<TodoModel>> get selectedTodosStream =>
       _selectedTodosController.stream;
@@ -47,8 +49,8 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
     return super.close();
   }
 
-  Future<void> handleFetchTodos(
-      TodosInitialEvent event, Emitter<TodosState> emit) async {
+  Future<void> handleFetchTodos(TodosInitialEvent event,
+      Emitter<TodosState> emit) async {
     try {
       emit(TodosFetchingState());
 
@@ -63,7 +65,7 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
         if (fetchResponse.success && fetchResponse.todos!.isNotEmpty) {
           final onlineFetchedNotes = fetchResponse.todos!;
           final updatedTodos =
-              await TodosRepository.syncOnlineTodos(onlineFetchedNotes);
+          await TodosRepository.syncOnlineTodos(onlineFetchedNotes);
 
           if (updatedTodos.isNotEmpty) {
             _doneTodos =
@@ -79,7 +81,8 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
         }
       }
 
-      if (!hasInternet || isFetchedNotesEmpty || !SETTINGS.isTodosOnlinePrefetchEnabled) {
+      if (!hasInternet || isFetchedNotesEmpty ||
+          !SETTINGS.isTodosOnlinePrefetchEnabled) {
         final offlineFetchedNotes = await LOCAL_DB.getTodos();
 
         if (offlineFetchedNotes.isEmpty) {
@@ -99,72 +102,129 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
     }
   }
 
-  FutureOr<void> handleMarkTodoDone(
-      TodosMarkTodoDoneEvent event, Emitter<TodosState> emit) async {
-    final modifiedTodo = event.todo;
-    modifiedTodo.isCompleted = true;
-    modifiedTodo.editedTime = DateTime.now();
-    modifiedTodo.isSynced = false;
+  FutureOr<void> handleMarkTodoDone(TodosMarkTodoDoneEvent event,
+      Emitter<TodosState> emit) async {
+    event.todo.setEditedTime(DateTime.now());
+    event.todo.setIsSynced(false);
+    event.todo.setIsCompleted(true);
 
     // update local lists in bloc
-    _notDoneTodos.removeWhere((todo) => todo.id == modifiedTodo.id);
-    _doneTodos.insert(0, modifiedTodo);
+    _notDoneTodos.removeWhere((todo) => todo.id == event.todo.id);
+    _doneTodos.insert(0, event.todo);
     emit(TodosFetchedState(_doneTodos, _notDoneTodos));
-
-    // set to-do as done on local db
-    await LOCAL_DB.updateTodo(
-        ModelToEntityRepository.mapToTodoEntity(model: modifiedTodo));
-    // update task on cloud
-  }
-
-  FutureOr<void> handleMarkTodoNotDone(
-      TodosMarkTodoNotDoneEvent event, Emitter<TodosState> emit) async {
-    final modifiedTodo = event.todo;
-    modifiedTodo.isCompleted = false;
-    modifiedTodo.editedTime = DateTime.now();
-    modifiedTodo.isSynced = false;
-
-    // update local lists in bloc
-    _doneTodos.removeWhere((todo) => todo.id == modifiedTodo.id);
-    _notDoneTodos.insert(0, modifiedTodo);
-    emit(TodosFetchedState(_doneTodos, _notDoneTodos));
-
     // set to-do as not done on local db
     await LOCAL_DB.updateTodo(
-        ModelToEntityRepository.mapToTodoEntity(model: modifiedTodo));
-
-    // update task on cloud
+        ModelToEntityRepository.mapToTodoEntity(model: event.todo));
   }
 
-  FutureOr<void> handleAddTodoDialogBox(
-      TodosShowAddTodoDialogBoxEvent event, Emitter<TodosState> emit) {
+  FutureOr<void> handleMarkTodoNotDone(TodosMarkTodoNotDoneEvent event,
+      Emitter<TodosState> emit) async {
+    event.todo.setEditedTime(DateTime.now());
+    event.todo.setIsSynced(false);
+    event.todo.setIsCompleted(false);
+
+    // update local lists in bloc
+    _doneTodos.removeWhere((todo) => todo.id == event.todo.id);
+    _notDoneTodos.insert(0, event.todo);
+    emit(TodosFetchedState(_doneTodos, _notDoneTodos));
+    // set to-do as not done on local db
+    await LOCAL_DB.updateTodo(
+        ModelToEntityRepository.mapToTodoEntity(model: event.todo));
+  }
+
+  FutureOr<void> handleAddTodoDialogBox(TodosShowAddTodoDialogBoxEvent event,
+      Emitter<TodosState> emit) {
     emit(TodosShowAddTodoDialogBoxState());
   }
 
-  FutureOr<void> handleAddTodo(
-      TodosAddTodoEvent event, Emitter<TodosState> emit) async {
+  FutureOr<void> handleAddTodo(TodosAddTodoEvent event,
+      Emitter<TodosState> emit) async {
     try {
       _notDoneTodos.insert(0, event.todo);
-      emit(TodosFetchedState(_doneTodos, _notDoneTodos,syncingTodos: [event.todo.id]));
+      emit(TodosFetchedState(
+          _doneTodos, _notDoneTodos, syncingTodos: [event.todo.id]));
       //insert new to-do
       final response = await TodosRepository.addTodo(event.todo);
-      if(response['success'] == true){
-        _notDoneTodos.removeWhere((e) => e.id == event.todo.id);
-        final modTodo = event.todo;
-        modTodo.updateId(response['id']);
-        modTodo.isSynced = true;
-        _notDoneTodos.insert(0, modTodo);
-      }else if(SETTINGS.isAutoSyncEnabled){
+      if (response['success'] == true) {
+        _notDoneTodos.first.updateId(response['id']);
+        _notDoneTodos.first.setIsSynced(true);
+        _notDoneTodos.first.setIsUploaded(true);
+      } else if (SETTINGS.isAutoSyncEnabled) {
         emit(TodosOperationFailedState('Failed syncing todo'));
       }
-      emit(TodosFetchedState(_doneTodos, _notDoneTodos,syncingTodos: null));
+      emit(TodosFetchedState(_doneTodos, _notDoneTodos, syncingTodos: null));
     } catch (error) {
       emit(TodosAddTodoFailedState('An unexpected error occurred \n $error'));
     }
   }
 
-  FutureOr<void> handleEditingEnter(
-      TodosEnteredEditingEvent event, Emitter<TodosState> emit) async {
+  FutureOr<void> handleUploadTodosToCloud(TodosUploadTodosToCloudEvent event,
+      Emitter<TodosState> emit) async {
+    try {
+      emit(TodosFetchedState(_doneTodos, _notDoneTodos,
+          syncingTodos: event.todos.map((t) => t.id).toList()));
+      await Future.forEach(event.todos, (todo) async{
+        final refTodoList = _notDoneTodos.any((t) => t.id == todo.id)
+            ? _notDoneTodos
+            : _doneTodos;
+        final todoIndex = refTodoList.indexWhere((t) => t.id == todo.id);
+        // insert new note.
+        final response = await TodosRepository.addTodoToCloud(
+            todo, manualUpload: true);
+        if (response["success"] == true) {
+          refTodoList[todoIndex].updateId(response["id"]);
+          refTodoList[todoIndex].setIsSynced(true);
+          refTodoList[todoIndex].setIsUploaded(true);
+        } else if (SETTINGS.isAutoSyncEnabled) {
+          emit(TodosOperationFailedState('Failed syncing todo'));
+        }
+      }).then(
+          (_) => emit(TodosFetchedState(_doneTodos, _notDoneTodos))
+      );
+
+    } catch (error) {
+      emit(TodosOperationFailedState(error.toString()));
+    }
+  }
+
+  FutureOr<void> handleSyncSelectedTodos(TodosSyncSelectedTodosEvent event,
+      Emitter<TodosState> emit) async {
+    try {
+      if (_selectedTodos.isEmpty) {
+        return;
+      } else {
+        _selectedTodosController.close();
+        emit(TodosExitedEditingState());
+        List<TodoModel> selectedTodosCopy = List.from(
+            _selectedTodos.where((t) => !t.isSynced).toList());
+        if (selectedTodosCopy.isEmpty) {
+          emit(TodosOperationFailedState('All todos are synced 🚀'));
+          emit(TodosFetchedState(_doneTodos, _notDoneTodos));
+          return;
+        }
+        emit(TodosFetchedState(_doneTodos, _notDoneTodos,
+            syncingTodos: selectedTodosCopy.map((e) => e.id).toList()));
+        await Future.forEach(selectedTodosCopy, (todo) async {
+          await TodosRepository.updateTodoInCloud(todo).then(
+                  (response) {
+                if (response.success) {
+                  _notDoneTodos.any((t) => t.id == todo.id)
+                      ? _notDoneTodos[_notDoneTodos.indexWhere((t) =>
+                  t.id == todo.id)].setIsSynced(true)
+                      : _doneTodos[_doneTodos.indexWhere((t) =>
+                  t.id == todo.id)].setIsSynced(true);
+                }
+              }
+          );
+        });
+      }
+    } catch (error) {
+      emit(TodosOperationFailedState(error.toString()));
+    }
+  }
+
+  FutureOr<void> handleEditingEnter(TodosEnteredEditingEvent event,
+      Emitter<TodosState> emit) async {
     emit(TodosEnteredEditingState());
     emit(TodosEditingState(_doneTodos, _notDoneTodos, areAllSelected: false));
     // Notify the stream listeners about the changes in _selectedTodos
@@ -175,8 +235,8 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
     _selectedTodosController.add(_selectedTodos);
   }
 
-  FutureOr<void> handleAreAllTodosSelected(
-      TodosAreAllTodosSelectedEvent event, Emitter<TodosState> emit) async {
+  FutureOr<void> handleAreAllTodosSelected(TodosAreAllTodosSelectedEvent event,
+      Emitter<TodosState> emit) async {
     if (event.areAllSelected) {
       _temp = [
         ..._doneTodos.where((todo) => !_selectedTodos.contains(todo)).toList(),
@@ -200,8 +260,8 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
         areAllSelected: event.areAllSelected));
   }
 
-  FutureOr<void> handleEditingExit(
-      TodosExitedEditingEvent event, Emitter<TodosState> emit) async {
+  FutureOr<void> handleEditingExit(TodosExitedEditingEvent event,
+      Emitter<TodosState> emit) async {
     emit(TodosExitedEditingState());
     emit(TodosFetchedState(_doneTodos, _notDoneTodos));
     // reset _selectedTodos list
@@ -212,8 +272,8 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
     _selectedTodosController.close();
   }
 
-  FutureOr<void> handleTodoSelect(
-      TodosIsTodoSelectedEvent event, Emitter<TodosState> emit) async {
+  FutureOr<void> handleTodoSelect(TodosIsTodoSelectedEvent event,
+      Emitter<TodosState> emit) async {
     try {
       if (event.isSelected) {
         // add to _selectedTodos list
@@ -238,8 +298,8 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
     }
   }
 
-  FutureOr<void> handleDeleteSelectedTodos(
-      TodosDeleteSelectedTodosEvent event, Emitter<TodosState> emit) async {
+  FutureOr<void> handleDeleteSelectedTodos(TodosDeleteSelectedTodosEvent event,
+      Emitter<TodosState> emit) async {
     try {
       // delete all selected todos
       if (_selectedTodos.isEmpty) {
@@ -248,8 +308,9 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
         _selectedTodosController.close();
         emit(TodosExitedEditingState());
         var selectedTodosCopy = List.from(_selectedTodos);
-        emit(TodosFetchedState(_doneTodos, _notDoneTodos,syncingTodos: [..._selectedTodos.map((e) => e.id).toList()]));
-        await Future.forEach(selectedTodosCopy, (todo) async{
+        emit(TodosFetchedState(_doneTodos, _notDoneTodos,
+            syncingTodos: [..._selectedTodos.map((e) => e.id).toList()]));
+        await Future.forEach(selectedTodosCopy, (todo) async {
           _selectedTodos.remove(todo);
           if (_doneTodos.contains(todo)) {
             _doneTodos.remove(todo);
@@ -258,7 +319,7 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
           }
           await TodosRepository.removeTodo(todo.id);
         }).then(
-            (_){
+                (_) {
               _temp.clear();
               _selectedTodos.clear();
               emit(TodosExitedEditingState());
@@ -275,8 +336,8 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
     }
   }
 
-  FutureOr<void> handleHideSelectedTodos(
-      TodosHideSelectedTodosEvent event, Emitter<TodosState> emit) async {
+  FutureOr<void> handleHideSelectedTodos(TodosHideSelectedTodosEvent event,
+      Emitter<TodosState> emit) async {
     // hide all selected todos
   }
 }
