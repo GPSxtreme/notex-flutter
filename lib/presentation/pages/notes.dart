@@ -143,11 +143,19 @@ class _NotesPageState extends State<NotesPage>
                         ],
                       )),
                 ] else if (state is NotesFetchingState) ...[
-                  const Center(
-                    child: SpinKitRing(
-                      color: kPinkD1,
-                      size: 35,
-                    ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const SpinKitRing(
+                        color: kPinkD1,
+                        size: 35,
+                      ),
+                      const SizedBox(height: 10,),
+                      Text(
+                        'This might take a while',
+                        style: kInter.copyWith(color: kWhite75,fontSize: 15),
+                      )
+                    ],
                   )
                 ] else if (state is NotesFetchingFailedState) ...[
                   Center(
