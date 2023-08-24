@@ -216,14 +216,14 @@ class _NoteTileState extends State<NoteTile> {
                           height: SizeConfig.blockSizeVertical! * 2,
                         ),
                         Text(
-                          'created on : ${DateFormat('d MMMM, h:mm a').format(widget.note.createdTime).toString()}',
+                          'created on : ${DateFormat('d MMMM, h:mm a').format(widget.note.createdTime.toLocal()).toString()}',
                           style: kInter.copyWith(color: kWhite75, fontSize: 10),
                         ),
                         SizedBox(
                           height: SizeConfig.blockSizeVertical! * 0.5,
                         ),
                         Text(
-                          'last edited : ${DateFormat('d MMMM, h:mm a').format(widget.note.editedTime).toString()}',
+                          'last edited : ${DateFormat('d MMMM, h:mm a').format(widget.note.editedTime.toLocal()).toString()}',
                           style: kInter.copyWith(color: kWhite75, fontSize: 10),
                         ),
                         Text(
