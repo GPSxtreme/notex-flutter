@@ -36,8 +36,8 @@ class TodosRepository {
     final Map<String, TodoModel> offlineTodosMap = {
       for (var todo in await LOCAL_DB.getTodos()) todo.id: todo
     };
-
     for (final onlineTodo in onlineTodos) {
+      onlineTodo.setIsUploaded(true);
       if (!offlineTodosMap.containsKey(onlineTodo.id)) {
         offlineTodosMap[onlineTodo.id] = TodoModel.fromJsonOfLocalDb(
             EntityToJson.todoEntityToJson(
@@ -49,15 +49,20 @@ class TodosRepository {
               model: onlineTodo, synced: true),
           true,
         );
-      } else if (offlineTodosMap[onlineTodo.id]!
-          .editedTime
-          .isBefore(onlineTodo.editedTime)) {
-        // Update local to-do only if online version has been edited more recently
-        offlineTodosMap[onlineTodo.id] = onlineTodo;
-        await LOCAL_DB.updateTodo(
-          ModelToEntityRepository.mapToTodoEntity(model: onlineTodo),
-        );
-        await LOCAL_DB.setTodoSynced(onlineTodo.id, true);
+      } else {
+        final offlineTodo = offlineTodosMap[onlineTodo.id]!;
+        if (onlineTodo.editedTime.isAfter(offlineTodo.editedTime)) {
+          // Update local to-do only if online version has been edited more recently
+          offlineTodosMap[onlineTodo.id] = TodoModel.fromJsonOfLocalDb(
+              EntityToJson.todoEntityToJson(
+                  ModelToEntityRepository.mapToTodoEntity(
+                      model: onlineTodo, synced: true),
+                  true));
+          await LOCAL_DB.updateTodo(
+            ModelToEntityRepository.mapToTodoEntity(
+                model: onlineTodo, synced: true),
+          );
+        }
       }
     } // Convert the Map values back to a List
     final updatedOfflineTodosList = offlineTodosMap.values.toList();
@@ -65,23 +70,24 @@ class TodosRepository {
     return updatedOfflineTodosList;
   }
 
-  static Future<Map<String,dynamic>> addTodo(TodoModel todo) async {
+  static Future<Map<String, dynamic>> addTodo(TodoModel todo) async {
     try {
       // Add to-do to local storage immediately
       await LOCAL_DB.insertTodo(
           ModelToEntityRepository.mapToTodoEntity(model: todo), false);
       // Trigger the cloud addition asynchronously without waiting for response
-      final response = await _addTodoToCloud(todo);
+      final response = await addTodoToCloud(todo);
       return response;
     } catch (error) {
       rethrow;
     }
   }
 
-  static Future<Map<String,dynamic>> _addTodoToCloud(TodoModel todo) async {
+  static Future<Map<String, dynamic>> addTodoToCloud(TodoModel todo,
+      {bool? manualUpload}) async {
     try {
       // Check if user has enabled auto sync
-      if (SETTINGS.isAutoSyncEnabled) {
+      if (SETTINGS.isAutoSyncEnabled || manualUpload == true) {
         final url = Uri.parse(TODO_ADD_ROUTE);
         final body = jsonEncode(todo.toJsonToServerAdd());
 
@@ -95,23 +101,23 @@ class TodosRepository {
         );
 
         final GenericServerResponse serverResponse =
-        genericServerResponseFromJson(response.body);
+            genericServerResponseFromJson(response.body);
 
         if (serverResponse.success) {
           final AddTodoResponseModel fetchResponse =
-          addTodoResponseModelFromJson(response.body);
+              addTodoResponseModelFromJson(response.body);
 
           // Update local to-do id with the fetchResponse's
           await LOCAL_DB.updateTodoId(todo.id, fetchResponse.todoId);
-
-          final success = await LOCAL_DB.setTodoSynced(fetchResponse.todoId, true);
+          // set to-do uploaded
+          await LOCAL_DB.setTodoUploaded(fetchResponse.todoId, true);
+          // set to-do synced
+          final success =
+              await LOCAL_DB.setTodoSynced(fetchResponse.todoId, true);
+          return {'success': success, 'id': fetchResponse.todoId};
+        } else {
           return {
-            'success' : success,
-            'id' : fetchResponse.todoId
-          };
-        }else{
-          return {
-            'success' : false,
+            'success': false,
           };
         }
       }
@@ -122,10 +128,9 @@ class TodosRepository {
       }
     }
     return {
-      'success' : false,
+      'success': false,
     };
   }
-
 
   static Future<void> _removeTodoFromCloud(String todoId) async {
     try {
@@ -154,9 +159,45 @@ class TodosRepository {
     try {
       await LOCAL_DB.removeTodo(todoId);
       // remove to-do on server
-     await _removeTodoFromCloud(todoId);
+      await _removeTodoFromCloud(todoId);
     } catch (error) {
       rethrow;
+    }
+  }
+
+  static Future<GenericServerResponse> updateTodoInCloud(TodoModel todo,
+      {bool? manualUpload}) async {
+    try {
+      // Check if user has enabled auto sync
+      if (manualUpload == true || SETTINGS.isAutoSyncEnabled) {
+        final url = Uri.parse(TODO_UPDATE_ROUTE);
+        final body = jsonEncode(todo.toJsonToServerUpdate());
+
+        final response = await http.post(
+          url,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': AuthRepository.userToken,
+          },
+          body: body,
+        );
+
+        final GenericServerResponse fetchResponse =
+            genericServerResponseFromJson(response.body);
+        if (fetchResponse.success) {
+          // Set note synced status based on server response
+          await LOCAL_DB.setTodoSynced(todo.id, fetchResponse.success);
+        }
+        return fetchResponse;
+      }
+      return GenericServerResponse(
+          success: false, message: 'auto sync disabled');
+    } catch (error) {
+      // Handle any errors that might occur during cloud update
+      if (kDebugMode) {
+        print("Error during cloud update: $error");
+      }
+      return GenericServerResponse(success: false, message: error.toString());
     }
   }
 }
