@@ -62,3 +62,5 @@ class TodosUploadTodosToCloudEvent extends TodosEvent {
 }
 
 class TodosSyncSelectedTodosEvent extends TodosEvent{}
+
+class TodosSyncAllTodosEvent extends TodosEvent{}
