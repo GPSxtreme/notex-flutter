@@ -57,3 +57,5 @@ class NotesUploadNoteToCloudEvent extends NotesEvent{
   final NoteModel note;
   NotesUploadNoteToCloudEvent(this.note);
 }
+
+class NotesSyncAllNotesEvent extends NotesEvent{}
