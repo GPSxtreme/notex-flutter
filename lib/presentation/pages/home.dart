@@ -115,7 +115,11 @@ class _HomePageState extends State<HomePage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      const Icon(Icons.sync,color: kWhite,size: 30,),
+                      const Icon(
+                        Icons.sync,
+                        color: kWhite,
+                        size: 30,
+                      ),
                       Padding(
                         padding: const EdgeInsets.only(top: 5),
                         child: Text(
@@ -199,6 +203,7 @@ class _HomePageState extends State<HomePage> {
       ],
     );
   }
+
   void _handleMenuButtonPressed() {
     // NOTICE: Manage Advanced Drawer state through the Controller.
     // _advancedDrawerController.value = AdvancedDrawerValue.visible();
@@ -207,7 +212,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-
     SizeConfig().init(context);
     return BlocConsumer(
       bloc: notesBloc,
@@ -264,7 +268,8 @@ class _HomePageState extends State<HomePage> {
               animateChildDecoration: true,
               rtlOpening: false,
               openScale: 0.9,
-              disabledGestures: false,
+              disabledGestures: notesState is NotesEditingState ||
+                  todosState is TodosEditingState,
               childDecoration: const BoxDecoration(
                 // NOTICE: Uncomment if you want to add shadow behind the page.
                 // Keep in mind that it may cause animation jerks.
@@ -290,9 +295,8 @@ class _HomePageState extends State<HomePage> {
                           width: 128.0,
                           height: 128.0,
                           margin: EdgeInsets.only(
-                            top: 24.0,
-                            bottom: !USER.data!.isEmailVerified ? 20 : 64
-                          ),
+                              top: 24.0,
+                              bottom: !USER.data!.isEmailVerified ? 20 : 64),
                           clipBehavior: Clip.antiAlias,
                           decoration: const BoxDecoration(
                             color: kPink,
@@ -304,56 +308,89 @@ class _HomePageState extends State<HomePage> {
                               'Content-Type': 'application/json',
                               'Authorization': AuthRepository.userToken
                             },
-                            progressIndicatorBuilder: (context, url, downloadProgress) =>
-                                CircularProgressIndicator(value: downloadProgress.progress,color: kPink,),
-                            errorWidget: (context, url, error) => const Icon(Icons.person,size: 70,color: kWhite,),
+                            progressIndicatorBuilder:
+                                (context, url, downloadProgress) =>
+                                    CircularProgressIndicator(
+                              value: downloadProgress.progress,
+                              color: kPink,
+                            ),
+                            errorWidget: (context, url, error) => const Icon(
+                              Icons.person,
+                              size: 70,
+                              color: kWhite,
+                            ),
                             width: 128.0,
                             height: 128.0,
                           ),
                         ),
-                        if(!USER.data!.isEmailVerified)
-                        Container(
-                          margin: const EdgeInsets.only(bottom: 30),
-                          child: ListTile(
-                            splashColor: kPinkD1,
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 30),
-                            leading: const Icon(Ionicons.alert_circle_outline,color: Colors.yellow,size: 35,),
-                            title: Text('Account not verified',style: kInter.copyWith(fontSize: 16),),
-                            subtitle: Text('Go to settings to start verification',style: kInter.copyWith(fontSize: 12),),
+                        if (!USER.data!.isEmailVerified)
+                          Container(
+                            margin: const EdgeInsets.only(bottom: 30),
+                            child: ListTile(
+                              splashColor: kPinkD1,
+                              contentPadding:
+                                  const EdgeInsets.symmetric(horizontal: 30),
+                              leading: const Icon(
+                                Ionicons.alert_circle_outline,
+                                color: Colors.yellow,
+                                size: 35,
+                              ),
+                              title: Text(
+                                'Account not verified',
+                                style: kInter.copyWith(fontSize: 16),
+                              ),
+                              subtitle: Text(
+                                'Go to settings to start verification',
+                                style: kInter.copyWith(fontSize: 12),
+                              ),
+                            ),
+                          ),
+                        ListTile(
+                          splashColor: kPinkD1,
+                          onTap: () {},
+                          contentPadding:
+                              const EdgeInsets.symmetric(horizontal: 30),
+                          leading: const Icon(Icons.account_circle_rounded),
+                          title: Text(
+                            'Profile',
+                            style: kInter,
                           ),
                         ),
                         ListTile(
                           splashColor: kPinkD1,
                           onTap: () {},
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 30),
-                          leading: const Icon(Icons.account_circle_rounded),
-                          title: Text('Profile',style: kInter,),
-                        ),
-                        ListTile(
-                          splashColor: kPinkD1,
-                          onTap: () {},
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 30),
+                          contentPadding:
+                              const EdgeInsets.symmetric(horizontal: 30),
                           leading: const Icon(Icons.favorite),
-                          title: Text('Favourites',style: kInter,),
+                          title: Text(
+                            'Favourites',
+                            style: kInter,
+                          ),
                         ),
                         ListTile(
                           splashColor: kPinkD1,
                           onTap: () {
                             _advancedDrawerController.hideDrawer();
-                            GoRouter.of(context).pushNamed(AppRouteConstants.settingsRouteName);
+                            GoRouter.of(context)
+                                .pushNamed(AppRouteConstants.settingsRouteName);
                           },
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 30),
+                          contentPadding:
+                              const EdgeInsets.symmetric(horizontal: 30),
                           leading: const Icon(Icons.settings),
-                          title: Text('Settings',style: kInter,),
+                          title: Text(
+                            'Settings',
+                            style: kInter,
+                          ),
                         ),
                         const Spacer(),
                         DefaultTextStyle(
-                          style: kInter.copyWith(color: kWhite75,fontSize: 12),
+                          style: kInter.copyWith(color: kWhite75, fontSize: 12),
                           child: Container(
                             margin: const EdgeInsets.symmetric(
                               vertical: 16.0,
                             ),
-                            child: const Text('Terms of Service | Privacy Policy'),
+                            child:
+                                const Text('Terms of Service | Privacy Policy'),
                           ),
                         ),
                       ],
@@ -369,30 +406,34 @@ class _HomePageState extends State<HomePage> {
                   centerTitle: true,
                   elevation: 0,
                   leadingWidth: 100,
-                  leading: !isFetching && !isInEditing ? Row(
-                    children: [
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      IconButton(
-                        splashRadius: 20,
-                        onPressed: _handleMenuButtonPressed,
-                        icon: ValueListenableBuilder<AdvancedDrawerValue>(
-                          valueListenable: _advancedDrawerController,
-                          builder: (_, value, __) {
-                            return AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 250),
-                              child: Icon(
-                                value.visible ? Icons.clear : Ionicons.menu_outline,
-                                size: 35,
-                                key: ValueKey<bool>(value.visible),
+                  leading: !isFetching && !isInEditing
+                      ? Row(
+                          children: [
+                            const SizedBox(
+                              width: 20,
+                            ),
+                            IconButton(
+                              splashRadius: 20,
+                              onPressed: _handleMenuButtonPressed,
+                              icon: ValueListenableBuilder<AdvancedDrawerValue>(
+                                valueListenable: _advancedDrawerController,
+                                builder: (_, value, __) {
+                                  return AnimatedSwitcher(
+                                    duration: const Duration(milliseconds: 250),
+                                    child: Icon(
+                                      value.visible
+                                          ? Icons.clear
+                                          : Ionicons.menu_outline,
+                                      size: 35,
+                                      key: ValueKey<bool>(value.visible),
+                                    ),
+                                  );
+                                },
                               ),
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                  ) : null,
+                            ),
+                          ],
+                        )
+                      : null,
                   title: !isInEditing
                       ? SvgPicture.asset(
                           'assets/svg/app_logo.svg',
@@ -416,7 +457,8 @@ class _HomePageState extends State<HomePage> {
                                   onPressed: () {
                                     // emit cancel event,
                                     _currentPageIndex == 0
-                                        ? notesBloc.add(NotesExitedEditingEvent())
+                                        ? notesBloc
+                                            .add(NotesExitedEditingEvent())
                                         : todosBloc
                                             .add(TodosExitedEditingEvent());
                                   },
@@ -460,20 +502,121 @@ class _HomePageState extends State<HomePage> {
                             ],
                           ),
                         ),
-                  actions: !isFetching && !isInEditing ? [
-
+                  actions: !isFetching && !isInEditing
+                      ? [
                     Padding(
-                      padding: const EdgeInsets.only(right: 10),
-                      child: IconButton(
-                          onPressed: () {},
-                          splashRadius: 20,
-                          icon: const Icon(
-                            Ionicons.ellipsis_vertical,
-                            color: kWhite,
-                            size: 25,
-                          )),
-                    )
-                  ] : null,
+                      padding: EdgeInsets.zero,
+                      child: PopupMenuButton<String>(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        color: kPinkD2,
+                        icon: const Icon(Ionicons.ellipsis_vertical,size: 25,color: kWhite,),
+                        splashRadius: 20,
+                        onSelected: (value) {
+                          switch (value) {
+                            case 'refetch':
+                              if (_currentPageIndex == 0) {
+                                notesBloc.add(NotesInitialEvent());
+                              } else if (_currentPageIndex == 1) {
+                                todosBloc.add(TodosInitialEvent());
+                              }
+                              break;
+                            case 'sync':
+                              if (_currentPageIndex == 0) {
+                                notesBloc.add(NotesSyncAllNotesEvent());
+                              } else if (_currentPageIndex == 1) {
+                                todosBloc.add(TodosSyncAllTodosEvent());
+                              }
+                              break;
+                            case 'showHidden':
+                              if (_currentPageIndex == 0) {
+                                // Handle show hidden action for notes
+                              } else if (_currentPageIndex == 1) {
+                                // Handle show hidden action for todos
+                              }
+                              break;
+                            case 'showDeleted':
+                              if (_currentPageIndex == 0) {
+                                // Handle show deleted action for notes
+                              } else if (_currentPageIndex == 1) {
+                                // Handle show deleted action for todos
+                              }
+                              break;
+                          }
+                        },
+                        itemBuilder: (BuildContext context) {
+                          return [
+                            PopupMenuItem<String>(
+                              value: 'refetch',
+                              child: ListTile(
+                                contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                                horizontalTitleGap : 5,
+                                leading: const Icon(
+                                  Icons.refresh,
+                                  color: kPinkD1,
+                                ),
+                                title: Text(
+                                  'Reload',
+                                  style: kInter.copyWith(fontSize: 13),
+                                ),
+                                tileColor: Colors.transparent,
+                              ),
+                            ),
+                            PopupMenuItem<String>(
+                              value: 'sync',
+                              child: ListTile(
+                                contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                                horizontalTitleGap : 5,
+                                leading: const Icon(
+                                  Icons.sync,
+                                  color: kPinkD1,
+                                ),
+                                title: Text(
+                                  'Sync All',
+                                  style: kInter.copyWith(fontSize: 13),
+                                ),
+                                tileColor: Colors.transparent,
+                              ),
+                            ),
+                            PopupMenuItem<String>(
+                              value: 'showHidden',
+                              child: ListTile(
+                                contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                                horizontalTitleGap : 5,
+                                leading: const Icon(
+                                  Icons.visibility,
+                                  color: kPinkD1,
+                                ),
+                                title: Text(
+                                  'Show Hidden',
+                                  style: kInter.copyWith(fontSize: 13),
+                                ),
+                                tileColor: Colors.transparent,
+                              ),
+                            ),
+                            PopupMenuItem<String>(
+                              value: 'showDeleted',
+                              child: ListTile(
+                                contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                                horizontalTitleGap : 5,
+                                leading: const Icon(
+                                  Icons.delete,
+                                  color: kPinkD1,
+                                ),
+                                title: Text(
+                                  'Show Deleted',
+                                  style: kInter.copyWith(fontSize: 13),
+                                ),
+                                tileColor: Colors.transparent,
+                              ),
+                            ),
+                          ];
+                        },
+                      ),
+                    ),
+                        ]
+                      : null,
                 ),
                 floatingActionButton: !isInEditing && !isFetching
                     ? FloatingActionButton(
@@ -506,8 +649,9 @@ class _HomePageState extends State<HomePage> {
                   // Create a custom ScrollBehavior
                   child: PageView(
                     controller: _pageController,
-                    physics:
-                        isInEditing ? const NeverScrollableScrollPhysics() : null,
+                    physics: isInEditing
+                        ? const NeverScrollableScrollPhysics()
+                        : null,
                     onPageChanged: (newIndex) {
                       setState(() {
                         _currentPageIndex = newIndex;
@@ -515,11 +659,13 @@ class _HomePageState extends State<HomePage> {
                     },
                     children: [
                       BlocProvider(
-                        create: (context) => notesBloc..add(NotesInitialEvent()),
+                        create: (context) =>
+                            notesBloc..add(NotesInitialEvent()),
                         child: const NotesPage(),
                       ),
                       BlocProvider(
-                        create: (context) => todosBloc..add(TodosInitialEvent()),
+                        create: (context) =>
+                            todosBloc..add(TodosInitialEvent()),
                         child: const TodosPage(),
                       ),
                     ],
