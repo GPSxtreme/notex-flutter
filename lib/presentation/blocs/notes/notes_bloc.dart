@@ -25,6 +25,7 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
     on<NotesSetNoteFavoriteEvent>(handleSetNoteFavorite);
     on<NotesUploadNoteToCloudEvent>(handleUploadNoteToCloud);
     on<NotesSyncSelectedNotesEvent>(handleSyncSelectedNotes);
+    on<NotesSyncAllNotesEvent>(handleSyncAllNotes);
   }
 
   late List<NoteModel> _notes;
@@ -73,7 +74,9 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
         }
       }
 
-      if (!hasInternet || isFetchedNotesEmpty || !SETTINGS.isNotesOnlinePrefetchEnabled) {
+      if (!hasInternet ||
+          isFetchedNotesEmpty ||
+          !SETTINGS.isNotesOnlinePrefetchEnabled) {
         _notes = await LOCAL_DB.getNotes();
 
         if (_notes.isEmpty) {
@@ -106,13 +109,15 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
       emit(NotesOperationFailedState(error.toString()));
     }
   }
+
   FutureOr<void> handleUploadNoteToCloud(
       NotesUploadNoteToCloudEvent event, Emitter<NotesState> emit) async {
     try {
       int noteIndex = _notes.indexWhere((n) => n.id == event.note.id);
       emit(NotesFetchedState(_notes, syncingNotes: [event.note.id]));
       // insert new note.
-      final response = await NotesRepository.addNoteToCloud(event.note,manualUpload: true);
+      final response =
+          await NotesRepository.addNoteToCloud(event.note, manualUpload: true);
       if (response["success"] == true) {
         _notes[noteIndex].updateId(response["id"]);
         _notes[noteIndex].updateIsSynced(true);
@@ -126,28 +131,33 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
     }
   }
 
-  FutureOr<void> handleSyncSelectedNotes(NotesSyncSelectedNotesEvent event , Emitter<NotesState> emit)async{
-    try{
+  FutureOr<void> handleSyncSelectedNotes(
+      NotesSyncSelectedNotesEvent event, Emitter<NotesState> emit) async {
+    try {
       if (_selectedNotes.isEmpty) {
         return;
       } else {
         _selectedNotesController.close();
         emit(NotesExitedEditingState());
-        List<NoteModel> selectedNotesCopy = List.from(_selectedNotes.where((n) => !n.isSynced).toList());
-        if(selectedNotesCopy.isEmpty){
+        List<NoteModel> selectedNotesCopy =
+            List.from(_selectedNotes.where((n) => !n.isSynced).toList());
+        if (selectedNotesCopy.isEmpty) {
           emit(NotesOperationFailedState('All notes are synced 🚀'));
           emit(NotesFetchedState(_notes));
           return;
         }
-        emit(NotesFetchedState(_notes, syncingNotes:selectedNotesCopy.map((e) => e.id).toList())); // emit that notes are being synced/being deleted
+        emit(NotesFetchedState(_notes,
+            syncingNotes: selectedNotesCopy
+                .map((e) => e.id)
+                .toList())); // emit that notes are being synced/being deleted
         await Future.forEach(selectedNotesCopy, (note) async {
-          await NotesRepository.updateNoteInCloud(note,manualUpload: true).then(
-              (response){
-                if(response.success) {
-                  _notes[_notes.indexWhere((n) => n.id == note.id)].updateIsSynced(true);
-                }
-              }
-          );
+          await NotesRepository.updateNoteInCloud(note, manualUpload: true)
+              .then((response) {
+            if (response.success) {
+              _notes[_notes.indexWhere((n) => n.id == note.id)]
+                  .updateIsSynced(true);
+            }
+          });
         }).then((_) {
           // after all the iterations of the for loop the remaining code should execute
           _selectedNotes.clear();
@@ -159,7 +169,7 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
           }
         });
       }
-    }catch(error){
+    } catch (error) {
       emit(NotesOperationFailedState(error.toString()));
     }
   }
@@ -240,7 +250,10 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
         _selectedNotesController.close();
         emit(NotesExitedEditingState());
         var selectedNotesCopy = List.from(_selectedNotes);
-        emit(NotesFetchedState(_notes, syncingNotes:_selectedNotes.map((e) => e.id).toList())); // emit that notes are being synced/being deleted
+        emit(NotesFetchedState(_notes,
+            syncingNotes: _selectedNotes
+                .map((e) => e.id)
+                .toList())); // emit that notes are being synced/being deleted
         await Future.forEach(selectedNotesCopy, (note) async {
           _selectedNotes.remove(note);
           _notes.remove(note);
@@ -308,8 +321,50 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
           .setIsFavorite(event.value);
       _notes[_notes.indexWhere((n) => n.id == event.noteId)]
           .updateIsSynced(false);
-      _notes[_notes.indexWhere((n) => n.id == event.noteId)].setEditedTime(DateTime.now());
+      _notes[_notes.indexWhere((n) => n.id == event.noteId)]
+          .setEditedTime(DateTime.now());
       emit(NotesFetchedState(_notes));
+    } catch (error) {
+      emit(NotesOperationFailedState(error.toString()));
+    }
+  }
+
+  FutureOr<void> handleSyncAllNotes(
+      NotesSyncAllNotesEvent event, Emitter<NotesState> emit) async {
+    try {
+      List<NoteModel> toSyncNotes =
+          _notes.where((n) => !n.isSynced && n.isUploaded).toList();
+      if (_notes.any((n) => !n.isUploaded)) {
+        emit(NotesOperationFailedState(
+            'Notes which are not uploaded will not be synced'));
+      }
+      if (toSyncNotes.isEmpty) {
+        emit(NotesOperationFailedState('All notes are synced 🚀'));
+        emit(NotesFetchedState(_notes));
+        return;
+      }
+      emit(NotesFetchedState(_notes,
+          syncingNotes: toSyncNotes
+              .map((e) => e.id)
+              .toList())); // emit that notes are being synced/being deleted
+      await Future.forEach(toSyncNotes, (note) async {
+        await NotesRepository.updateNoteInCloud(note, manualUpload: true)
+            .then((response) {
+          if (response.success) {
+            _notes[_notes.indexWhere((n) => n.id == note.id)]
+                .updateIsSynced(true);
+          }
+        });
+      }).then((_) {
+        // after all the iterations of the for loop the remaining code should execute
+        _selectedNotes.clear();
+        _temp.clear();
+        if (_notes.isNotEmpty) {
+          emit(NotesFetchedState(_notes, syncingNotes: null));
+        } else {
+          emit(NotesEmptyState());
+        }
+      });
     } catch (error) {
       emit(NotesOperationFailedState(error.toString()));
     }
