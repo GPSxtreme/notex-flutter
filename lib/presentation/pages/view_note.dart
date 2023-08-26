@@ -8,8 +8,8 @@ import '../../main.dart';
 import '../styles/size_config.dart';
 
 class ViewNotePage extends StatefulWidget {
-  const ViewNotePage({super.key, this.noteId, required this.notesBloc});
-
+  const ViewNotePage({super.key, this.noteId, required this.notesBloc,this.isInHiddenMode = false});
+  final bool isInHiddenMode;
   final String? noteId;
   final NotesBloc notesBloc;
 
@@ -111,6 +111,10 @@ class _ViewNotePageState extends State<ViewNotePage> {
   }
 
   Future<void> _saveChanges() async {
+    if( _headingHistoryIndex == 0 && _bodyHistoryIndex == 0){
+      Navigator.of(context).pop();
+      return;
+    }
     if(widget.noteId == null){
       //create new note
       widget.notesBloc.add(NotesAddNoteEvent(note));
@@ -120,7 +124,7 @@ class _ViewNotePageState extends State<ViewNotePage> {
       note.updateIsSynced(false);
       await NotesRepository.updateNote(note)
           .then((_) {
-        widget.notesBloc.add(NotesRefetchNotesEvent(note));
+        widget.notesBloc.add(NotesRefetchNotesEvent(note,isInHiddenMode: widget.isInHiddenMode));
         Navigator.of(context).pop();
       });
     }
