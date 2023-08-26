@@ -278,6 +278,26 @@ class _NotesPageState extends State<NotesPage>
                                   ? SizeConfig.blockSizeVertical! * 3
                                   : SizeConfig.blockSizeVertical! * 2,
                             ),
+                            if(state is NotesFetchedState && state.showHiddenNotes && state is! NotesEditingState) ...[
+                              Row(
+                                children: [
+                                  Text(
+                                    'Hidden',
+                                    style: kInter.copyWith(fontSize: 35,fontWeight: FontWeight.w500),
+                                  ),
+                                  Text(
+                                    ' Notes',
+                                    style: kInter.copyWith(fontSize: 35,fontWeight: FontWeight.w500,color: kPink),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: !_isSyncing ||
+                                    !notesBloc.isSelectedNotesStreamClosed
+                                    ? SizeConfig.blockSizeVertical! * 3
+                                    : SizeConfig.blockSizeVertical! * 2,
+                              ),
+                            ],
                             MasonryGridView.count(
                               crossAxisCount: numberOfColumns,
                               mainAxisSpacing: 10,
