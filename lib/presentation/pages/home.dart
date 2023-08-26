@@ -73,7 +73,7 @@ class _HomePageState extends State<HomePage> {
                     if (_currentPageIndex == 1) {
                       todosBloc.add(TodosDeleteSelectedTodosEvent());
                     } else if (_currentPageIndex == 0) {
-                      notesBloc.add(NotesDeleteSelectedNotesEvent());
+                      notesBloc.add(NotesDeleteSelectedNotesEvent(isInHiddenMode: _isNotesHiddenMode));
                     }
                   }, // button pressed
                   child: Column(
@@ -110,7 +110,7 @@ class _HomePageState extends State<HomePage> {
                       todosBloc.add(TodosSyncSelectedTodosEvent());
                     } else if (_currentPageIndex == 0) {
                       // sync note
-                      notesBloc.add(NotesSyncSelectedNotesEvent());
+                      notesBloc.add(NotesSyncSelectedNotesEvent(isInHiddenMode: _isNotesHiddenMode));
                     }
                   }, // button pressed
                   child: Column(
@@ -143,18 +143,25 @@ class _HomePageState extends State<HomePage> {
                   child: InkWell(
                     splashColor: kPinkD2, // splash color
                     onTap: () {
-                      notesBloc.add(NotesHideSelectedNotesEvent());
+                      !_isNotesHiddenMode ?
+                      notesBloc.add(NotesHideSelectedNotesEvent()) :
+                          notesBloc.add(NotesUnHideSelectedNotesEvent(isInHiddenMode: _isNotesHiddenMode));
                     }, // button pressed
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
+                        !_isNotesHiddenMode ?
                         SvgPicture.asset(
                           'assets/svg/hide_icon.svg',
-                        ), // icon
+                        ): const Icon(
+                          Icons.visibility,
+                          color: kWhite,
+                          size: 30,
+                        ),
                         Padding(
                           padding: const EdgeInsets.only(top: 5),
                           child: Text(
-                            'Hide',
+                            !_isNotesHiddenMode ? 'Hide' : 'Unhide',
                             style: kInter.copyWith(color: kWhite, fontSize: 12),
                           ),
                         ), // text
@@ -224,13 +231,7 @@ class _HomePageState extends State<HomePage> {
         }
       },
       builder: (context, notesState) {
-        if(notesState is NotesFetchedState){
-          _isNotesHiddenMode = notesState.showHiddenNotes;
-        } else if(notesState is NotesEmptyState){
-          _isNotesHiddenMode = notesState.isInHiddenMode;
-        }  else if(notesState is NotesEditingState){
-          _isNotesHiddenMode = notesState.showHiddenNotes;
-        } else if(notesState is NotesEnteredEditingState){
+        if(notesState is NotesState){
           _isNotesHiddenMode = notesState.isInHiddenMode;
         }
         return BlocConsumer(
@@ -526,14 +527,14 @@ class _HomePageState extends State<HomePage> {
                                 switch (value) {
                                   case 'refetch':
                                     if (_currentPageIndex == 0) {
-                                      notesBloc.add(NotesInitialEvent());
+                                      notesBloc.add(NotesInitialEvent(isInHiddenMode: _isNotesHiddenMode));
                                     } else if (_currentPageIndex == 1) {
                                       todosBloc.add(TodosInitialEvent());
                                     }
                                     break;
                                   case 'sync':
                                     if (_currentPageIndex == 0) {
-                                      notesBloc.add(NotesSyncAllNotesEvent());
+                                      notesBloc.add(NotesSyncAllNotesEvent(isInHiddenMode: _isNotesHiddenMode));
                                     } else if (_currentPageIndex == 1) {
                                       todosBloc.add(TodosSyncAllTodosEvent());
                                     }
@@ -634,7 +635,7 @@ class _HomePageState extends State<HomePage> {
                         ]
                       : null,
                 ),
-                floatingActionButton: !isInEditing && !isFetching
+                floatingActionButton: !isInEditing && !isFetching && !(_currentPageIndex == 0 && _isNotesHiddenMode)
                     ? FloatingActionButton(
                         backgroundColor: kPink,
                         onPressed: () {
@@ -676,7 +677,7 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       BlocProvider(
                         create: (context) =>
-                            notesBloc..add(NotesInitialEvent()),
+                            notesBloc..add(const NotesInitialEvent()),
                         child: const NotesPage(),
                       ),
                       BlocProvider(
