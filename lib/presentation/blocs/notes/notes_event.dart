@@ -12,6 +12,10 @@ class NotesRefetchNotesEvent extends NotesEvent {
 }
 
 class NotesEnteredEditingEvent extends NotesEvent {
+  final bool isInHiddenMode;
+
+  NotesEnteredEditingEvent({this.isInHiddenMode = false});
+
 }
 
 class NotesAddNoteEvent extends NotesEvent{
@@ -21,7 +25,10 @@ class NotesAddNoteEvent extends NotesEvent{
 
 }
 
-class NotesExitedEditingEvent extends NotesEvent {}
+class NotesExitedEditingEvent extends NotesEvent {
+  final bool isInHiddenMode;
+  NotesExitedEditingEvent({this.isInHiddenMode = false});
+}
 
 class NotesDeleteSelectedNotesEvent extends NotesEvent {}
 
@@ -31,20 +38,23 @@ class NotesSyncSelectedNotesEvent extends NotesEvent{}
 
 class NotesAreAllNotesSelectedEvent extends NotesEvent {
   final bool areAllSelected;
-  NotesAreAllNotesSelectedEvent(this.areAllSelected);
+  final bool isInHiddenMode;
+  NotesAreAllNotesSelectedEvent(this.areAllSelected,{this.isInHiddenMode = false});
 }
 
 class NotesSetAllNotesSelectedCheckBoxEvent extends NotesEvent {
   final bool flag;
-
-  NotesSetAllNotesSelectedCheckBoxEvent(this.flag);
+  final bool isInHiddenMode;
+  NotesSetAllNotesSelectedCheckBoxEvent(this.flag,{this.isInHiddenMode = false});
 }
 
 class NotesIsNoteSelectedEvent extends NotesEvent{
   final bool isSelected;
   final NoteModel note;
+  final bool isInHiddenMode;
 
-  NotesIsNoteSelectedEvent(this.isSelected, this.note);
+  NotesIsNoteSelectedEvent(this.isSelected, this.note,
+      {this.isInHiddenMode = false});
 }
 
 class NotesSetNoteFavoriteEvent extends NotesEvent{
@@ -59,3 +69,9 @@ class NotesUploadNoteToCloudEvent extends NotesEvent{
 }
 
 class NotesSyncAllNotesEvent extends NotesEvent{}
+
+class NotesShowHiddenNotesEvent extends NotesEvent {
+  final bool value;
+  NotesShowHiddenNotesEvent({this.value = true});
+
+}
