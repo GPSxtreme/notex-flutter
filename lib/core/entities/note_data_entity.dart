@@ -9,7 +9,8 @@ class NoteDataEntity {
   final bool? isSynced;
   final bool isFavorite;
   final bool isUploaded;
-  NoteDataEntity({
+  final bool isHidden;
+  NoteDataEntity( {
     required this.id,
     required this.userId,
     required this.title,
@@ -19,6 +20,7 @@ class NoteDataEntity {
     required this.v,
     this.isSynced,
     required this.isUploaded,
-    required this.isFavorite
+    required this.isFavorite,
+    required this.isHidden
   });
 }
