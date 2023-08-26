@@ -280,6 +280,7 @@ class _NotesPageState extends State<NotesPage>
                             ),
                             if(state is NotesFetchedState && state.showHiddenNotes && state is! NotesEditingState) ...[
                               Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
                                     'Hidden',
@@ -290,6 +291,10 @@ class _NotesPageState extends State<NotesPage>
                                     style: kInter.copyWith(fontSize: 35,fontWeight: FontWeight.w500,color: kPink),
                                   ),
                                 ],
+                              ),
+                              Divider(
+                                color: kPinkD1,
+                                endIndent: 25,indent: 25,
                               ),
                               SizedBox(
                                 height: !_isSyncing ||
