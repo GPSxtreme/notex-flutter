@@ -20,6 +20,7 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
     on<NotesAreAllNotesSelectedEvent>(handleAreAllNotesSelected);
     on<NotesDeleteSelectedNotesEvent>(handleDeleteNotes);
     on<NotesHideSelectedNotesEvent>(handleHideNotes);
+    on<NotesUnHideSelectedNotesEvent>(handleUnhideNotes);
     on<NotesIsNoteSelectedEvent>(handleNoteSelect);
     on<NotesSetAllNotesSelectedCheckBoxEvent>(handleSetAllNotesSelectCheckBox);
     on<NotesSetNoteFavoriteEvent>(handleSetNoteFavorite);
@@ -49,30 +50,30 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
   }
 
   void emitNotesFetchedState(Emitter emit,
-      {List<String>? syncingNotes, bool showHidden = false}) {
-    if (showHidden) {
+      {List<String>? syncingNotes, bool isInHiddenMode = false}) {
+    if (isInHiddenMode) {
       List<NoteModel> modList = _notes.where((n) => n.isHidden).toList();
       if(modList.isEmpty){
-        emit(NotesEmptyState(isInHiddenMode: true));
+        emit(const NotesEmptyState(isInHiddenMode: true));
       }else{
         emit(NotesFetchedState(modList,
-            syncingNotes: syncingNotes, showHiddenNotes: showHidden));
+            syncingNotes: syncingNotes, isInHiddenMode: isInHiddenMode));
       }
     } else {
       List<NoteModel> modList = _notes.where((n) => !n.isHidden).toList();
       if(modList.isEmpty){
-        emit(NotesEmptyState());
+        emit(const NotesEmptyState());
       }else{
         emit(NotesFetchedState(_notes.where((n) => !n.isHidden).toList(),
-            syncingNotes: syncingNotes, showHiddenNotes: showHidden));
+            syncingNotes: syncingNotes, isInHiddenMode: isInHiddenMode));
       }
     }
   }
 
-  void emitNotesEditingState(Emitter emit,{List<String>? syncingNotes ,List<String>? selectedNotesIds,bool areAllSelected = false,bool showHidden = false}){
-    if(showHidden){
+  void emitNotesEditingState(Emitter emit,{List<String>? syncingNotes ,List<String>? selectedNotesIds,bool areAllSelected = false,bool isInHiddenMode = false}){
+    if(isInHiddenMode){
       List<NoteModel> modList = _notes.where((n) => n.isHidden).toList();
-      emit(NotesEditingState(modList,syncingNotes: syncingNotes,areAllSelected: areAllSelected,selectedNotesIds: selectedNotesIds,showHiddenNotes: true));
+      emit(NotesEditingState(modList,syncingNotes: syncingNotes,areAllSelected: areAllSelected,selectedNotesIds: selectedNotesIds,isInHiddenMode: true));
     }else{
       List<NoteModel> modList = _notes.where((n) => !n.isHidden).toList();
       emit(NotesEditingState(modList,syncingNotes: syncingNotes,areAllSelected: areAllSelected,selectedNotesIds: selectedNotesIds));
@@ -83,7 +84,6 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
       NotesInitialEvent event, Emitter<NotesState> emit) async {
     try {
       emit(NotesFetchingState());
-
       final connectivityResult = await Connectivity().checkConnectivity();
       final hasInternet = (connectivityResult == ConnectivityResult.mobile ||
           connectivityResult == ConnectivityResult.wifi);
@@ -97,7 +97,7 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
           _notes = await NotesRepository.syncOnlineNotes(onlineFetchedNotes);
 
           if (_notes.isNotEmpty) {
-            emitNotesFetchedState(emit);
+            emitNotesFetchedState(emit,isInHiddenMode: event.isInHiddenMode);
           } else {
             isFetchedNotesEmpty = true;
           }
@@ -111,9 +111,9 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
           !SETTINGS.isNotesOnlinePrefetchEnabled) {
         _notes = await LOCAL_DB.getNotes();
         if (_notes.isEmpty) {
-          emit(NotesEmptyState());
+          emit(NotesEmptyState(isInHiddenMode: event.isInHiddenMode));
         } else {
-          emitNotesFetchedState(emit);
+          emitNotesFetchedState(emit,isInHiddenMode: event.isInHiddenMode);
         }
       }
     } catch (error) {
@@ -169,15 +169,16 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
         return;
       } else {
         _selectedNotesController.close();
-        emit(NotesExitedEditingState());
+        emit(NotesExitedEditingState(isInHiddenMode: event.isInHiddenMode));
         List<NoteModel> selectedNotesCopy =
             List.from(_selectedNotes.where((n) => !n.isSynced).toList());
         if (selectedNotesCopy.isEmpty) {
           emit(NotesOperationFailedState('All notes are synced 🚀'));
-          emitNotesFetchedState(emit);
+          emitNotesFetchedState(emit,isInHiddenMode: event.isInHiddenMode);
           return;
         }
         emitNotesFetchedState(emit,
+            isInHiddenMode: event.isInHiddenMode,
             syncingNotes: selectedNotesCopy
                 .map((e) => e.id)
                 .toList()); // emit that notes are being synced/being deleted
@@ -194,9 +195,9 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
           _selectedNotes.clear();
           _temp.clear();
           if (_notes.isNotEmpty) {
-            emitNotesFetchedState(emit);
+            emitNotesFetchedState(emit,isInHiddenMode: event.isInHiddenMode);
           } else {
-            emit(NotesEmptyState());
+            emit(NotesEmptyState(isInHiddenMode: event.isInHiddenMode));
           }
         });
       }
@@ -215,8 +216,6 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
       if (existingIndex != -1) {
         // Remove the existing note
         _notes.removeAt(existingIndex);
-        // update note in local db
-        await NotesRepository.updateNote(note);
       } else {
         // add note in local db
         await NotesRepository.addNote(note);
@@ -224,13 +223,13 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
       // Push new note at the starting index
       _notes.insert(0, note);
     }
-    emitNotesFetchedState(emit);
+    emitNotesFetchedState(emit,isInHiddenMode: event.isInHiddenMode);
   }
 
   FutureOr<void> handleEnterEditing(
       NotesEnteredEditingEvent event, Emitter emit) async {
     emit(NotesEnteredEditingState(isInHiddenMode: event.isInHiddenMode));
-    emitNotesEditingState(emit,showHidden: event.isInHiddenMode,
+    emitNotesEditingState(emit,isInHiddenMode: event.isInHiddenMode,
         areAllSelected: false);
     // Notify the stream listeners about the changes in _selectedTodos
     if (isSelectedNotesStreamClosed) {
@@ -242,8 +241,8 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
 
   FutureOr<void> handleExitedEditing(
       NotesExitedEditingEvent event, Emitter emit) async {
-    emit(NotesExitedEditingState());
-    emitNotesFetchedState(emit,showHidden: event.isInHiddenMode);
+    emit(const NotesExitedEditingState());
+    emitNotesFetchedState(emit,isInHiddenMode: event.isInHiddenMode);
     // reset _selectedTodos list
     _selectedNotes.clear();
     // reset _temp list
@@ -263,12 +262,12 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
       if (_temp.length < _selectedNotes.length &&
           _selectedNotes.length == _notes.length) {
         _selectedNotes.clear();
-        emitNotesEditingState(emit,showHidden: event.isInHiddenMode,
+        emitNotesEditingState(emit,isInHiddenMode: event.isInHiddenMode,
             selectedNotesIds: null, areAllSelected: false);
       }
       _selectedNotes.removeWhere((note) => _temp.contains(note));
     }
-    emitNotesEditingState(emit,showHidden: event.isInHiddenMode,
+    emitNotesEditingState(emit,isInHiddenMode: event.isInHiddenMode,
         selectedNotesIds: _selectedNotes.map((note) => note.id).toList(),
         areAllSelected: event.areAllSelected);
   }
@@ -280,9 +279,10 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
         return;
       } else {
         _selectedNotesController.close();
-        emit(NotesExitedEditingState());
+        emit(NotesExitedEditingState(isInHiddenMode: event.isInHiddenMode));
         var selectedNotesCopy = List.from(_selectedNotes);
         emitNotesFetchedState(emit,
+            isInHiddenMode: event.isInHiddenMode,
             syncingNotes: _selectedNotes
                 .map((e) => e.id)
                 .toList()); // emit that notes are being synced/being deleted
@@ -296,9 +296,9 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
           _selectedNotes.clear();
           _temp.clear();
           if (_notes.isNotEmpty) {
-            emitNotesFetchedState(emit);
+            emitNotesFetchedState(emit,isInHiddenMode: event.isInHiddenMode);
           } else {
-            emit(NotesEmptyState());
+            emit(NotesEmptyState(isInHiddenMode: event.isInHiddenMode));
           }
         });
       }
@@ -314,7 +314,7 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
         return;
       } else {
         _selectedNotesController.close();
-        emit(NotesExitedEditingState());
+        emit(const NotesExitedEditingState());
         var selectedNotesCopy = List.from(_selectedNotes);
         emitNotesFetchedState(emit,
             syncingNotes: _selectedNotes
@@ -332,7 +332,40 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
           if (_notes.isNotEmpty) {
             emitNotesFetchedState(emit);
           } else {
-            emit(NotesEmptyState());
+            emit(const NotesEmptyState());
+          }
+        });
+      }
+    } catch (error) {
+      emit(NotesOperationFailedState(error.toString()));
+    }
+  }
+
+  FutureOr<void> handleUnhideNotes(NotesUnHideSelectedNotesEvent event , Emitter<NotesState> emit)async{
+    try {
+      if (_selectedNotes.isEmpty) {
+        return;
+      } else {
+        _selectedNotesController.close();
+        emit(NotesExitedEditingState(isInHiddenMode: event.isInHiddenMode));
+        var selectedNotesCopy = List.from(_selectedNotes);
+        emitNotesFetchedState(emit,
+            isInHiddenMode: event.isInHiddenMode,
+            syncingNotes: _selectedNotes
+                .map((e) => e.id)
+                .toList()); // emit that notes are being synced/being hidden
+        await Future.forEach(selectedNotesCopy, (note) async {
+          _selectedNotes.remove(note);
+          _notes[_notes.indexWhere((n) => n.id == note.id)].setIsHidden(false);
+          await NotesRepository.setNoteHidden(note,false); // should go to next iteration until this operation is completed
+        }).then((_) {
+          // after all the iterations of the for loop the remaining code should execute
+          _selectedNotes.clear();
+          _temp.clear();
+          if (_notes.isNotEmpty) {
+            emitNotesFetchedState(emit,isInHiddenMode: event.isInHiddenMode);
+          } else {
+            emit(NotesEmptyState(isInHiddenMode: event.isInHiddenMode));
           }
         });
       }
@@ -343,7 +376,7 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
 
   FutureOr<void> handleShowHiddenNotes(NotesShowHiddenNotesEvent event , Emitter<NotesState> emit){
     try{
-      emitNotesFetchedState(emit , showHidden: event.value);
+      emitNotesFetchedState(emit , isInHiddenMode: event.value);
     }catch(error){
       emit(NotesOperationFailedState(error.toString()));
     }
@@ -369,7 +402,7 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
       // Notify the stream listeners about the changes in _selectedNotes
       _selectedNotesController.add(_selectedNotes);
       // rebuild to show changes
-      emitNotesEditingState(emit,showHidden: event.isInHiddenMode,
+      emitNotesEditingState(emit,isInHiddenMode: event.isInHiddenMode,
           selectedNotesIds: _selectedNotes.map((e) => e.id).toList());
     } catch (error) {
       emit(NotesOperationFailedState(error.toString()));
@@ -379,7 +412,7 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
   FutureOr<void> handleSetAllNotesSelectCheckBox(
       NotesSetAllNotesSelectedCheckBoxEvent event, Emitter emit) {
     emit(NotesSetAllNotesSelectedCheckBoxState(event.flag));
-    emitNotesEditingState(emit,showHidden: event.isInHiddenMode,
+    emitNotesEditingState(emit,isInHiddenMode: event.isInHiddenMode,
         areAllSelected: false,
         selectedNotesIds: _selectedNotes.map((e) => e.id).toList());
   }
@@ -387,12 +420,12 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
   FutureOr<void> handleSetNoteFavorite(
       NotesSetNoteFavoriteEvent event, Emitter<NotesState> emit) async {
     try {
-      await NotesRepository.setNoteFavorite(event.noteId, event.value);
-      _notes[_notes.indexWhere((n) => n.id == event.noteId)]
+      await NotesRepository.setNoteFavorite(event.note, event.value);
+      _notes[_notes.indexWhere((n) => n.id == event.note.id)]
           .setIsFavorite(event.value);
-      _notes[_notes.indexWhere((n) => n.id == event.noteId)]
+      _notes[_notes.indexWhere((n) => n.id == event.note.id)]
           .updateIsSynced(false);
-      _notes[_notes.indexWhere((n) => n.id == event.noteId)]
+      _notes[_notes.indexWhere((n) => n.id == event.note.id)]
           .setEditedTime(DateTime.now());
       emitNotesFetchedState(emit);
     } catch (error) {
@@ -411,10 +444,11 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
       }
       if (toSyncNotes.isEmpty) {
         emit(NotesOperationFailedState('All notes are synced 🚀'));
-        emitNotesFetchedState(emit);
+        emitNotesFetchedState(emit,isInHiddenMode: event.isInHiddenMode);
         return;
       }
       emitNotesFetchedState(emit,
+          isInHiddenMode: event.isInHiddenMode,
           syncingNotes: toSyncNotes
               .map((e) => e.id)
               .toList()); // emit that notes are being synced/being deleted
@@ -431,9 +465,9 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
         _selectedNotes.clear();
         _temp.clear();
         if (_notes.isNotEmpty) {
-          emitNotesFetchedState(emit);
+          emitNotesFetchedState(emit,isInHiddenMode: event.isInHiddenMode);
         } else {
-          emit(NotesEmptyState());
+          emit(NotesEmptyState(isInHiddenMode: event.isInHiddenMode));
         }
       });
     } catch (error) {
