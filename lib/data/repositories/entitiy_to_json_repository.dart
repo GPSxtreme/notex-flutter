@@ -14,7 +14,8 @@ class EntityToJson {
       '__v': note.v,
       'isSynced': isSynced ? 1 : 0,
       'isFavorite' : note.isFavorite ? 1 : 0,
-      'isUploaded' : note.isUploaded ? 1 : 0
+      'isUploaded' : note.isUploaded ? 1 : 0,
+      'isHidden' : note.isHidden ? 1 : 0,
     };
     return noteMap;
   }
