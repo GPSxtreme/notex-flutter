@@ -4,6 +4,10 @@
 
 import 'dart:convert';
 
+import 'package:uuid/uuid.dart';
+
+import '../../main.dart';
+
 NoteModel noteModelFromJson(String str) => NoteModel.fromJson(json.decode(str));
 
 String noteModelToJson(NoteModel data) => json.encode(data.toJson());
@@ -15,10 +19,11 @@ class NoteModel {
   String body;
   final DateTime createdTime;
   DateTime editedTime;
-  final int v;
+  int v;
   dynamic isSynced;
   dynamic isFavorite;
   dynamic isUploaded;
+  dynamic isHidden;
 
   NoteModel({
     required this.id,
@@ -30,7 +35,8 @@ class NoteModel {
     required this.v,
     this.isSynced = false,
     this.isFavorite = false,
-    this.isUploaded = false
+    this.isUploaded = false,
+    this.isHidden = false,
   });
 
   void updateIsSynced(dynamic value) => isSynced = value;
@@ -38,6 +44,18 @@ class NoteModel {
   void setIsFavorite(bool value) => isFavorite = value;
   void setIsUploaded(bool value) => isUploaded = value;
   void setEditedTime(DateTime time) => editedTime = time.toUtc();
+  void setIsHidden(dynamic value) => isHidden = value;
+  void incV() => v++;
+
+  factory NoteModel.createEmptyNote() => NoteModel(
+      id: const Uuid().v4(),
+      userId: USER.data!.userId,
+      title: '',
+      body: '',
+      createdTime: DateTime.now().toUtc(),
+      editedTime: DateTime.now().toUtc(),
+      v: 0
+  );
 
   factory NoteModel.fromJson(Map<String, dynamic> json) => NoteModel(
     id: json["_id"],
@@ -47,6 +65,7 @@ class NoteModel {
     createdTime: DateTime.parse(json["createdTime"]),
     editedTime: DateTime.parse(json["editedTime"]),
     isFavorite: json['isFavorite'],
+    isHidden: json['isHidden'],
     v: json["__v"],
   );
   factory NoteModel.fromJsonOfLocalDb(Map<String, dynamic> json) => NoteModel(
@@ -60,6 +79,7 @@ class NoteModel {
     isSynced: json["isSynced"] == 0 ? false : true,
     isFavorite: json['isFavorite'] == 0 ? false : true,
     isUploaded: json['isUploaded'] == 0 ? false : true,
+    isHidden: json['isHidden'] == 0 ? false : true,
   );
 
   Map<String, dynamic> toJson() => {
@@ -69,7 +89,10 @@ class NoteModel {
     "body": body,
     "createdTime": createdTime.toIso8601String(),
     "editedTime": editedTime.toIso8601String(),
+    'isSynced' : isSynced,
     'isFavorite' : isFavorite,
+    'isHidden' : isHidden,
+    'isUploaded' : isUploaded,
     "__v": v,
   };
   Map<String, dynamic> toJsonToServerAdd() => {
@@ -85,6 +108,7 @@ class NoteModel {
     "createdTime": createdTime.toIso8601String(),
     "editedTime": editedTime.toIso8601String(),
     'isFavorite' : isFavorite,
+    'isHidden' : isHidden,
     "__v": v,
   };
 }
