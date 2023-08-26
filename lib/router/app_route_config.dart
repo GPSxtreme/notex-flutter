@@ -18,7 +18,7 @@ class MyAppRouter {
     final rootNavigatorKey = GlobalKey<NavigatorState>();
 
     return GoRouter(
-        initialLocation: '/',
+        initialLocation: '/home',
         navigatorKey: rootNavigatorKey,
         routes: [
           GoRoute(
@@ -61,13 +61,13 @@ class MyAppRouter {
                 routes: [
                   GoRoute(
                     name: AppRouteConstants.noteViewRouteName,
-                    path: 'view_note/:noteId',
+                    path: 'view_note/:noteId/:isInHiddenMode',
                     pageBuilder: (BuildContext context, GoRouterState state) {
-                      String? noteId;
-                      noteId = state.pathParameters['noteId'] == 'new' ? null : state.pathParameters['noteId']; // Obtain the noteId from the GoRouterState if passed
+                       String? inHiddenMode = state.pathParameters['isInHiddenMode'];
+                       String? noteId = state.pathParameters['noteId'] == 'new' ? null : state.pathParameters['noteId']; // Obtain the noteId from the GoRouterState if passed
                       final notesBloc = state.extra! as NotesBloc;
                       return MaterialPage(
-                        child: ViewNotePage(noteId: noteId,notesBloc: notesBloc), // Pass the noteId as a parameter to the ViewNotePage
+                        child: ViewNotePage(noteId: noteId,notesBloc: notesBloc,isInHiddenMode: inHiddenMode == 'true',), // Pass the noteId as a parameter to the ViewNotePage
                       );
                     },
                   ),
