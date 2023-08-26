@@ -28,6 +28,7 @@ class _NotesPageState extends State<NotesPage>
   late List<NoteModel> _notes;
   bool _isSyncing = false;
   int _noOfNotesSyncing = 0;
+  bool _isHiddenMode = false;
 
   @override
   bool get wantKeepAlive => true;
@@ -65,6 +66,9 @@ class _NotesPageState extends State<NotesPage>
         }
       },
       builder: (context, state) {
+        if(state is NotesState){
+          _isHiddenMode = state.isInHiddenMode;
+        }
         if (state is NotesFetchedState) {
           _notes = state.notes;
           if (state.syncingNotes != null) {
@@ -92,9 +96,9 @@ class _NotesPageState extends State<NotesPage>
                     bottom: 0,
                     left: SizeConfig.screenWidth! * 0.1,
                     right: SizeConfig.screenWidth! * 0.1,
-                    child: SvgPicture.asset(
-                      "assets/svg/magnify-glass.svg",
-                    ),
+                    child:  SvgPicture.asset(
+                      !_isHiddenMode ? "assets/svg/magnify-glass.svg" : "assets/svg/incognito.svg",
+                    )
                   ),
                   // showed when no notes are found
                   Positioned(
@@ -127,7 +131,7 @@ class _NotesPageState extends State<NotesPage>
                             ],
                           ),
                           Text(
-                            'Found',
+                            _isHiddenMode ? 'Hidden' : 'Found',
                             style: kInter.copyWith(
                                 fontSize: 30, fontWeight: FontWeight.w500),
                           ),
@@ -135,6 +139,8 @@ class _NotesPageState extends State<NotesPage>
                             height: SizeConfig.blockSizeVertical! * 3,
                           ),
                           Text(
+                            _isHiddenMode ?
+                            "You can hide a note by long pressing and selecting hide option from the bottom action bar":
                             "You can add new note by pressing\nAdd button at the bottom",
                             style:
                                 kInter.copyWith(fontSize: 15, color: kWhite24),
@@ -278,21 +284,21 @@ class _NotesPageState extends State<NotesPage>
                                   ? SizeConfig.blockSizeVertical! * 3
                                   : SizeConfig.blockSizeVertical! * 2,
                             ),
-                            if(state is NotesFetchedState && state.showHiddenNotes && state is! NotesEditingState) ...[
+                            if(state is NotesFetchedState && state.isInHiddenMode && state is! NotesEditingState && !_isSyncing) ...[
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
                                     'Hidden',
-                                    style: kInter.copyWith(fontSize: 35,fontWeight: FontWeight.w500),
+                                    style: kInter.copyWith(fontSize: 30,fontWeight: FontWeight.w500),
                                   ),
                                   Text(
-                                    ' Notes',
-                                    style: kInter.copyWith(fontSize: 35,fontWeight: FontWeight.w500,color: kPink),
+                                    ' Notes (${_notes.length})',
+                                    style: kInter.copyWith(fontSize: 30,fontWeight: FontWeight.w500,color: kPink),
                                   ),
                                 ],
                               ),
-                              Divider(
+                              const Divider(
                                 color: kPinkD1,
                                 endIndent: 25,indent: 25,
                               ),
