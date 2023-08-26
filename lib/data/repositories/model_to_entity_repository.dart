@@ -27,6 +27,7 @@ class ModelToEntityRepository {
       isSynced: synced ?? model.isSynced,
       isUploaded: model.isUploaded,
       isFavorite: model.isFavorite,
+      isHidden : model.isHidden
     );
   }
 
