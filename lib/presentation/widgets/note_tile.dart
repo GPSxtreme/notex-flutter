@@ -38,17 +38,17 @@ class _NoteTileState extends State<NoteTile> {
 
   _inEditOnTap() {
     if (_areAllSelected) {
-      widget.notesBloc.add(NotesSetAllNotesSelectedCheckBoxEvent(false));
+      widget.notesBloc.add(NotesSetAllNotesSelectedCheckBoxEvent(false,isInHiddenMode: widget.note.isHidden));
       _areAllSelected = false;
       if (_areAllSelected && !_isSelected) {
         _isSelected = true;
       } else {
         _isSelected = false;
       }
-      widget.notesBloc.add(NotesIsNoteSelectedEvent(_isSelected, widget.note));
+      widget.notesBloc.add(NotesIsNoteSelectedEvent(_isSelected, widget.note,isInHiddenMode: widget.note.isHidden));
     } else {
       _isSelected = !_isSelected;
-      widget.notesBloc.add(NotesIsNoteSelectedEvent(_isSelected, widget.note));
+      widget.notesBloc.add(NotesIsNoteSelectedEvent(_isSelected, widget.note,isInHiddenMode: widget.note.isHidden));
     }
   }
 
@@ -99,7 +99,8 @@ class _NoteTileState extends State<NoteTile> {
               splashColor: kPink,
               borderRadius: BorderRadius.circular(20.0),
               onLongPress: () {
-                widget.notesBloc.add(NotesEnteredEditingEvent());
+                print('widget.note.isHidden : ${widget.note.isHidden}');
+                widget.notesBloc.add(NotesEnteredEditingEvent(isInHiddenMode: widget.note.isHidden));
                 _inEditOnTap();
               },
               onTap: () {
@@ -228,6 +229,10 @@ class _NoteTileState extends State<NoteTile> {
                         ),
                         Text(
                           'is uploaded : ${widget.note.isUploaded}',
+                          style: kInter.copyWith(color: kWhite75, fontSize: 10),
+                        ),
+                        Text(
+                          'is hidden : ${widget.note.isHidden}',
                           style: kInter.copyWith(color: kWhite75, fontSize: 10),
                         ),
                         Text(
