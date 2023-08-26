@@ -37,7 +37,8 @@ class LocalDatabaseRepository {
         __v INTEGER,
         isSynced INTEGER,
         isFavorite INTEGER,
-        isUploaded INTEGER
+        isUploaded INTEGER,
+        isHidden INTEGER
       )
     ''');
     } catch (error) {
@@ -71,6 +72,17 @@ class LocalDatabaseRepository {
       await _database.update('notes', {'_id': newId},
           where: '_id = ?',
           whereArgs: [oldId],
+          conflictAlgorithm: ConflictAlgorithm.replace);
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  Future<void> setNoteIsHidden(String noteId, bool value) async{
+    try {
+      await _database.update('notes', {'isHidden': value ? 1 : 0},
+          where: '_id = ?',
+          whereArgs: [noteId],
           conflictAlgorithm: ConflictAlgorithm.replace);
     } catch (e) {
       throw Exception(e);
