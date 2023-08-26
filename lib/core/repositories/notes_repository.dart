@@ -181,6 +181,8 @@ class NotesRepository {
 
   static Future<GenericServerResponse> updateNote(NoteModel note) async {
     try {
+      // increase version
+      note.incV();
       // Update note in local storage immediately
       await LOCAL_DB.updateNote(ModelToEntityRepository.mapToNoteEntity(model: note));
       // set note un-synced
@@ -227,15 +229,17 @@ class NotesRepository {
     }
   }
 
-  static Future<void> setNoteFavorite(String id,bool value)async{
-    // update favorite field
-    await LOCAL_DB.setNoteFavorite(id, value);
-    // update status
-    await LOCAL_DB.setNoteSynced(id,false);
+  static Future<void> setNoteFavorite(NoteModel note,bool value)async{
+    // increase version
+    note.incV();
+    await LOCAL_DB.setNoteFavorite(note.id, value);
+    await LOCAL_DB.setNoteSynced(note.id,false);
   }
 
-  static Future<void> setNoteHidden(String id, bool value)async{
-    await LOCAL_DB.setNoteIsHidden(id, value);
-    await LOCAL_DB.setNoteSynced(id,false);
+  static Future<void> setNoteHidden(NoteModel note, bool value)async{
+    // increase version
+    note.incV();
+    await LOCAL_DB.setNoteIsHidden(note.id, value);
+    await LOCAL_DB.setNoteSynced(note.id,false);
   }
 }
