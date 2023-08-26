@@ -24,7 +24,6 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
     on<TodosExitedEditingEvent>(handleEditingExit);
     on<TodosIsTodoSelectedEvent>(handleTodoSelect);
     on<TodosDeleteSelectedTodosEvent>(handleDeleteSelectedTodos);
-    on<TodosHideSelectedTodosEvent>(handleHideSelectedTodos);
     on<TodosUploadTodosToCloudEvent>(handleUploadTodosToCloud);
     on<TodosSyncSelectedTodosEvent>(handleSyncSelectedTodos);
     on<TodosSyncAllTodosEvent>(handleSyncAllTodos);
@@ -331,12 +330,6 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
       emit(TodosOperationFailedState(error.toString()));
     }
   }
-
-  FutureOr<void> handleHideSelectedTodos(
-      TodosHideSelectedTodosEvent event, Emitter<TodosState> emit) async {
-    // hide all selected todos
-  }
-
   FutureOr<void> handleSyncAllTodos(
       TodosSyncAllTodosEvent event, Emitter<TodosState> emit) async {
     try {
