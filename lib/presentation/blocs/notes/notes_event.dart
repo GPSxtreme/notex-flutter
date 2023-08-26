@@ -1,77 +1,83 @@
 part of 'notes_bloc.dart';
 
 @immutable
-abstract class NotesEvent {}
+abstract class NotesEvent {
+  final bool isInHiddenMode;
+  const NotesEvent({this.isInHiddenMode = false});
+}
 
-class NotesInitialEvent extends NotesEvent {}
+class NotesInitialEvent extends NotesEvent {
+  const NotesInitialEvent({super.isInHiddenMode});
+}
 
 class NotesRefetchNotesEvent extends NotesEvent {
   final NoteModel? note;
 
-  NotesRefetchNotesEvent(this.note);
+  const NotesRefetchNotesEvent(this.note,{super.isInHiddenMode});
 }
 
 class NotesEnteredEditingEvent extends NotesEvent {
-  final bool isInHiddenMode;
-
-  NotesEnteredEditingEvent({this.isInHiddenMode = false});
-
+  const NotesEnteredEditingEvent({super.isInHiddenMode});
 }
 
 class NotesAddNoteEvent extends NotesEvent{
   final NoteModel newNote;
 
-  NotesAddNoteEvent(this.newNote);
-
+  const NotesAddNoteEvent(this.newNote);
 }
 
 class NotesExitedEditingEvent extends NotesEvent {
-  final bool isInHiddenMode;
-  NotesExitedEditingEvent({this.isInHiddenMode = false});
+  const NotesExitedEditingEvent({super.isInHiddenMode});
 }
 
-class NotesDeleteSelectedNotesEvent extends NotesEvent {}
+class NotesDeleteSelectedNotesEvent extends NotesEvent {
+  const NotesDeleteSelectedNotesEvent({super.isInHiddenMode});
+}
 
 class NotesHideSelectedNotesEvent extends NotesEvent{}
 
-class NotesSyncSelectedNotesEvent extends NotesEvent{}
+class NotesUnHideSelectedNotesEvent extends NotesEvent{
+  const NotesUnHideSelectedNotesEvent({super.isInHiddenMode});
+}
+
+class NotesSyncSelectedNotesEvent extends NotesEvent{
+  const NotesSyncSelectedNotesEvent({super.isInHiddenMode});
+}
 
 class NotesAreAllNotesSelectedEvent extends NotesEvent {
   final bool areAllSelected;
-  final bool isInHiddenMode;
-  NotesAreAllNotesSelectedEvent(this.areAllSelected,{this.isInHiddenMode = false});
+  const NotesAreAllNotesSelectedEvent(this.areAllSelected,
+      {super.isInHiddenMode});
 }
 
 class NotesSetAllNotesSelectedCheckBoxEvent extends NotesEvent {
   final bool flag;
-  final bool isInHiddenMode;
-  NotesSetAllNotesSelectedCheckBoxEvent(this.flag,{this.isInHiddenMode = false});
+  const NotesSetAllNotesSelectedCheckBoxEvent(this.flag,{super.isInHiddenMode});
 }
 
 class NotesIsNoteSelectedEvent extends NotesEvent{
   final bool isSelected;
   final NoteModel note;
-  final bool isInHiddenMode;
-
-  NotesIsNoteSelectedEvent(this.isSelected, this.note,
-      {this.isInHiddenMode = false});
+  const NotesIsNoteSelectedEvent(this.isSelected, this.note,{super.isInHiddenMode});
 }
 
 class NotesSetNoteFavoriteEvent extends NotesEvent{
-  final String noteId;
+  final NoteModel note;
   final bool value;
-  NotesSetNoteFavoriteEvent(this.value, this.noteId);
+  const NotesSetNoteFavoriteEvent(this.value, this.note);
 }
 
 class NotesUploadNoteToCloudEvent extends NotesEvent{
   final NoteModel note;
-  NotesUploadNoteToCloudEvent(this.note);
+  const NotesUploadNoteToCloudEvent(this.note);
 }
 
-class NotesSyncAllNotesEvent extends NotesEvent{}
+class NotesSyncAllNotesEvent extends NotesEvent{
+  const NotesSyncAllNotesEvent({super.isInHiddenMode});
+}
 
 class NotesShowHiddenNotesEvent extends NotesEvent {
   final bool value;
-  NotesShowHiddenNotesEvent({this.value = true});
+  const NotesShowHiddenNotesEvent({this.value = true});
 
 }
