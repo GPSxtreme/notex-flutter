@@ -3,7 +3,6 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:notex/data/models/note_model.dart';
 import 'package:notex/presentation/blocs/notes/notes_bloc.dart';
 import 'package:notex/presentation/styles/app_styles.dart';
-import 'package:uuid/uuid.dart';
 import '../../core/repositories/notes_repository.dart';
 import '../../main.dart';
 import '../styles/size_config.dart';
@@ -40,15 +39,7 @@ class _ViewNotePageState extends State<ViewNotePage> {
       _bodyController.text = note.body;
     } else {
       // create new note
-      final user = USER.data;
-      note = NoteModel(
-          id: const Uuid().v4(),
-          userId: user!.userId,
-          title: '',
-          body: '',
-          createdTime: DateTime.now().toUtc(),
-          editedTime: DateTime.now().toUtc(),
-          v: 0);
+      note = NoteModel.createEmptyNote();
     }
     _headingFocusNode = FocusNode();
     _bodyFocusNode = FocusNode();
