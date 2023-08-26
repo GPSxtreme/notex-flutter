@@ -233,4 +233,9 @@ class NotesRepository {
     // update status
     await LOCAL_DB.setNoteSynced(id,false);
   }
+
+  static Future<void> setNoteHidden(String id, bool value)async{
+    await LOCAL_DB.setNoteIsHidden(id, value);
+    await LOCAL_DB.setNoteSynced(id,false);
+  }
 }
