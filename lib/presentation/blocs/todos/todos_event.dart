@@ -52,8 +52,6 @@ class TodosIsTodoSelectedEvent extends TodosEvent {
 
 class TodosDeleteSelectedTodosEvent extends TodosEvent {}
 
-class TodosHideSelectedTodosEvent extends TodosEvent {}
-
 class TodosExitedEditingEvent extends TodosEvent {}
 
 class TodosUploadTodosToCloudEvent extends TodosEvent {
