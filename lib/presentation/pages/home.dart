@@ -32,6 +32,7 @@ class _HomePageState extends State<HomePage> {
   final TodosBloc todosBloc = TodosBloc();
   bool _selectAllTodos = false;
   bool _selectAllNotes = false;
+  bool _isNotesHiddenMode = false;
   final _advancedDrawerController = AdvancedDrawerController();
 
   @override
@@ -133,39 +134,36 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-          SizedBox.fromSize(
-            size: const Size(56, 56), // button width and height
-            child: ClipOval(
-              child: Material(
-                color: Colors.transparent, // button color
-                child: InkWell(
-                  splashColor: kPinkD2, // splash color
-                  onTap: () {
-                    if (_currentPageIndex == 1) {
-                      todosBloc.add(TodosHideSelectedTodosEvent());
-                    } else if (_currentPageIndex == 0) {
+          if (_currentPageIndex == 0)
+            SizedBox.fromSize(
+              size: const Size(56, 56), // button width and height
+              child: ClipOval(
+                child: Material(
+                  color: Colors.transparent, // button color
+                  child: InkWell(
+                    splashColor: kPinkD2, // splash color
+                    onTap: () {
                       notesBloc.add(NotesHideSelectedNotesEvent());
-                    }
-                  }, // button pressed
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      SvgPicture.asset(
-                        'assets/svg/hide_icon.svg',
-                      ), // icon
-                      Padding(
-                        padding: const EdgeInsets.only(top: 5),
-                        child: Text(
-                          'Hide',
-                          style: kInter.copyWith(color: kWhite, fontSize: 12),
-                        ),
-                      ), // text
-                    ],
+                    }, // button pressed
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        SvgPicture.asset(
+                          'assets/svg/hide_icon.svg',
+                        ), // icon
+                        Padding(
+                          padding: const EdgeInsets.only(top: 5),
+                          child: Text(
+                            'Hide',
+                            style: kInter.copyWith(color: kWhite, fontSize: 12),
+                          ),
+                        ), // text
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
         ],
       ),
     );
@@ -205,8 +203,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _handleMenuButtonPressed() {
-    // NOTICE: Manage Advanced Drawer state through the Controller.
-    // _advancedDrawerController.value = AdvancedDrawerValue.visible();
     _advancedDrawerController.showDrawer();
   }
 
@@ -228,6 +224,15 @@ class _HomePageState extends State<HomePage> {
         }
       },
       builder: (context, notesState) {
+        if(notesState is NotesFetchedState){
+          _isNotesHiddenMode = notesState.showHiddenNotes;
+        } else if(notesState is NotesEmptyState){
+          _isNotesHiddenMode = notesState.isInHiddenMode;
+        }  else if(notesState is NotesEditingState){
+          _isNotesHiddenMode = notesState.showHiddenNotes;
+        } else if(notesState is NotesEnteredEditingState){
+          _isNotesHiddenMode = notesState.isInHiddenMode;
+        }
         return BlocConsumer(
           bloc: todosBloc,
           buildWhen: (previous, current) => current is TodosHomeState,
@@ -458,7 +463,7 @@ class _HomePageState extends State<HomePage> {
                                     // emit cancel event,
                                     _currentPageIndex == 0
                                         ? notesBloc
-                                            .add(NotesExitedEditingEvent())
+                                            .add(NotesExitedEditingEvent(isInHiddenMode: _isNotesHiddenMode))
                                         : todosBloc
                                             .add(TodosExitedEditingEvent());
                                   },
@@ -491,7 +496,7 @@ class _HomePageState extends State<HomePage> {
                                           _currentPageIndex == 0
                                               ? notesBloc.add(
                                                   NotesAreAllNotesSelectedEvent(
-                                                      value))
+                                                      value,isInHiddenMode: _isNotesHiddenMode))
                                               : todosBloc.add(
                                                   TodosAreAllTodosSelectedEvent(
                                                       value));
@@ -504,117 +509,128 @@ class _HomePageState extends State<HomePage> {
                         ),
                   actions: !isFetching && !isInEditing
                       ? [
-                    Padding(
-                      padding: EdgeInsets.zero,
-                      child: PopupMenuButton<String>(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        color: kPinkD2,
-                        icon: const Icon(Ionicons.ellipsis_vertical,size: 25,color: kWhite,),
-                        splashRadius: 20,
-                        onSelected: (value) {
-                          switch (value) {
-                            case 'refetch':
-                              if (_currentPageIndex == 0) {
-                                notesBloc.add(NotesInitialEvent());
-                              } else if (_currentPageIndex == 1) {
-                                todosBloc.add(TodosInitialEvent());
-                              }
-                              break;
-                            case 'sync':
-                              if (_currentPageIndex == 0) {
-                                notesBloc.add(NotesSyncAllNotesEvent());
-                              } else if (_currentPageIndex == 1) {
-                                todosBloc.add(TodosSyncAllTodosEvent());
-                              }
-                              break;
-                            case 'showHidden':
-                              if (_currentPageIndex == 0) {
-                                // Handle show hidden action for notes
-                              } else if (_currentPageIndex == 1) {
-                                // Handle show hidden action for todos
-                              }
-                              break;
-                            case 'showDeleted':
-                              if (_currentPageIndex == 0) {
-                                // Handle show deleted action for notes
-                              } else if (_currentPageIndex == 1) {
-                                // Handle show deleted action for todos
-                              }
-                              break;
-                          }
-                        },
-                        itemBuilder: (BuildContext context) {
-                          return [
-                            PopupMenuItem<String>(
-                              value: 'refetch',
-                              child: ListTile(
-                                contentPadding: const EdgeInsets.symmetric(vertical: 0),
-                                horizontalTitleGap : 5,
-                                leading: const Icon(
-                                  Icons.refresh,
-                                  color: kPinkD1,
-                                ),
-                                title: Text(
-                                  'Reload',
-                                  style: kInter.copyWith(fontSize: 13),
-                                ),
-                                tileColor: Colors.transparent,
+                          Padding(
+                            padding: EdgeInsets.zero,
+                            child: PopupMenuButton<String>(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
                               ),
-                            ),
-                            PopupMenuItem<String>(
-                              value: 'sync',
-                              child: ListTile(
-                                contentPadding: const EdgeInsets.symmetric(vertical: 0),
-                                horizontalTitleGap : 5,
-                                leading: const Icon(
-                                  Icons.sync,
-                                  color: kPinkD1,
-                                ),
-                                title: Text(
-                                  'Sync All',
-                                  style: kInter.copyWith(fontSize: 13),
-                                ),
-                                tileColor: Colors.transparent,
+                              color: kPinkD2,
+                              icon: const Icon(
+                                Ionicons.ellipsis_vertical,
+                                size: 25,
+                                color: kWhite,
                               ),
+                              splashRadius: 20,
+                              onSelected: (value) {
+                                switch (value) {
+                                  case 'refetch':
+                                    if (_currentPageIndex == 0) {
+                                      notesBloc.add(NotesInitialEvent());
+                                    } else if (_currentPageIndex == 1) {
+                                      todosBloc.add(TodosInitialEvent());
+                                    }
+                                    break;
+                                  case 'sync':
+                                    if (_currentPageIndex == 0) {
+                                      notesBloc.add(NotesSyncAllNotesEvent());
+                                    } else if (_currentPageIndex == 1) {
+                                      todosBloc.add(TodosSyncAllTodosEvent());
+                                    }
+                                    break;
+                                  case 'showHidden':
+                                    // Handle show hidden action for notes
+                                    notesBloc.add(NotesShowHiddenNotesEvent(
+                                        value: !_isNotesHiddenMode));
+                                    break;
+                                  case 'showDeleted':
+                                    if (_currentPageIndex == 0) {
+                                      // Handle show deleted action for notes
+                                    } else if (_currentPageIndex == 1) {
+                                      // Handle show deleted action for todos
+                                    }
+                                    break;
+                                }
+                              },
+                              itemBuilder: (BuildContext context) {
+                                return [
+                                  PopupMenuItem<String>(
+                                    value: 'refetch',
+                                    child: ListTile(
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              vertical: 0),
+                                      horizontalTitleGap: 5,
+                                      leading: const Icon(
+                                        Icons.refresh,
+                                        color: kPinkD1,
+                                      ),
+                                      title: Text(
+                                        'Reload',
+                                        style: kInter.copyWith(fontSize: 13),
+                                      ),
+                                      tileColor: Colors.transparent,
+                                    ),
+                                  ),
+                                  PopupMenuItem<String>(
+                                    value: 'sync',
+                                    child: ListTile(
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              vertical: 0),
+                                      horizontalTitleGap: 5,
+                                      leading: const Icon(
+                                        Icons.sync,
+                                        color: kPinkD1,
+                                      ),
+                                      title: Text(
+                                        'Sync All',
+                                        style: kInter.copyWith(fontSize: 13),
+                                      ),
+                                      tileColor: Colors.transparent,
+                                    ),
+                                  ),
+                                  if (_currentPageIndex == 0)
+                                    PopupMenuItem<String>(
+                                      value: 'showHidden',
+                                      child: ListTile(
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                vertical: 0),
+                                        horizontalTitleGap: 5,
+                                        leading: Icon(
+                                         !_isNotesHiddenMode ? Icons.visibility : Icons.visibility_off,
+                                          color: kPinkD1,
+                                        ),
+                                        title: Text(
+                                          !_isNotesHiddenMode ?'Show Hidden' : 'Hide Hidden',
+                                          style: kInter.copyWith(fontSize: 13),
+                                        ),
+                                        tileColor: Colors.transparent,
+                                      ),
+                                    ),
+                                  PopupMenuItem<String>(
+                                    value: 'showDeleted',
+                                    child: ListTile(
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              vertical: 0),
+                                      horizontalTitleGap: 5,
+                                      leading: const Icon(
+                                        Icons.delete,
+                                        color: kPinkD1,
+                                      ),
+                                      title: Text(
+                                        'Show Deleted',
+                                        style: kInter.copyWith(fontSize: 13),
+                                      ),
+                                      tileColor: Colors.transparent,
+                                    ),
+                                  ),
+                                ];
+                              },
                             ),
-                            PopupMenuItem<String>(
-                              value: 'showHidden',
-                              child: ListTile(
-                                contentPadding: const EdgeInsets.symmetric(vertical: 0),
-                                horizontalTitleGap : 5,
-                                leading: const Icon(
-                                  Icons.visibility,
-                                  color: kPinkD1,
-                                ),
-                                title: Text(
-                                  'Show Hidden',
-                                  style: kInter.copyWith(fontSize: 13),
-                                ),
-                                tileColor: Colors.transparent,
-                              ),
-                            ),
-                            PopupMenuItem<String>(
-                              value: 'showDeleted',
-                              child: ListTile(
-                                contentPadding: const EdgeInsets.symmetric(vertical: 0),
-                                horizontalTitleGap : 5,
-                                leading: const Icon(
-                                  Icons.delete,
-                                  color: kPinkD1,
-                                ),
-                                title: Text(
-                                  'Show Deleted',
-                                  style: kInter.copyWith(fontSize: 13),
-                                ),
-                                tileColor: Colors.transparent,
-                              ),
-                            ),
-                          ];
-                        },
-                      ),
-                    ),
+                          ),
                         ]
                       : null,
                 ),
