@@ -16,14 +16,15 @@ class NotesFetchingState extends NotesHomeState {}
 class NotesFetchedState extends NotesHomeState {
   final List<NoteModel> notes;
   final List<String>? syncingNotes;
+  final bool showHiddenNotes;
   NotesFetchedState(
-    this.notes, {this.syncingNotes}
+    this.notes, {this.syncingNotes,this.showHiddenNotes = false}
   );
 }
 
 class NotesEditingState extends NotesFetchedState {
   NotesEditingState(
-      super.notes, { super.syncingNotes ,this.selectedNotesIds, this.areAllSelected = false});
+      super.notes, { super.syncingNotes ,this.selectedNotesIds, this.areAllSelected = false,super.showHiddenNotes = false});
 
   final List<String>? selectedNotesIds;
   final bool areAllSelected;
@@ -51,8 +52,16 @@ class NotesLoadingState extends NotesState {}
 
 class NotesLoadedState extends NotesState {}
 
-class NotesEmptyState extends NotesHomeState {}
+class NotesEmptyState extends NotesHomeState {
+  final bool isInHiddenMode;
 
-class NotesEnteredEditingState extends NotesHomeState {}
+  NotesEmptyState({this.isInHiddenMode = false});
+}
+
+class NotesEnteredEditingState extends NotesHomeState {
+  final bool isInHiddenMode;
+
+  NotesEnteredEditingState({this.isInHiddenMode = false});
+}
 
 class NotesExitedEditingState extends NotesHomeState {}
