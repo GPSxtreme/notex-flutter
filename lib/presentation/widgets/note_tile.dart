@@ -23,7 +23,7 @@ class _NoteTileState extends State<NoteTile> {
   bool _isSelected = false;
   bool _areAllSelected = false;
   bool _isSyncing = false;
-
+  bool _inHiddenMode = false;
   Color getColor(Set<MaterialState> states) {
     const Set<MaterialState> interactiveStates = <MaterialState>{
       MaterialState.pressed,
@@ -65,6 +65,9 @@ class _NoteTileState extends State<NoteTile> {
         }
       },
       builder: (context, state) {
+        if(state is NotesState){
+          _inHiddenMode = state.isInHiddenMode;
+        }
         if (state is NotesEditingState) {
           if (state.selectedNotesIds != null) {
             state.selectedNotesIds!.contains(widget.note.id)
@@ -99,7 +102,6 @@ class _NoteTileState extends State<NoteTile> {
               splashColor: kPink,
               borderRadius: BorderRadius.circular(20.0),
               onLongPress: () {
-                print('widget.note.isHidden : ${widget.note.isHidden}');
                 widget.notesBloc.add(NotesEnteredEditingEvent(isInHiddenMode: widget.note.isHidden));
                 _inEditOnTap();
               },
@@ -107,7 +109,7 @@ class _NoteTileState extends State<NoteTile> {
                 if (state is! NotesEditingState) {
                   GoRouter.of(context).pushNamed(
                       AppRouteConstants.noteViewRouteName,
-                      pathParameters: {'noteId': widget.note.id},
+                      pathParameters: {'noteId': widget.note.id,'isInHiddenMode' : _inHiddenMode.toString()},
                       extra: widget.notesBloc);
                 } else {
                   _inEditOnTap();
@@ -157,7 +159,7 @@ class _NoteTileState extends State<NoteTile> {
                                       widget.notesBloc.add(
                                           NotesSetNoteFavoriteEvent(
                                               !widget.note.isFavorite,
-                                              widget.note.id));
+                                              widget.note));
                                     },
                                     tooltip: 'Favorite note',
                                     splashRadius: 15,
@@ -237,6 +239,10 @@ class _NoteTileState extends State<NoteTile> {
                         ),
                         Text(
                           'is favorite : ${widget.note.isFavorite}',
+                          style: kInter.copyWith(color: kWhite75, fontSize: 10),
+                        ),
+                        Text(
+                          'version : ${widget.note.v}',
                           style: kInter.copyWith(color: kWhite75, fontSize: 10),
                         ),
                         if (!_isSyncing) ...[
