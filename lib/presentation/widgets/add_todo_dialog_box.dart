@@ -1,6 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
-
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:notex/data/models/todo_model.dart';
 import 'package:notex/presentation/blocs/todos/todos_bloc.dart';
 import 'package:notex/presentation/styles/app_styles.dart';
@@ -17,9 +17,45 @@ class AddTodoDialogBox extends StatefulWidget {
   State<AddTodoDialogBox> createState() => _AddTodoDialogBoxState();
 }
 
+Future<DateTime?> showDateTimePicker({
+  required BuildContext context,
+  DateTime? initialDate,
+  DateTime? firstDate,
+  DateTime? lastDate,
+}) async {
+  initialDate ??= DateTime.now();
+  firstDate ??= DateTime.now();
+  lastDate ??= firstDate.add(const Duration(days: 365 * 200));
+
+  final DateTime? selectedDate = await showDatePicker(
+    context: context,
+    initialDate: initialDate,
+    firstDate: firstDate,
+    lastDate: lastDate,
+  );
+
+  if (selectedDate == null) return null;
+
+  if (!context.mounted) return selectedDate;
+
+  final TimeOfDay? selectedTime = await showTimePicker(
+    context: context,
+    initialTime: TimeOfDay.fromDateTime(DateTime.now()),
+  );
+
+  return selectedTime == null
+      ? selectedDate
+      : DateTime(
+    selectedDate.year,
+    selectedDate.month,
+    selectedDate.day,
+    selectedTime.hour,
+    selectedTime.minute,
+  );
+}
 class _AddTodoDialogBoxState extends State<AddTodoDialogBox> {
   final TextEditingController _todoController = TextEditingController();
-  DateTime _expireTime = DateTime.now().toUtc();
+  DateTime? _expireTime;
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -77,7 +113,7 @@ class _AddTodoDialogBoxState extends State<AddTodoDialogBox> {
                         isCompleted: false,
                         createdTime: DateTime.now().toUtc(),
                         editedTime: DateTime.now().toUtc(),
-                        expireTime: _expireTime,
+                        expireTime: _expireTime ?? DateTime.now().toUtc(),
                         v: 0);
                     widget.todosBloc.add(TodosAddTodoEvent(todo));
                     Navigator.of(context).pop(); // Close the dialog
@@ -98,16 +134,37 @@ class _AddTodoDialogBoxState extends State<AddTodoDialogBox> {
         decoration: kTextFieldDecorationT1,
       ),
       actions: [
-        IconButton(
-          splashRadius: 20,
-          icon: const Icon(
-            Icons.notification_add,
-            color: kWhite,
-            size: 20,
-          ),
-          onPressed: () {
-            // show pick end date settings
-          },
+        Row(
+          children: [
+            IconButton(
+              splashRadius: 20,
+              icon: const Icon(
+                Icons.notification_add,
+                color: kWhite,
+                size: 20,
+              ),
+              onPressed: () async{
+                // show pick end date settings
+                _expireTime = await showDateTimePicker(context: context);
+                setState(() {
+                  _expireTime;
+                });
+              },
+            ),
+            // const SizedBox(width: 5,),
+            if(_expireTime != null)
+            Container(
+              decoration: BoxDecoration(
+                color: kPink.withOpacity(0.75),
+                borderRadius: BorderRadius.circular(18)
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 6),
+              child: Text(
+                DateFormat('h:mm a, d MMMM y').format(_expireTime!),
+                style: kInter.copyWith(fontSize: 13,color: kWhite,fontWeight: FontWeight.w600),
+              ),
+            )
+          ],
         )
       ],
     );
