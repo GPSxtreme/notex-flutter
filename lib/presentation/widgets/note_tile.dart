@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:notex/data/models/note_model.dart';
 import 'package:notex/presentation/blocs/notes/notes_bloc.dart';
+import 'package:notex/presentation/widgets/common_widgets.dart';
 import '../../router/app_route_constants.dart';
 import '../styles/app_styles.dart';
 import '../styles/size_config.dart';
@@ -24,6 +25,8 @@ class _NoteTileState extends State<NoteTile> {
   bool _areAllSelected = false;
   bool _isSyncing = false;
   bool _inHiddenMode = false;
+  bool _inDeletedMode = false;
+
   Color getColor(Set<MaterialState> states) {
     const Set<MaterialState> interactiveStates = <MaterialState>{
       MaterialState.pressed,
@@ -38,17 +41,20 @@ class _NoteTileState extends State<NoteTile> {
 
   _inEditOnTap() {
     if (_areAllSelected) {
-      widget.notesBloc.add(NotesSetAllNotesSelectedCheckBoxEvent(false,isInHiddenMode: widget.note.isHidden));
+      widget.notesBloc.add(NotesSetAllNotesSelectedCheckBoxEvent(false,
+          isInHiddenMode: widget.note.isHidden));
       _areAllSelected = false;
       if (_areAllSelected && !_isSelected) {
         _isSelected = true;
       } else {
         _isSelected = false;
       }
-      widget.notesBloc.add(NotesIsNoteSelectedEvent(_isSelected, widget.note,isInHiddenMode: widget.note.isHidden));
+      widget.notesBloc.add(NotesIsNoteSelectedEvent(_isSelected, widget.note,
+          isInHiddenMode: widget.note.isHidden));
     } else {
       _isSelected = !_isSelected;
-      widget.notesBloc.add(NotesIsNoteSelectedEvent(_isSelected, widget.note,isInHiddenMode: widget.note.isHidden));
+      widget.notesBloc.add(NotesIsNoteSelectedEvent(_isSelected, widget.note,
+          isInHiddenMode: widget.note.isHidden));
     }
   }
 
@@ -65,8 +71,9 @@ class _NoteTileState extends State<NoteTile> {
         }
       },
       builder: (context, state) {
-        if(state is NotesState){
+        if (state is NotesState) {
           _inHiddenMode = state.isInHiddenMode;
+          _inDeletedMode = state.isInDeletedMode;
         }
         if (state is NotesEditingState) {
           if (state.selectedNotesIds != null) {
@@ -101,20 +108,24 @@ class _NoteTileState extends State<NoteTile> {
             child: InkWell(
               splashColor: kPink,
               borderRadius: BorderRadius.circular(20.0),
-              onLongPress: () {
-                widget.notesBloc.add(NotesEnteredEditingEvent(isInHiddenMode: widget.note.isHidden));
+              onLongPress: !_inDeletedMode ?() {
+                widget.notesBloc.add(NotesEnteredEditingEvent(
+                    isInHiddenMode: widget.note.isHidden));
                 _inEditOnTap();
-              },
-              onTap: () {
+              } : null,
+              onTap: !_inDeletedMode ? () {
                 if (state is! NotesEditingState) {
                   GoRouter.of(context).pushNamed(
                       AppRouteConstants.noteViewRouteName,
-                      pathParameters: {'noteId': widget.note.id,'isInHiddenMode' : _inHiddenMode.toString()},
+                      pathParameters: {
+                        'noteId': widget.note.id,
+                        'isInHiddenMode': _inHiddenMode.toString()
+                      },
                       extra: widget.notesBloc);
                 } else {
                   _inEditOnTap();
                 }
-              },
+              } : null,
               child: Stack(
                 children: [
                   Positioned(
@@ -130,7 +141,7 @@ class _NoteTileState extends State<NoteTile> {
                                       color: kPink, lineWidth: 4.0, size: 20),
                                 )
                               else ...[
-                                if (!widget.note.isUploaded)
+                                if (!widget.note.isUploaded && !widget.note.isDeleted)
                                   IconButton(
                                     icon: const Icon(
                                       Icons.cloud_upload_outlined,
@@ -145,7 +156,7 @@ class _NoteTileState extends State<NoteTile> {
                                     tooltip: "upload to cloud",
                                     splashRadius: 15,
                                   ),
-                                if (widget.note.isUploaded)
+                                if (widget.note.isUploaded && !widget.note.isDeleted)
                                   IconButton(
                                     icon: widget.note.isFavorite
                                         ? const Icon(
@@ -159,9 +170,27 @@ class _NoteTileState extends State<NoteTile> {
                                       widget.notesBloc.add(
                                           NotesSetNoteFavoriteEvent(
                                               !widget.note.isFavorite,
+                                              isInHiddenMode: _inHiddenMode,
                                               widget.note));
                                     },
                                     tooltip: 'Favorite note',
+                                    splashRadius: 15,
+                                  ),
+                                if(widget.note.isDeleted)
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.restore_from_trash,
+                                      color: kPink,
+                                    ),
+                                    onPressed: () async{
+                                      //restore note
+                                      bool? response = await CommonWidgets.commonAlertDialog(context, title: 'Restore note?', body: 'This will restore the deleted note.', agreeLabel: 'Yes', denyLabel: "No");
+                                      if(response == true) {
+                                        widget.notesBloc.add(
+                                          NotesRestoreDeletedNoteEvent(widget.note));
+                                      }
+                                    },
+                                    tooltip: 'restore note',
                                     splashRadius: 15,
                                   ),
                               ],
@@ -235,6 +264,14 @@ class _NoteTileState extends State<NoteTile> {
                         ),
                         Text(
                           'is hidden : ${widget.note.isHidden}',
+                          style: kInter.copyWith(color: kWhite75, fontSize: 10),
+                        ),
+                        Text(
+                          'is deleted : ${widget.note.isDeleted}',
+                          style: kInter.copyWith(color: kWhite75, fontSize: 10),
+                        ),
+                        Text(
+                          'deleted time : ${widget.note.deletedTime != null ? DateFormat('d MMMM, h:mm a').format(widget.note.deletedTime.toLocal()).toString() : null}',
                           style: kInter.copyWith(color: kWhite75, fontSize: 10),
                         ),
                         Text(
