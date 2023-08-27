@@ -10,6 +10,8 @@ class NoteDataEntity {
   final bool isFavorite;
   final bool isUploaded;
   final bool isHidden;
+  final bool isDeleted;
+  final bool? deletedTime;
   NoteDataEntity( {
     required this.id,
     required this.userId,
@@ -21,6 +23,8 @@ class NoteDataEntity {
     this.isSynced,
     required this.isUploaded,
     required this.isFavorite,
-    required this.isHidden
+    required this.isHidden,
+    required this.isDeleted,
+    this.deletedTime
   });
 }
