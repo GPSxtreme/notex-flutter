@@ -53,7 +53,13 @@ class NotesRepository {
       } else {
         // Note exists offline, compare edited times
         final offlineNote = offlineNotesMap[onlineNote.id]!;
-        if (onlineNote.editedTime.isAfter(offlineNote.editedTime)) {
+        if (offlineNote.isDeleted && DateTime.now().toUtc().difference(offlineNote.deletedTime as DateTime).inDays >= 30) {
+          await LOCAL_DB.removeNotePermanent(offlineNote.id);
+          offlineNotesMap.remove(onlineNote.id);
+          if(offlineNote.isUploaded) {
+            await removeNoteFromCloud(offlineNote.id,manual: true);
+          }
+        } else if (onlineNote.editedTime.isAfter(offlineNote.editedTime)) {
           // Online note is more recent, update the offline note
           offlineNotesMap[onlineNote.id] = NoteModel.fromJsonOfLocalDb(
               EntityToJson.noteEntityToJson(
@@ -143,19 +149,19 @@ class NotesRepository {
   static Future<bool> removeNote(String noteId) async {
     try {
       // Remove note from local storage immediately
-      await LOCAL_DB.removeNote(noteId);
-      // Trigger the cloud removal asynchronously without waiting for response
-      final response = _removeNoteFromCloud(noteId);
+      await LOCAL_DB.markNoteAsDeleted(noteId);
+      /// [_removeNoteFromCloud] runs only if the user enables auto-sync
+      final response = removeNoteFromCloud(noteId);
       return response;
     } catch (error) {
       return false;
     }
   }
 
-  static Future<bool> _removeNoteFromCloud(String noteId) async {
+  static Future<bool> removeNoteFromCloud(String noteId, {bool? manual}) async {
     try {
       // Check if user has enabled auto sync
-      if (SETTINGS.isAutoSyncEnabled) {
+      if (SETTINGS.isAutoSyncEnabled || manual == true) {
         final url = Uri.parse("$NOTE_DELETE_ROUTE?noteId=$noteId");
 
        final response =  await http.get(
