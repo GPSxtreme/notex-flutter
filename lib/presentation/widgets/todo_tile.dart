@@ -89,7 +89,7 @@ class _TodoTileState extends State<TodoTile> {
         return Container(
           width: double.maxFinite,
           decoration: BoxDecoration(
-              color: kPinkD2,
+              color: DateTime.now().isAfter(widget.todo.expireTime.toLocal()) ?Colors.black12 : kPinkD2,
               borderRadius: BorderRadius.circular(20.0),
               border: Border.all(width: 1.0, color: kPinkD1)),
           child: Material(
