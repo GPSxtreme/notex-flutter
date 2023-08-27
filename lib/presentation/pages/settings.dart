@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:notex/presentation/blocs/settings/settings_bloc.dart';
 import 'package:notex/presentation/styles/app_styles.dart';
+import 'package:notex/presentation/styles/size_config.dart';
 import 'package:notex/presentation/widgets/common_widgets.dart';
 import 'package:notex/router/app_route_constants.dart';
 
@@ -38,6 +39,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    SizeConfig().init(context);
     return BlocConsumer(
       bloc: settingsBloc,
       listenWhen: (previous, current) => current is SettingsActionState,
