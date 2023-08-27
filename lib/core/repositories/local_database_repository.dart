@@ -38,7 +38,9 @@ class LocalDatabaseRepository {
         isSynced INTEGER,
         isFavorite INTEGER,
         isUploaded INTEGER,
-        isHidden INTEGER
+        isHidden INTEGER,
+        isDeleted INTEGER,
+        deletedTime TEXT
       )
     ''');
     } catch (error) {
@@ -110,7 +112,26 @@ class LocalDatabaseRepository {
     return NoteModel.fromJsonOfLocalDb(dbNote.first);
   }
 
-  Future<void> removeNote(String noteId) async {
+  Future<void> markNoteAsDeleted(String id)async{
+    await _database.update(
+      'notes',
+      {'isDeleted' : 1,'deletedTime' : DateTime.now().toUtc().toIso8601String()},
+      where: '_id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  Future<void> markNoteAsNotDeleted(String id)async{
+    await _database.update(
+      'notes',
+      {'isDeleted' : 0,'deletedTime' : null},
+      where: '_id = ?',
+      whereArgs: [id],
+      conflictAlgorithm: ConflictAlgorithm.replace
+    );
+  }
+
+  Future<void> removeNotePermanent(String noteId) async {
     await _database.delete(
       'notes',
       where: '_id = ?',
