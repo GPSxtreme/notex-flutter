@@ -3,11 +3,12 @@ part of 'notes_bloc.dart';
 @immutable
 abstract class NotesState {
   final bool isInHiddenMode;
-  const NotesState({this.isInHiddenMode = false});
+  final bool isInDeletedMode;
+  const NotesState({this.isInHiddenMode = false,this.isInDeletedMode = false});
 }
 
 abstract class NotesHomeState extends NotesState {
-  const NotesHomeState({super.isInHiddenMode});
+  const NotesHomeState({super.isInHiddenMode,super.isInDeletedMode});
 }
 
 abstract class NotesActionState extends NotesState {}
@@ -22,13 +23,13 @@ class NotesFetchedState extends NotesHomeState {
   final List<NoteModel> notes;
   final List<String>? syncingNotes;
   const NotesFetchedState(
-    this.notes, {this.syncingNotes,super.isInHiddenMode}
+    this.notes, {this.syncingNotes,super.isInHiddenMode,super.isInDeletedMode}
   );
 }
 
 class NotesEditingState extends NotesFetchedState {
   const NotesEditingState(
-      super.notes, { super.syncingNotes ,this.selectedNotesIds, this.areAllSelected = false,super.isInHiddenMode});
+      super.notes, { super.syncingNotes ,this.selectedNotesIds, this.areAllSelected = false,super.isInHiddenMode,super.isInDeletedMode});
 
   final List<String>? selectedNotesIds;
   final bool areAllSelected;
@@ -36,7 +37,7 @@ class NotesEditingState extends NotesFetchedState {
 
 class NotesFetchingFailedState extends NotesState {
   final String reason;
-  const NotesFetchingFailedState(this.reason,{super.isInHiddenMode});
+  const NotesFetchingFailedState(this.reason,{super.isInHiddenMode,super.isInDeletedMode});
 }
 
 class NotesOperationFailedState extends NotesActionState {
@@ -54,13 +55,13 @@ class NotesLoadingState extends NotesState {}
 class NotesLoadedState extends NotesState {}
 
 class NotesEmptyState extends NotesHomeState {
-  const NotesEmptyState({super.isInHiddenMode});
+  const NotesEmptyState({super.isInHiddenMode,super.isInDeletedMode});
 }
 
 class NotesEnteredEditingState extends NotesHomeState {
-  const NotesEnteredEditingState({super.isInHiddenMode});
+  const NotesEnteredEditingState({super.isInHiddenMode,super.isInDeletedMode});
 }
 
 class NotesExitedEditingState extends NotesHomeState {
-  const NotesExitedEditingState({super.isInHiddenMode});
+  const NotesExitedEditingState({super.isInHiddenMode,super.isInDeletedMode});
 }
