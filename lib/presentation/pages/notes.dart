@@ -29,7 +29,7 @@ class _NotesPageState extends State<NotesPage>
   bool _isSyncing = false;
   int _noOfNotesSyncing = 0;
   bool _isHiddenMode = false;
-
+  bool _isDeletedMode = false;
   @override
   bool get wantKeepAlive => true;
 
@@ -68,6 +68,7 @@ class _NotesPageState extends State<NotesPage>
       builder: (context, state) {
         if(state is NotesState){
           _isHiddenMode = state.isInHiddenMode;
+          _isDeletedMode = state.isInDeletedMode;
         }
         if (state is NotesFetchedState) {
           _notes = state.notes;
@@ -97,7 +98,7 @@ class _NotesPageState extends State<NotesPage>
                     left: SizeConfig.screenWidth! * 0.1,
                     right: SizeConfig.screenWidth! * 0.1,
                     child:  SvgPicture.asset(
-                      !_isHiddenMode ? "assets/svg/magnify-glass.svg" : "assets/svg/incognito.svg",
+                      !_isHiddenMode && !_isDeletedMode ? "assets/svg/magnify-glass.svg" : _isHiddenMode ? "assets/svg/incognito.svg" : "assets/svg/delete_icon_light.svg",
                     )
                   ),
                   // showed when no notes are found
@@ -131,7 +132,7 @@ class _NotesPageState extends State<NotesPage>
                             ],
                           ),
                           Text(
-                            _isHiddenMode ? 'Hidden' : 'Found',
+                            _isHiddenMode ? 'Hidden' : _isDeletedMode ? 'Deleted' : 'Found',
                             style: kInter.copyWith(
                                 fontSize: 30, fontWeight: FontWeight.w500),
                           ),
@@ -141,7 +142,7 @@ class _NotesPageState extends State<NotesPage>
                           Text(
                             _isHiddenMode ?
                             "You can hide a note by long pressing and selecting hide option from the bottom action bar":
-                            "You can add new note by pressing\nAdd button at the bottom",
+                            _isDeletedMode ? "All deleted notes are retained for 30 days and can be restored.":"You can add new note by pressing\nAdd button at the bottom",
                             style:
                                 kInter.copyWith(fontSize: 15, color: kWhite24),
                             textAlign: TextAlign.center,
@@ -159,7 +160,7 @@ class _NotesPageState extends State<NotesPage>
                       const SizedBox(height: 10,),
                       Text(
                         'This might take a while',
-                        style: kInter.copyWith(color: kWhite75,fontSize: 15),
+                        style: kInter.copyWith(color: kWhite75,fontSize: 15),textAlign: TextAlign.center,
                       )
                     ],
                   )
@@ -284,7 +285,7 @@ class _NotesPageState extends State<NotesPage>
                                   ? SizeConfig.blockSizeVertical! * 3
                                   : SizeConfig.blockSizeVertical! * 2,
                             ),
-                            if(state is NotesFetchedState && state.isInHiddenMode && state is! NotesEditingState && !_isSyncing) ...[
+                            if(_isHiddenMode && state is! NotesEditingState && !_isSyncing) ...[
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -297,6 +298,39 @@ class _NotesPageState extends State<NotesPage>
                                     style: kInter.copyWith(fontSize: 30,fontWeight: FontWeight.w500,color: kPink),
                                   ),
                                 ],
+                              ),
+                              const Divider(
+                                color: kPinkD1,
+                                endIndent: 25,indent: 25,
+                              ),
+                              SizedBox(
+                                height: !_isSyncing ||
+                                    !notesBloc.isSelectedNotesStreamClosed
+                                    ? SizeConfig.blockSizeVertical! * 3
+                                    : SizeConfig.blockSizeVertical! * 2,
+                              ),
+                            ] else if(_isDeletedMode && state is! NotesEditingState && !_isSyncing) ...[
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Deleted',
+                                    style: kInter.copyWith(fontSize: 30,fontWeight: FontWeight.w500),
+                                  ),
+                                  Text(
+                                    ' Notes (${_notes.length})',
+                                    style: kInter.copyWith(fontSize: 30,fontWeight: FontWeight.w500,color: kPink),
+                                  ),
+                                ],
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 5),
+                                child: Center(
+                                  child: Text(
+                                    '(Deleted notes are retained for 30 days)',
+                                    style: kInter.copyWith(fontSize: 12,color: kWhite75),
+                                  ),
+                                ),
                               ),
                               const Divider(
                                 color: kPinkD1,
