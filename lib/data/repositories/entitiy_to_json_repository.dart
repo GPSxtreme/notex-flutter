@@ -16,6 +16,8 @@ class EntityToJson {
       'isFavorite' : note.isFavorite ? 1 : 0,
       'isUploaded' : note.isUploaded ? 1 : 0,
       'isHidden' : note.isHidden ? 1 : 0,
+      'isDeleted' : note.isDeleted ? 1 : 0,
+      'deletedTime' : note.deletedTime
     };
     return noteMap;
   }
