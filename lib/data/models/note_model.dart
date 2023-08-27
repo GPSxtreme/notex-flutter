@@ -24,6 +24,8 @@ class NoteModel {
   dynamic isFavorite;
   dynamic isUploaded;
   dynamic isHidden;
+  dynamic isDeleted;
+  dynamic deletedTime;
 
   NoteModel({
     required this.id,
@@ -37,14 +39,18 @@ class NoteModel {
     this.isFavorite = false,
     this.isUploaded = false,
     this.isHidden = false,
+    this.isDeleted = false,
+    this.deletedTime,
   });
 
-  void updateIsSynced(dynamic value) => isSynced = value;
+  void updateIsSynced(value) => isSynced = value;
   void updateId(String newId) => id = newId;
   void setIsFavorite(bool value) => isFavorite = value;
   void setIsUploaded(bool value) => isUploaded = value;
   void setEditedTime(DateTime time) => editedTime = time.toUtc();
-  void setIsHidden(dynamic value) => isHidden = value;
+  void setIsHidden(value) => isHidden = value;
+  void setIsDeleted(value) => isDeleted = value;
+  void setDelTs(DateTime? time) => deletedTime = time?.toUtc();
   void incV() => v++;
 
   factory NoteModel.createEmptyNote() => NoteModel(
@@ -80,6 +86,8 @@ class NoteModel {
     isFavorite: json['isFavorite'] == 0 ? false : true,
     isUploaded: json['isUploaded'] == 0 ? false : true,
     isHidden: json['isHidden'] == 0 ? false : true,
+    isDeleted: json['isDeleted'] == 0 ? false : true,
+    deletedTime: json['deletedTime'] != null && json['deletedTime'] != 'null' ? DateTime.parse(json['deletedTime']) : null
   );
 
   Map<String, dynamic> toJson() => {
@@ -93,6 +101,8 @@ class NoteModel {
     'isFavorite' : isFavorite,
     'isHidden' : isHidden,
     'isUploaded' : isUploaded,
+    'isDeleted' : isDeleted,
+    'deletedTime' : deletedTime,
     "__v": v,
   };
   Map<String, dynamic> toJsonToServerAdd() => {
