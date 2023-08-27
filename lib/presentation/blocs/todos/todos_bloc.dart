@@ -155,6 +155,12 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
       emit(TodosFetchedState(_doneTodos, _notDoneTodos, syncingTodos: null));
     } catch (error) {
       emit(TodosAddTodoFailedState('An unexpected error occurred \n $error'));
+    } finally {
+      NOTIFICATION_SERVICES.scheduleNotification(
+          title: 'Todo remainder ⏲️',
+          body: event.todo.body,
+          payLoad: event.todo.id,
+          scheduledNotificationDateTime: event.todo.expireTime);
     }
   }
 
@@ -330,6 +336,7 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
       emit(TodosOperationFailedState(error.toString()));
     }
   }
+
   FutureOr<void> handleSyncAllTodos(
       TodosSyncAllTodosEvent event, Emitter<TodosState> emit) async {
     try {
