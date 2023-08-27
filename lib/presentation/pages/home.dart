@@ -33,6 +33,7 @@ class _HomePageState extends State<HomePage> {
   bool _selectAllTodos = false;
   bool _selectAllNotes = false;
   bool _isNotesHiddenMode = false;
+  bool _isNotesDeletedMode = false;
   final _advancedDrawerController = AdvancedDrawerController();
 
   @override
@@ -73,7 +74,8 @@ class _HomePageState extends State<HomePage> {
                     if (_currentPageIndex == 1) {
                       todosBloc.add(TodosDeleteSelectedTodosEvent());
                     } else if (_currentPageIndex == 0) {
-                      notesBloc.add(NotesDeleteSelectedNotesEvent(isInHiddenMode: _isNotesHiddenMode));
+                      notesBloc.add(NotesDeleteSelectedNotesEvent(
+                          isInHiddenMode: _isNotesHiddenMode));
                     }
                   }, // button pressed
                   child: Column(
@@ -110,7 +112,8 @@ class _HomePageState extends State<HomePage> {
                       todosBloc.add(TodosSyncSelectedTodosEvent());
                     } else if (_currentPageIndex == 0) {
                       // sync note
-                      notesBloc.add(NotesSyncSelectedNotesEvent(isInHiddenMode: _isNotesHiddenMode));
+                      notesBloc.add(NotesSyncSelectedNotesEvent(
+                          isInHiddenMode: _isNotesHiddenMode));
                     }
                   }, // button pressed
                   child: Column(
@@ -143,21 +146,23 @@ class _HomePageState extends State<HomePage> {
                   child: InkWell(
                     splashColor: kPinkD2, // splash color
                     onTap: () {
-                      !_isNotesHiddenMode ?
-                      notesBloc.add(NotesHideSelectedNotesEvent()) :
-                          notesBloc.add(NotesUnHideSelectedNotesEvent(isInHiddenMode: _isNotesHiddenMode));
+                      !_isNotesHiddenMode
+                          ? notesBloc.add(NotesHideSelectedNotesEvent())
+                          : notesBloc.add(NotesUnHideSelectedNotesEvent(
+                              isInHiddenMode: _isNotesHiddenMode));
                     }, // button pressed
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        !_isNotesHiddenMode ?
-                        SvgPicture.asset(
-                          'assets/svg/hide_icon.svg',
-                        ): const Icon(
-                          Icons.visibility,
-                          color: kWhite,
-                          size: 30,
-                        ),
+                        !_isNotesHiddenMode
+                            ? SvgPicture.asset(
+                                'assets/svg/hide_icon.svg',
+                              )
+                            : const Icon(
+                                Icons.visibility,
+                                color: kWhite,
+                                size: 30,
+                              ),
                         Padding(
                           padding: const EdgeInsets.only(top: 5),
                           child: Text(
@@ -231,8 +236,9 @@ class _HomePageState extends State<HomePage> {
         }
       },
       builder: (context, notesState) {
-        if(notesState is NotesState){
+        if (notesState is NotesState) {
           _isNotesHiddenMode = notesState.isInHiddenMode;
+          _isNotesDeletedMode = notesState.isInDeletedMode;
         }
         return BlocConsumer(
           bloc: todosBloc,
@@ -353,23 +359,15 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ListTile(
                           splashColor: kPinkD1,
-                          onTap: () {},
+                          onTap: () {
+                            _advancedDrawerController.hideDrawer();
+                            GoRouter.of(context).pushNamed(AppRouteConstants.profileRouteName);
+                          },
                           contentPadding:
                               const EdgeInsets.symmetric(horizontal: 30),
                           leading: const Icon(Icons.account_circle_rounded),
                           title: Text(
                             'Profile',
-                            style: kInter,
-                          ),
-                        ),
-                        ListTile(
-                          splashColor: kPinkD1,
-                          onTap: () {},
-                          contentPadding:
-                              const EdgeInsets.symmetric(horizontal: 30),
-                          leading: const Icon(Icons.favorite),
-                          title: Text(
-                            'Favourites',
                             style: kInter,
                           ),
                         ),
@@ -463,8 +461,8 @@ class _HomePageState extends State<HomePage> {
                                   onPressed: () {
                                     // emit cancel event,
                                     _currentPageIndex == 0
-                                        ? notesBloc
-                                            .add(NotesExitedEditingEvent(isInHiddenMode: _isNotesHiddenMode))
+                                        ? notesBloc.add(NotesExitedEditingEvent(
+                                            isInHiddenMode: _isNotesHiddenMode))
                                         : todosBloc
                                             .add(TodosExitedEditingEvent());
                                   },
@@ -497,7 +495,9 @@ class _HomePageState extends State<HomePage> {
                                           _currentPageIndex == 0
                                               ? notesBloc.add(
                                                   NotesAreAllNotesSelectedEvent(
-                                                      value,isInHiddenMode: _isNotesHiddenMode))
+                                                      value,
+                                                      isInHiddenMode:
+                                                          _isNotesHiddenMode))
                                               : todosBloc.add(
                                                   TodosAreAllTodosSelectedEvent(
                                                       value));
@@ -527,29 +527,30 @@ class _HomePageState extends State<HomePage> {
                                 switch (value) {
                                   case 'refetch':
                                     if (_currentPageIndex == 0) {
-                                      notesBloc.add(NotesInitialEvent(isInHiddenMode: _isNotesHiddenMode));
+                                      notesBloc.add(NotesInitialEvent(
+                                          isInHiddenMode: _isNotesHiddenMode,isInDeletedMode: _isNotesDeletedMode));
                                     } else if (_currentPageIndex == 1) {
                                       todosBloc.add(TodosInitialEvent());
                                     }
                                     break;
                                   case 'sync':
                                     if (_currentPageIndex == 0) {
-                                      notesBloc.add(NotesSyncAllNotesEvent(isInHiddenMode: _isNotesHiddenMode));
+                                      notesBloc.add(NotesSyncAllNotesEvent(
+                                          isInHiddenMode: _isNotesHiddenMode,isInDeletedMode: _isNotesDeletedMode));
                                     } else if (_currentPageIndex == 1) {
                                       todosBloc.add(TodosSyncAllTodosEvent());
                                     }
                                     break;
                                   case 'showHidden':
                                     // Handle show hidden action for notes
+                                  // todo : to ask user for privacy password provided by android
                                     notesBloc.add(NotesShowHiddenNotesEvent(
                                         value: !_isNotesHiddenMode));
                                     break;
                                   case 'showDeleted':
-                                    if (_currentPageIndex == 0) {
-                                      // Handle show deleted action for notes
-                                    } else if (_currentPageIndex == 1) {
-                                      // Handle show deleted action for todos
-                                    }
+                                    // Handle show deleted action for notes
+                                    notesBloc.add(NotesShowDeletedNotesEvent(
+                                        value: !_isNotesDeletedMode));
                                     break;
                                 }
                               },
@@ -600,34 +601,39 @@ class _HomePageState extends State<HomePage> {
                                                 vertical: 0),
                                         horizontalTitleGap: 5,
                                         leading: Icon(
-                                         !_isNotesHiddenMode ? Icons.visibility : Icons.visibility_off,
+                                          !_isNotesHiddenMode
+                                              ? Icons.visibility
+                                              : Icons.visibility_off,
                                           color: kPinkD1,
                                         ),
                                         title: Text(
-                                          !_isNotesHiddenMode ?'Show Hidden' : 'Hide Hidden',
+                                          !_isNotesHiddenMode
+                                              ? 'Show Hidden'
+                                              : 'Hide Hidden',
                                           style: kInter.copyWith(fontSize: 13),
                                         ),
                                         tileColor: Colors.transparent,
                                       ),
                                     ),
-                                  PopupMenuItem<String>(
-                                    value: 'showDeleted',
-                                    child: ListTile(
-                                      contentPadding:
-                                          const EdgeInsets.symmetric(
-                                              vertical: 0),
-                                      horizontalTitleGap: 5,
-                                      leading: const Icon(
-                                        Icons.delete,
-                                        color: kPinkD1,
+                                  if (_currentPageIndex == 0)
+                                    PopupMenuItem<String>(
+                                      value: 'showDeleted',
+                                      child: ListTile(
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                vertical: 0),
+                                        horizontalTitleGap: 5,
+                                        leading: Icon(
+                                         !_isNotesDeletedMode ? Icons.delete : Icons.hide_source,
+                                          color: kPinkD1,
+                                        ),
+                                        title: Text(
+                                          !_isNotesDeletedMode ? 'Show Deleted' :'Hide Deleted',
+                                          style: kInter.copyWith(fontSize: 13),
+                                        ),
+                                        tileColor: Colors.transparent,
                                       ),
-                                      title: Text(
-                                        'Show Deleted',
-                                        style: kInter.copyWith(fontSize: 13),
-                                      ),
-                                      tileColor: Colors.transparent,
                                     ),
-                                  ),
                                 ];
                               },
                             ),
@@ -635,7 +641,9 @@ class _HomePageState extends State<HomePage> {
                         ]
                       : null,
                 ),
-                floatingActionButton: !isInEditing && !isFetching && !(_currentPageIndex == 0 && _isNotesHiddenMode)
+                floatingActionButton: !isInEditing &&
+                        !isFetching &&
+                        !(_currentPageIndex == 0 && (_isNotesHiddenMode || _isNotesDeletedMode))
                     ? FloatingActionButton(
                         backgroundColor: kPink,
                         onPressed: () {
@@ -643,7 +651,10 @@ class _HomePageState extends State<HomePage> {
                             case 0: // notes page
                               GoRouter.of(context).pushNamed(
                                   AppRouteConstants.noteViewRouteName,
-                                  pathParameters: {'noteId': 'new'},
+                                  pathParameters: {
+                                    'noteId': 'new',
+                                    'isInHiddenMode': 'false'
+                                  },
                                   extra: notesBloc);
                               break;
                             case 1: // todos page
