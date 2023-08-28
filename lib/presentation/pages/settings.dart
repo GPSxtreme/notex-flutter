@@ -110,9 +110,9 @@ class _SettingsPageState extends State<SettingsPage> {
                     ListTileTheme(
                       textColor: kWhite,
                       iconColor: kPinkD1,
-                      horizontalTitleGap: 5,
+                      horizontalTitleGap: 10,
                       contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 5),
+                          horizontal: 15, vertical: 5),
                       child: Column(
                         children: [
                           if (!USER.data!.isEmailVerified)
@@ -122,7 +122,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                   ? const Icon(
                                       Ionicons.alert_circle_outline,
                                       color: Colors.yellow,
-                                      size: 30,
+                                      size: 35,
                                     )
                                   : const SizedBox(
                                       width: 25,
@@ -152,7 +152,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             leading: const Icon(
                               Icons.sync,
                               color: kPinkD1,
-                              size: 30,
+                              size: 35,
                             ),
                             title: Text(
                               'Auto sync',
@@ -179,7 +179,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             leading: const Icon(
                               Icons.cloud_download_outlined,
                               color: kPinkD1,
-                              size: 30,
+                              size: 35,
                             ),
                             title: Text(
                               'Prefetch cloud notes',
@@ -206,7 +206,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             leading: const Icon(
                               Icons.cloud_download_outlined,
                               color: kPinkD1,
-                              size: 30,
+                              size: 35,
                             ),
                             title: Text(
                               'Prefetch cloud todos',
@@ -236,7 +236,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                   ? const Icon(
                                       Icons.lock_reset,
                                       color: kPinkD1,
-                                      size: 30,
+                                      size: 35,
                                     )
                                   : const SizedBox(
                                       width: 25,
@@ -267,7 +267,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             leading: const Icon(
                               Icons.logout_rounded,
                               color: kPinkD1,
-                              size: 30,
+                              size: 35,
                             ),
                             onTap: () {
                               settingsBloc.add(SettingsUserLogoutEvent());
