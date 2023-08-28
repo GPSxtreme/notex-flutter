@@ -156,11 +156,15 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
     } catch (error) {
       emit(TodosAddTodoFailedState('An unexpected error occurred \n $error'));
     } finally {
+      NOTIFICATION_SERVICES.showNotification(
+          title: 'Remainder set for todo!',
+          body: 'TODO: ${event.todo.body}',
+          payLoad: event.todo.id);
       NOTIFICATION_SERVICES.scheduleNotification(
-          title: 'Todo remainder ⏲️',
-          body: event.todo.body,
+          title: 'Hey ${USER.data!.name}! You have a remainder.',
+          body: 'TODO: ${event.todo.body}',
           payLoad: event.todo.id,
-          scheduledNotificationDateTime: event.todo.expireTime);
+          scheduledNotificationDateTime: event.todo.expireTime.toLocal());
     }
   }
 
