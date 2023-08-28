@@ -226,7 +226,7 @@ class _TodosPageState extends State<TodosPage>
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            if (!_isSyncing && _areTodosNotUploaded) ...[
+                            if (!_isSyncing && _areTodosNotUploaded && state is! TodosEditingState) ...[
                               SizedBox(
                                 height: SizeConfig.blockSizeVertical! * 3,
                               ),
