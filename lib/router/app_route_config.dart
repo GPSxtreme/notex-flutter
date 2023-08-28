@@ -17,7 +17,6 @@ class MyAppRouter {
   static GoRouter getRouter(bool isAuth) {
     // private navigators
     final rootNavigatorKey = GlobalKey<NavigatorState>();
-
     return GoRouter(
         initialLocation: '/',
         navigatorKey: rootNavigatorKey,
