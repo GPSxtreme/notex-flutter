@@ -1,7 +1,9 @@
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
 
 class SharedPreferencesRepository {
   static const String _jwtKey = 'jwt_token';
+  static const String _profilePictureCacheKey = 'profile_picture';
   static const String _enableAutoSync = 'enableAutoSync';
   static const String _enableNotesOnlinePrefetch = 'enableNotesOnlinePrefetch';
   static const String _enableTodosOnlinePrefetch = 'enableTodosOnlinePrefetch';
@@ -60,5 +62,17 @@ class SharedPreferencesRepository {
     return preferences.getBool(_enableTodosOnlinePrefetch);
   }
 
+  /// Method to set assign an unique id for [_profilePictureCacheKey]
+  static Future<String> generateProfilePictureCacheKey()async{
+    final preferences = await SharedPreferences.getInstance();
+    var uuid = const Uuid().v4();
+    await preferences.setString(uuid, _profilePictureCacheKey);
+    return uuid;
+  }
 
+  /// Method to get [_profilePictureCacheKey]
+  static Future<String?> getProfilePictureCacheKey()async{
+    final preferences = await SharedPreferences.getInstance();
+    return preferences.getString(_profilePictureCacheKey);
+  }
 }
