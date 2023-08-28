@@ -13,16 +13,20 @@ class UserDataModel {
   final String email;
   final String name;
   final bool isEmailVerified;
+  final String country;
+  final DateTime dob;
   final int iat;
   final int exp;
 
-  UserDataModel({
+  UserDataModel( {
     required this.userId,
     required this.email,
     required this.name,
     required this.isEmailVerified,
     required this.iat,
     required this.exp,
+    required this.country,
+    required this.dob
   });
 
   factory UserDataModel.fromJson(Map<String, dynamic> json) => UserDataModel(
@@ -32,6 +36,8 @@ class UserDataModel {
     isEmailVerified: json["isEmailVerified"],
     iat: json["iat"],
     exp: json["exp"],
+    country: json['country'],
+      dob: DateTime.parse(json['dob'])
   );
 
   Map<String, dynamic> toJson() => {
@@ -41,5 +47,7 @@ class UserDataModel {
     "isEmailVerified": isEmailVerified,
     "iat": iat,
     "exp": exp,
+    'country' : country,
+    'dob' : dob,
   };
 }
