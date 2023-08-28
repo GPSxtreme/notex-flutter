@@ -10,24 +10,24 @@ String updatableUserDataModelToJson(UpdatableUserDataModel data) => json.encode(
 
 class UpdatableUserDataModel {
   final String name;
-  final String country;
-  final String dob;
+  final String countryCode;
+  final DateTime dob;
 
   UpdatableUserDataModel({
     required this.name,
-    required this.country,
+    required this.countryCode,
     required this.dob,
   });
 
   factory UpdatableUserDataModel.fromJson(Map<String, dynamic> json) => UpdatableUserDataModel(
     name: json["name"],
-    country: json["country"],
-    dob: json["dob"],
+    countryCode: json["country"],
+    dob: DateTime.parse(json["dob"]),
   );
 
   Map<String, dynamic> toJson() => {
     "name": name,
-    "country": country,
-    "dob": dob,
+    "country": countryCode,
+    "dob": dob.toUtc().toIso8601String(),
   };
 }
