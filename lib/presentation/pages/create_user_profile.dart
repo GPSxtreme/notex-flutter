@@ -66,6 +66,7 @@ class _CreateUserProfileState extends State<CreateUserProfile> {
 
   void _showPickOptions() => showModalBottomSheet(
     backgroundColor: kPinkD2,
+    showDragHandle: true,
     context: context,
     builder: (BuildContext context) {
       return Column(
@@ -322,7 +323,7 @@ class _CreateUserProfileState extends State<CreateUserProfile> {
                                         dialogBackgroundColor: kPinkD1.withOpacity(0.3),
                                         onChanged: (CountryCode countryCode) {
                                           setState(() {
-                                            _selectedCountry = countryCode.name!;
+                                            _selectedCountry = countryCode.code!;
                                           });
                                         },
                                       ),
@@ -338,7 +339,8 @@ class _CreateUserProfileState extends State<CreateUserProfile> {
                                         kSnackBar(context, "Please fill in all fields");
                                       }else{
                                         // create user profile
-                                       createUserProfileBloc.add(CreateUserProfileCreateEvent(UpdatableUserDataModel(country: _selectedCountry,dob: DateFormat('MM/dd/yyyy').parse(_dobController.text).toIso8601String(),name: _nameController.text),_imageFile!));
+                                       createUserProfileBloc.add(CreateUserProfileCreateEvent(UpdatableUserDataModel(countryCode: _selectedCountry,dob:DateFormat('MM/dd/yyyy')
+                                           .parse(_dobController.text).toUtc(),name: _nameController.text),_imageFile!));
                                       }
                                     } : null,
                                     style: kBtnStyleT1,
