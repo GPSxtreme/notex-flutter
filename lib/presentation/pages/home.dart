@@ -314,25 +314,29 @@ class _HomePageState extends State<HomePage> {
                             color: kPink,
                             shape: BoxShape.circle,
                           ),
-                          child: CachedNetworkImage(
-                            imageUrl: USER_PROFILE_PICTURE_GET_ROUTE,
-                            httpHeaders: {
-                              'Content-Type': 'application/json',
-                              'Authorization': AuthRepository.userToken
-                            },
-                            progressIndicatorBuilder:
-                                (context, url, downloadProgress) =>
-                                    CircularProgressIndicator(
-                              value: downloadProgress.progress,
-                              color: kPink,
+                          child: ClipOval(
+                            child: CachedNetworkImage(
+                              fit: BoxFit.cover,
+                              imageUrl: USER_PROFILE_PICTURE_GET_ROUTE,
+                              httpHeaders: {
+                                'Content-Type': 'application/json',
+                                'Authorization': AuthRepository.userToken
+                              },
+                              cacheKey: USER.profilePictureCacheKey,
+                              progressIndicatorBuilder:
+                                  (context, url, downloadProgress) =>
+                                  CircularProgressIndicator(
+                                    value: downloadProgress.progress,
+                                    color: kPink,
+                                  ),
+                              errorWidget: (context, url, error) => const Icon(
+                                Icons.person,
+                                size: 70,
+                                color: kWhite,
+                              ),
+                              width: 128.0,
+                              height: 128.0,
                             ),
-                            errorWidget: (context, url, error) => const Icon(
-                              Icons.person,
-                              size: 70,
-                              color: kWhite,
-                            ),
-                            width: 128.0,
-                            height: 128.0,
                           ),
                         ),
                         if (!USER.data!.isEmailVerified)
