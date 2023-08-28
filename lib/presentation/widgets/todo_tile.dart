@@ -89,7 +89,7 @@ class _TodoTileState extends State<TodoTile> {
         return Container(
           width: double.maxFinite,
           decoration: BoxDecoration(
-              color: DateTime.now().isAfter(widget.todo.expireTime.toLocal()) ?Colors.black12 : kPinkD2,
+              color: DateTime.now().isAfter(widget.todo.expireTime.toLocal()) ? kPinkD2 : kPinkD2,
               borderRadius: BorderRadius.circular(20.0),
               border: Border.all(width: 1.0, color: kPinkD1)),
           child: Material(
@@ -180,7 +180,7 @@ class _TodoTileState extends State<TodoTile> {
                                   color: kWhite75, fontSize: 12),
                             ),
                             Text(
-                              'expires on : ${DateFormat('d MMMM, h:mm a').format(widget.todo.expireTime.toLocal()).toString()}',
+                              'completion on : ${DateFormat('d MMMM, h:mm a').format(widget.todo.expireTime.toLocal()).toString()}',
                               style: kInter.copyWith(
                                   color: kWhite75, fontSize: 12),
                             ),
