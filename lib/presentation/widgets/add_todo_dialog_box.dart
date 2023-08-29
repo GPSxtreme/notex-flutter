@@ -113,7 +113,7 @@ class _AddTodoDialogBoxState extends State<AddTodoDialogBox> {
                         isCompleted: false,
                         createdTime: DateTime.now().toUtc(),
                         editedTime: DateTime.now().toUtc(),
-                        expireTime: _expireTime ?? DateTime.now().toUtc(),
+                        expireTime: _expireTime ?? DateTime.now().add(const Duration(hours: 6)).toUtc(),
                         v: 0);
                     widget.todosBloc.add(TodosAddTodoEvent(todo));
                     Navigator.of(context).pop(); // Close the dialog
