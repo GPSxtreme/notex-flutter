@@ -2,10 +2,10 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:meta/meta.dart';
+import 'package:notex/core/repositories/auth_repository.dart';
 import 'package:notex/core/repositories/notes_repository.dart';
 import 'package:notex/main.dart';
 import '../../../data/models/note_model.dart';
-
 part 'notes_event.dart';
 
 part 'notes_state.dart';
@@ -413,19 +413,51 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
     }
   }
 
-  FutureOr<void> handleShowHiddenNotes(
-      NotesShowHiddenNotesEvent event, Emitter<NotesState> emit) {
+  Future<FutureOr<void>> handleShowHiddenNotes(
+      NotesShowHiddenNotesEvent event, Emitter<NotesState> emit) async {
     try {
-      emitNotesFetchedState(emit, isInHiddenMode: event.value);
-    } catch (error) {
+      if(event.value) {
+        if(SETTINGS.isHiddenNotesLockEnabled) {
+          await AuthRepository.authenticateUser().then(
+            (response) {
+              if(response){
+                emitNotesFetchedState(emit, isInHiddenMode: event.value);
+              } else{
+                emit(NotesOperationFailedState('Failed to authenticate'));
+              }
+            }
+        );
+        }else{
+          emitNotesFetchedState(emit, isInHiddenMode: event.value);
+        }
+      }else{
+        emitNotesFetchedState(emit, isInHiddenMode: event.value);
+      }
+      } catch (error) {
       emit(NotesOperationFailedState(error.toString()));
     }
   }
 
-  FutureOr<void> handleShowDeletedNotes(
-      NotesShowDeletedNotesEvent event, Emitter<NotesState> emit) {
+  Future<FutureOr<void>> handleShowDeletedNotes(
+      NotesShowDeletedNotesEvent event, Emitter<NotesState> emit) async {
     try {
-      emitNotesFetchedState(emit, isInDeletedMode: event.value);
+      if(event.value) {
+        if(SETTINGS.isDeletedNotesLockEnabled) {
+          await AuthRepository.authenticateUser().then(
+                  (response) {
+                if(response){
+                  emitNotesFetchedState(emit, isInDeletedMode: event.value);
+                } else{
+                  emit(NotesOperationFailedState('Failed to authenticate'));
+                }
+              }
+          );
+        }else{
+          emitNotesFetchedState(emit, isInDeletedMode: event.value);
+        }
+      }else{
+        emitNotesFetchedState(emit, isInDeletedMode: event.value);
+      }
     } catch (error) {
       emit(NotesOperationFailedState(error.toString()));
     }
