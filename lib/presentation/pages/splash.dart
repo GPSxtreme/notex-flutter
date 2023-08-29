@@ -38,9 +38,7 @@ class _SplashPageState extends State<SplashPage>{
         } else if (state is  SplashUserAuthenticatedState){
           // GoRouter.of(context).go("/${AppRouteConstants.notesRouteName}");
           GoRouter.of(context).goNamed(AppRouteConstants.homeRouteName);
-
         }
-
       },
       builder: (context, state){
         return Scaffold(
@@ -66,6 +64,9 @@ class _SplashPageState extends State<SplashPage>{
                     children: [
                       if(state is SplashLoadingState) ...[
                         const SpinKitRing(color: kPinkD1,size: 30,),
+                        SizedBox(height: SizeConfig.blockSizeVertical,),
+                      ]else if(state is SplashUserLocalAuthenticationFailedState) ...[
+                        const Icon(Icons.error_outline,color: kRed,size: 35,),
                         SizedBox(height: SizeConfig.blockSizeVertical,),
                       ],
                       Center(child: kDevLogo,),
