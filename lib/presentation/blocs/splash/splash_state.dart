@@ -12,3 +12,5 @@ class SplashLoadingState extends SplashState {}
 class SplashUserNotAuthenticatedState extends SplashActionState {}
 
 class SplashUserAuthenticatedState extends SplashActionState{}
+
+class SplashUserLocalAuthenticationFailedState extends SplashState{}
