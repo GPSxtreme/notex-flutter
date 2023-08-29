@@ -250,4 +250,14 @@ class LocalDatabaseRepository {
       return TodoModel.fromJsonOfLocalDb(todos[i]);
     });
   }
+
+  Future<void> dropNotes() async {
+    // Delete the "notes" table
+    await _database.delete('notes');
+  }
+
+  Future<void> dropTodos() async {
+    // Delete the "todos" table
+    await _database.delete('todos');
+  }
 }
