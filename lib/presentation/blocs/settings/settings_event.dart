@@ -25,6 +25,27 @@ class SettingsSetPrefetchCloudTodosEvent extends SettingsEvent{
   SettingsSetPrefetchCloudTodosEvent(this.value);
 }
 
+class SettingsSetAppLockEvent extends SettingsEvent {
+  final bool value;
+  SettingsSetAppLockEvent(this.value);
+}
+
+class SettingsSetHiddenNotesLockEvent extends SettingsEvent {
+  final bool value;
+  SettingsSetHiddenNotesLockEvent(this.value);
+}
+
+class SettingsSetDeletedNotesLockEvent extends SettingsEvent {
+  final bool value;
+  SettingsSetDeletedNotesLockEvent(this.value);
+}
+
+class SettingsSetBiometricOnlyEvent extends SettingsEvent {
+  final bool value;
+  SettingsSetBiometricOnlyEvent(this.value);
+}
+
+
 class SettingsUserLogoutEvent extends SettingsEvent{
   final String? title;
   final String? body;
