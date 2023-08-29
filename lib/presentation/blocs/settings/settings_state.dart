@@ -19,11 +19,19 @@ class SettingsFetchedState extends SettingsState {
   final bool isAutoSyncEnabled;
   final bool isNotesOnlinePrefetchEnabled;
   final bool isTodosOnlinePrefetchEnabled;
+  final bool isAppLockEnabled;
+  final bool isHiddenNotesLockEnabled;
+  final bool isDeletedNotesLockEnabled;
+  final bool isBiometricOnly;
 
   SettingsFetchedState(
       {required this.isAutoSyncEnabled,
       required this.isNotesOnlinePrefetchEnabled,
-      required this.isTodosOnlinePrefetchEnabled});
+      required this.isTodosOnlinePrefetchEnabled,
+      required this.isAppLockEnabled,
+      required this.isHiddenNotesLockEnabled,
+      required this.isDeletedNotesLockEnabled,
+      required this.isBiometricOnly});
 }
 
 class SettingsSnackBarState extends SettingsActionState {
