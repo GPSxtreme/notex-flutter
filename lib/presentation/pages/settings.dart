@@ -25,6 +25,13 @@ class _SettingsPageState extends State<SettingsPage> {
   bool _isSendingPasswordResetLink = false;
   bool _isSendingEmailVerificationLink = false;
 
+  Widget label(String label) => Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        child: Text(label,
+            style: kInter.copyWith(
+                fontSize: 17, color: kWhite, fontWeight: FontWeight.w600)),
+      );
+
   @override
   void initState() {
     super.initState();
@@ -86,207 +93,377 @@ class _SettingsPageState extends State<SettingsPage> {
             decoration: const BoxDecoration(gradient: kPageBgGradient),
             child: Material(
               color: Colors.transparent,
-              child: Column(
-                mainAxisAlignment: state is! SettingsFetchedState
-                    ? MainAxisAlignment.center
-                    : MainAxisAlignment.start,
-                children: [
-                  if (state is SettingsFetchingState) ...[
-                    const Center(
-                      child: SpinKitRing(
-                        lineWidth: 3.0,
-                        color: kPinkD1,
-                      ),
-                    )
-                  ] else if (state is SettingsFetchingFailedState) ...[
-                    Center(
-                      child: Text(
-                        'Something went wrong \n ${state.reason}',
-                        style: kInter,
-                        textAlign: TextAlign.center,
-                      ),
-                    )
-                  ] else if (state is SettingsFetchedState) ...[
-                    ListTileTheme(
-                      textColor: kWhite,
-                      iconColor: kPinkD1,
-                      horizontalTitleGap: 10,
-                      contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 15, vertical: 5),
-                      child: Column(
-                        children: [
-                          if (!USER.data!.isEmailVerified)
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: state is! SettingsFetchedState
+                      ? MainAxisAlignment.center
+                      : MainAxisAlignment.start,
+                  children: [
+                    if (state is SettingsFetchingState) ...[
+                      const Center(
+                        child: SpinKitRing(
+                          lineWidth: 3.0,
+                          color: kPinkD1,
+                        ),
+                      )
+                    ] else if (state is SettingsFetchingFailedState) ...[
+                      Center(
+                        child: Text(
+                          'Something went wrong \n ${state.reason}',
+                          style: kInter,
+                          textAlign: TextAlign.center,
+                        ),
+                      )
+                    ] else if (state is SettingsFetchedState) ...[
+                      ListTileTheme(
+                        textColor: kWhite,
+                        iconColor: kPinkD1,
+                        horizontalTitleGap: 10,
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 15, vertical: 5),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            label('Sync Settings'),
                             ListTile(
-                              splashColor: kPinkD1,
-                              leading: !_isSendingEmailVerificationLink
-                                  ? const Icon(
-                                      Ionicons.alert_circle_outline,
-                                      color: Colors.yellow,
-                                      size: 35,
-                                    )
-                                  : const SizedBox(
-                                      width: 25,
-                                      height: 25,
-                                      child: SpinKitRing(
-                                          color: kPinkD1, lineWidth: 4.0)),
-                              onTap: !_isSendingEmailVerificationLink
-                                  ? () {
-                                      setState(() {
-                                        _isSendingEmailVerificationLink = true;
-                                      });
-                                      settingsBloc.add(
-                                          SettingsUserAccountVerifyEvent());
-                                    }
-                                  : null,
+                              leading: const Icon(
+                                Icons.sync,
+                                color: kPinkD1,
+                                size: 35,
+                              ),
                               title: Text(
-                                'Verify account',
+                                'Auto sync',
                                 style: kInter.copyWith(fontSize: 15),
                               ),
                               subtitle: Text(
-                                'Secure your account by verifying your email.\nPassword can only be reset if the account is verified.',
+                                'This enables auto-sync for both notes and todos.',
+                                style: kInter.copyWith(
+                                    color: kWhite75, fontSize: 12),
+                              ),
+                              trailing: Switch(
+                                activeColor: kPink,
+                                activeTrackColor: kPinkD1,
+                                inactiveThumbColor: kPinkD1,
+                                inactiveTrackColor: kPinkD2,
+                                value: state.isAutoSyncEnabled,
+                                onChanged: (value) async {
+                                  settingsBloc
+                                      .add(SettingsSetAutoSyncEvent(value));
+                                },
+                              ),
+                            ),
+                            ListTile(
+                              leading: const Icon(
+                                Icons.cloud_download_outlined,
+                                color: kPinkD1,
+                                size: 35,
+                              ),
+                              title: Text(
+                                'Prefetch cloud notes',
+                                style: kInter.copyWith(fontSize: 15),
+                              ),
+                              subtitle: Text(
+                                'This enables prefetch of cloud notes on startup.',
+                                style: kInter.copyWith(
+                                    color: kWhite75, fontSize: 12),
+                              ),
+                              trailing: Switch(
+                                activeColor: kPink,
+                                activeTrackColor: kPinkD1,
+                                inactiveThumbColor: kPinkD1,
+                                inactiveTrackColor: kPinkD2,
+                                value: state.isNotesOnlinePrefetchEnabled,
+                                onChanged: (value) {
+                                  settingsBloc.add(
+                                      SettingsSetPrefetchCloudNotesEvent(
+                                          value));
+                                },
+                              ),
+                            ),
+                            ListTile(
+                              leading: const Icon(
+                                Icons.cloud_download_outlined,
+                                color: kPinkD1,
+                                size: 35,
+                              ),
+                              title: Text(
+                                'Prefetch cloud todos',
+                                style: kInter.copyWith(fontSize: 15),
+                              ),
+                              subtitle: Text(
+                                'This enables prefetch of cloud todos on startup.',
+                                style: kInter.copyWith(
+                                    color: kWhite75, fontSize: 12),
+                              ),
+                              trailing: Switch(
+                                activeColor: kPink,
+                                activeTrackColor: kPinkD1,
+                                inactiveThumbColor: kPinkD1,
+                                inactiveTrackColor: kPinkD2,
+                                value: state.isTodosOnlinePrefetchEnabled,
+                                onChanged: (value) {
+                                  settingsBloc.add(
+                                      SettingsSetPrefetchCloudTodosEvent(
+                                          value));
+                                },
+                              ),
+                            ),
+                            label('Data Management'),
+                            ListTile(
+                              splashColor: kPinkD1,
+                              leading: const Icon(
+                                Icons.delete_outline,
+                                color: kPinkD1,
+                                size: 35,
+                              ),
+                              onTap: () async {
+                                bool? res = await CommonWidgets.commonAlertDialog(context, title: "Delete all notes?", body: "All locally saved notes will be deleted.", agreeLabel: 'continue', denyLabel: 'cancel');
+                                if(res == true){
+                                  await LOCAL_DB.dropNotes().then((_) {
+                                    GoRouter.of(context)
+                                        .goNamed(AppRouteConstants.splashRouteName);
+                                  });
+                                }
+                              },
+                              title: Text(
+                                'Delete all notes',
+                                style: kInter.copyWith(fontSize: 15),
+                              ),
+                              subtitle: Text(
+                                'This will remove all the notes locally saved. Notes synced to cloud will not be affected.',
                                 style: kInter.copyWith(
                                     color: kWhite75, fontSize: 12),
                               ),
                             ),
-                          ListTile(
-                            leading: const Icon(
-                              Icons.sync,
-                              color: kPinkD1,
-                              size: 35,
-                            ),
-                            title: Text(
-                              'Auto sync',
-                              style: kInter.copyWith(fontSize: 15),
-                            ),
-                            subtitle: Text(
-                              'This enables auto-sync for both notes and todos.',
-                              style: kInter.copyWith(
-                                  color: kWhite75, fontSize: 12),
-                            ),
-                            trailing: Switch(
-                              activeColor: kPink,
-                              activeTrackColor: kPinkD1,
-                              inactiveThumbColor: kPinkD1,
-                              inactiveTrackColor: kPinkD2,
-                              value: state.isAutoSyncEnabled,
-                              onChanged: (value) async {
-                                settingsBloc
-                                    .add(SettingsSetAutoSyncEvent(value));
-                              },
-                            ),
-                          ),
-                          ListTile(
-                            leading: const Icon(
-                              Icons.cloud_download_outlined,
-                              color: kPinkD1,
-                              size: 35,
-                            ),
-                            title: Text(
-                              'Prefetch cloud notes',
-                              style: kInter.copyWith(fontSize: 15),
-                            ),
-                            subtitle: Text(
-                              'This enables prefetch of cloud notes on startup.',
-                              style: kInter.copyWith(
-                                  color: kWhite75, fontSize: 12),
-                            ),
-                            trailing: Switch(
-                              activeColor: kPink,
-                              activeTrackColor: kPinkD1,
-                              inactiveThumbColor: kPinkD1,
-                              inactiveTrackColor: kPinkD2,
-                              value: state.isNotesOnlinePrefetchEnabled,
-                              onChanged: (value) async {
-                                settingsBloc
-                                    .add(SettingsSetPrefetchCloudNotesEvent(value));
-                              },
-                            ),
-                          ),
-                          ListTile(
-                            leading: const Icon(
-                              Icons.cloud_download_outlined,
-                              color: kPinkD1,
-                              size: 35,
-                            ),
-                            title: Text(
-                              'Prefetch cloud todos',
-                              style: kInter.copyWith(fontSize: 15),
-                            ),
-                            subtitle: Text(
-                              'This enables prefetch of cloud todos on startup.',
-                              style: kInter.copyWith(
-                                  color: kWhite75, fontSize: 12),
-                            ),
-                            trailing: Switch(
-                              activeColor: kPink,
-                              activeTrackColor: kPinkD1,
-                              inactiveThumbColor: kPinkD1,
-                              inactiveTrackColor: kPinkD2,
-                              value: state.isTodosOnlinePrefetchEnabled,
-                              onChanged: (value) async {
-                                settingsBloc
-                                    .add(SettingsSetPrefetchCloudTodosEvent(value));
-                              },
-                            ),
-                          ),
-                          if (USER.data!.isEmailVerified)
                             ListTile(
                               splashColor: kPinkD1,
-                              leading: !_isSendingPasswordResetLink
-                                  ? const Icon(
-                                      Icons.lock_reset,
-                                      color: kPinkD1,
-                                      size: 35,
-                                    )
-                                  : const SizedBox(
-                                      width: 25,
-                                      height: 25,
-                                      child: SpinKitRing(
-                                          color: kPinkD1, lineWidth: 4.0)),
-                              onTap: !_isSendingPasswordResetLink
-                                  ? () {
-                                      setState(() {
-                                        _isSendingPasswordResetLink = true;
-                                      });
-                                      settingsBloc.add(
-                                          SettingsUserPasswordResetEvent());
-                                    }
-                                  : null,
+                              leading: const Icon(
+                                Icons.delete_outline,
+                                color: kPinkD1,
+                                size: 35,
+                              ),
+                              onTap: () async {
+                                bool? res = await CommonWidgets.commonAlertDialog(context, title: "Delete all todos?", body: "All locally saved todos will be deleted.", agreeLabel: 'continue', denyLabel: 'cancel');
+                                if(res == true){
+                                  await LOCAL_DB.dropTodos().then((_) {
+                                    GoRouter.of(context)
+                                        .goNamed(AppRouteConstants.splashRouteName);
+                                  });
+                                }
+                              },
                               title: Text(
-                                'Reset password',
+                                'Delete all todos',
                                 style: kInter.copyWith(fontSize: 15),
                               ),
                               subtitle: Text(
-                                'You will be sent a password reset link to your registered email.',
+                                'This will remove all the todos locally saved. Todos synced to cloud will not be affected.',
                                 style: kInter.copyWith(
                                     color: kWhite75, fontSize: 12),
                               ),
                             ),
-                          ListTile(
-                            splashColor: kPinkD1,
-                            leading: const Icon(
-                              Icons.logout_rounded,
-                              color: kPinkD1,
-                              size: 35,
+                            label('Security Settings'),
+                            ListTile(
+                              leading: const Icon(
+                                Icons.phonelink_lock_outlined,
+                                color: kPinkD1,
+                                size: 35,
+                              ),
+                              title: Text(
+                                'App lock',
+                                style: kInter.copyWith(fontSize: 15),
+                              ),
+                              subtitle: Text(
+                                'Sets up app lock to enter app.',
+                                style: kInter.copyWith(
+                                    color: kWhite75, fontSize: 12),
+                              ),
+                              trailing: Switch(
+                                activeColor: kPink,
+                                activeTrackColor: kPinkD1,
+                                inactiveThumbColor: kPinkD1,
+                                inactiveTrackColor: kPinkD2,
+                                value: state.isAppLockEnabled,
+                                onChanged: (value) {
+                                  settingsBloc
+                                      .add(SettingsSetAppLockEvent(value));
+                                },
+                              ),
                             ),
-                            onTap: () {
-                              settingsBloc.add(SettingsUserLogoutEvent());
-                            },
-                            title: Text(
-                              'Logout',
-                              style: kInter.copyWith(fontSize: 15),
+                            ListTile(
+                              leading: const Icon(
+                                Icons.lock,
+                                color: kPinkD1,
+                                size: 35,
+                              ),
+                              title: Text(
+                                'Lock hidden notes',
+                                style: kInter.copyWith(fontSize: 15),
+                              ),
+                              subtitle: Text(
+                                'Sets up app lock to access hidden notes.',
+                                style: kInter.copyWith(
+                                    color: kWhite75, fontSize: 12),
+                              ),
+                              trailing: Switch(
+                                activeColor: kPink,
+                                activeTrackColor: kPinkD1,
+                                inactiveThumbColor: kPinkD1,
+                                inactiveTrackColor: kPinkD2,
+                                value: state.isHiddenNotesLockEnabled,
+                                onChanged: (value) {
+                                  settingsBloc.add(
+                                      SettingsSetHiddenNotesLockEvent(value));
+                                },
+                              ),
                             ),
-                            subtitle: Text(
-                              'You will be redirected to login screen',
-                              style: kInter.copyWith(
-                                  color: kWhite75, fontSize: 12),
+                            ListTile(
+                              leading: const Icon(
+                                Icons.lock,
+                                color: kPinkD1,
+                                size: 35,
+                              ),
+                              title: Text(
+                                'Lock deleted notes',
+                                style: kInter.copyWith(fontSize: 15),
+                              ),
+                              subtitle: Text(
+                                'Sets up app lock to access deleted notes.',
+                                style: kInter.copyWith(
+                                    color: kWhite75, fontSize: 12),
+                              ),
+                              trailing: Switch(
+                                activeColor: kPink,
+                                activeTrackColor: kPinkD1,
+                                inactiveThumbColor: kPinkD1,
+                                inactiveTrackColor: kPinkD2,
+                                value: state.isDeletedNotesLockEnabled,
+                                onChanged: (value) {
+                                  settingsBloc.add(
+                                      SettingsSetDeletedNotesLockEvent(value));
+                                },
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    )
-                  ]
-                ],
+                            ListTile(
+                              leading: const Icon(
+                                Icons.fingerprint_rounded,
+                                color: kPinkD1,
+                                size: 35,
+                              ),
+                              title: Text(
+                                'Biometric only',
+                                style: kInter.copyWith(fontSize: 15),
+                              ),
+                              subtitle: Text(
+                                'Prevent authentications from using non-biometric local authentication such as pin, passcode, or pattern.',
+                                style: kInter.copyWith(
+                                    color: kWhite75, fontSize: 12),
+                              ),
+                              trailing: Switch(
+                                activeColor: kPink,
+                                activeTrackColor: kPinkD1,
+                                inactiveThumbColor: kPinkD1,
+                                inactiveTrackColor: kPinkD2,
+                                value: state.isBiometricOnly,
+                                onChanged: (value) async {
+                                  settingsBloc.add(
+                                      SettingsSetBiometricOnlyEvent(value));
+                                },
+                              ),
+                            ),
+                            label('Account Management'),
+                            if (!USER.data!.isEmailVerified)
+                              ListTile(
+                                splashColor: kPinkD1,
+                                leading: !_isSendingEmailVerificationLink
+                                    ? const Icon(
+                                        Ionicons.alert_circle_outline,
+                                        color: Colors.yellow,
+                                        size: 35,
+                                      )
+                                    : const SizedBox(
+                                        width: 25,
+                                        height: 25,
+                                        child: SpinKitRing(
+                                            color: kPinkD1, lineWidth: 4.0)),
+                                onTap: !_isSendingEmailVerificationLink
+                                    ? () {
+                                        setState(() {
+                                          _isSendingEmailVerificationLink =
+                                              true;
+                                        });
+                                        settingsBloc.add(
+                                            SettingsUserAccountVerifyEvent());
+                                      }
+                                    : null,
+                                title: Text(
+                                  'Verify account',
+                                  style: kInter.copyWith(fontSize: 15),
+                                ),
+                                subtitle: Text(
+                                  'Secure your account by verifying your email.\nPassword can only be reset if the account is verified.',
+                                  style: kInter.copyWith(
+                                      color: kWhite75, fontSize: 12),
+                                ),
+                              ),
+                            if (USER.data!.isEmailVerified)
+                              ListTile(
+                                splashColor: kPinkD1,
+                                leading: !_isSendingPasswordResetLink
+                                    ? const Icon(
+                                        Icons.lock_reset,
+                                        color: kPinkD1,
+                                        size: 35,
+                                      )
+                                    : const SizedBox(
+                                        width: 25,
+                                        height: 25,
+                                        child: SpinKitRing(
+                                            color: kPinkD1, lineWidth: 4.0)),
+                                onTap: !_isSendingPasswordResetLink
+                                    ? () {
+                                        setState(() {
+                                          _isSendingPasswordResetLink = true;
+                                        });
+                                        settingsBloc.add(
+                                            SettingsUserPasswordResetEvent());
+                                      }
+                                    : null,
+                                title: Text(
+                                  'Reset password',
+                                  style: kInter.copyWith(fontSize: 15),
+                                ),
+                                subtitle: Text(
+                                  'You will be sent a password reset link to your registered email.',
+                                  style: kInter.copyWith(
+                                      color: kWhite75, fontSize: 12),
+                                ),
+                              ),
+                            ListTile(
+                              splashColor: kPinkD1,
+                              leading: const Icon(
+                                Icons.logout_rounded,
+                                color: kPinkD1,
+                                size: 35,
+                              ),
+                              onTap: () {
+                                settingsBloc.add(SettingsUserLogoutEvent());
+                              },
+                              title: Text(
+                                'Logout',
+                                style: kInter.copyWith(fontSize: 15),
+                              ),
+                              subtitle: Text(
+                                'You will be redirected to login screen',
+                                style: kInter.copyWith(
+                                    color: kWhite75, fontSize: 12),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    ]
+                  ],
+                ),
               ),
             ),
           ),
