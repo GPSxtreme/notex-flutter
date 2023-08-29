@@ -62,7 +62,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
           emit(UserSendScaffoldMessageState(response.message));
           // update login token
           await SharedPreferencesRepository.saveJwtToken(response.token!);
-          await AuthRepository.initUserToken();
+          await AuthRepository.init();
           await USER.init().then(
               (_) {
                 emit(UserSettingsFetchedState(USER.data!, img));
