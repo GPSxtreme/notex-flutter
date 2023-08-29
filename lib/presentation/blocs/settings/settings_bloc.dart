@@ -17,59 +17,96 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     on<SettingsUserPasswordResetEvent>(handleUserPasswordReset);
     on<SettingsSetPrefetchCloudNotesEvent>(handleSetOnlineNotesPrefetch);
     on<SettingsSetPrefetchCloudTodosEvent>(handleSetOnlineTodosPrefetch);
+    on<SettingsSetAppLockEvent>(handleSetAppLock);
+    on<SettingsSetHiddenNotesLockEvent>(handleSetHiddenNotesLock);
+    on<SettingsSetDeletedNotesLockEvent>(handleSetDeletedNotesLock);
+    on<SettingsSetBiometricOnlyEvent>(handleSetBiometricOnly);
+
   }
 
-  FutureOr<void> handleFetchSettings(
-      SettingsInitialEvent event, Emitter<SettingsState> emit) async {
+  SettingsFetchedState settingsFetchedState () => SettingsFetchedState(
+      isAutoSyncEnabled: SETTINGS.isAutoSyncEnabled,
+      isNotesOnlinePrefetchEnabled: SETTINGS.isNotesOnlinePrefetchEnabled,
+      isTodosOnlinePrefetchEnabled: SETTINGS.isTodosOnlinePrefetchEnabled,
+      isAppLockEnabled: SETTINGS.isAppLockEnabled,
+      isHiddenNotesLockEnabled: SETTINGS.isHiddenNotesLockEnabled,
+      isDeletedNotesLockEnabled: SETTINGS.isDeletedNotesLockEnabled,
+      isBiometricOnly: SETTINGS.isBiometricOnly);
+
+  FutureOr<void> handleFetchSettings(SettingsInitialEvent event,
+      Emitter<SettingsState> emit) async {
     try {
-      emit(SettingsFetchedState(
-          isAutoSyncEnabled: SETTINGS.isAutoSyncEnabled,
-          isNotesOnlinePrefetchEnabled: SETTINGS.isNotesOnlinePrefetchEnabled,
-          isTodosOnlinePrefetchEnabled: SETTINGS.isTodosOnlinePrefetchEnabled));
+      emit(settingsFetchedState());
     } catch (error) {
       emit(SettingsFetchingFailedState(error.toString()));
     }
   }
 
-  FutureOr<void> handleSetAutoSync(
-      SettingsSetAutoSyncEvent event, Emitter<SettingsState> emit) async {
+  FutureOr<void> handleSetAutoSync(SettingsSetAutoSyncEvent event,
+      Emitter<SettingsState> emit) async {
     try {
-      await SETTINGS.setAutoSyncEnabled(event.value);
-      emit(SettingsFetchedState(
-          isAutoSyncEnabled: SETTINGS.isAutoSyncEnabled,
-          isNotesOnlinePrefetchEnabled: SETTINGS.isNotesOnlinePrefetchEnabled,
-          isTodosOnlinePrefetchEnabled: SETTINGS.isTodosOnlinePrefetchEnabled));
-    } catch (error) {
-      emit(SettingsSnackBarState(error.toString()));
-    }
-  }
-  FutureOr<void> handleSetOnlineNotesPrefetch(
-      SettingsSetPrefetchCloudNotesEvent event, Emitter<SettingsState> emit) async {
-    try {
-      await SETTINGS.setNotesOnlinePrefetch(event.value);
-      emit(SettingsFetchedState(
-          isAutoSyncEnabled: SETTINGS.isAutoSyncEnabled,
-          isNotesOnlinePrefetchEnabled: SETTINGS.isNotesOnlinePrefetchEnabled,
-          isTodosOnlinePrefetchEnabled: SETTINGS.isTodosOnlinePrefetchEnabled));
-    } catch (error) {
-      emit(SettingsSnackBarState(error.toString()));
-    }
-  }
-  FutureOr<void> handleSetOnlineTodosPrefetch(
-      SettingsSetPrefetchCloudTodosEvent event, Emitter<SettingsState> emit) async {
-    try {
-      await SETTINGS.setTodosOnlinePrefetch(event.value);
-      emit(SettingsFetchedState(
-          isAutoSyncEnabled: SETTINGS.isAutoSyncEnabled,
-          isNotesOnlinePrefetchEnabled: SETTINGS.isNotesOnlinePrefetchEnabled,
-          isTodosOnlinePrefetchEnabled: SETTINGS.isTodosOnlinePrefetchEnabled));
+      await SETTINGS.setAutoSyncEnabled(event.value).then((_)=>emit(settingsFetchedState()));
+
     } catch (error) {
       emit(SettingsSnackBarState(error.toString()));
     }
   }
 
-  FutureOr<void> handleUserLogout(
-      SettingsUserLogoutEvent event, Emitter<SettingsState> emit) async {
+  FutureOr<void> handleSetOnlineNotesPrefetch(
+      SettingsSetPrefetchCloudNotesEvent event,
+      Emitter<SettingsState> emit) async {
+    try {
+      await SETTINGS.setNotesOnlinePrefetch(event.value).then((_)=>emit(settingsFetchedState()));
+    } catch (error) {
+      emit(SettingsSnackBarState(error.toString()));
+    }
+  }
+
+  FutureOr<void> handleSetOnlineTodosPrefetch(
+      SettingsSetPrefetchCloudTodosEvent event,
+      Emitter<SettingsState> emit) async {
+    try {
+      await SETTINGS.setTodosOnlinePrefetch(event.value).then((_)=>emit(settingsFetchedState()));
+    } catch (error) {
+      emit(SettingsSnackBarState(error.toString()));
+    }
+  }
+
+  FutureOr<void> handleSetAppLock(SettingsSetAppLockEvent event, Emitter<SettingsState> emit) async {
+    try {
+      await SETTINGS.setAppLockEnabled(event.value).then((_)=>emit(settingsFetchedState()));
+    } catch (error) {
+      emit(SettingsSnackBarState(error.toString()));
+    }
+  }
+
+  FutureOr<void> handleSetHiddenNotesLock(SettingsSetHiddenNotesLockEvent event, Emitter<SettingsState> emit) async {
+    try {
+      await SETTINGS.setHiddenNotesLockEnabled(event.value).then((_)=>emit(settingsFetchedState()));
+    } catch (error) {
+      emit(SettingsSnackBarState(error.toString()));
+    }
+  }
+
+  FutureOr<void> handleSetDeletedNotesLock(SettingsSetDeletedNotesLockEvent event, Emitter<SettingsState> emit) async {
+    try {
+      await SETTINGS.setDeletedNotesLockEnabled(event.value).then((_)=>emit(settingsFetchedState()));
+    } catch (error) {
+      emit(SettingsSnackBarState(error.toString()));
+    }
+  }
+
+  FutureOr<void> handleSetBiometricOnly(SettingsSetBiometricOnlyEvent event, Emitter<SettingsState> emit) async {
+    try {
+      await SETTINGS.setBiometricOnly(event.value).then((_)=>emit(settingsFetchedState()));
+    } catch (error) {
+      emit(SettingsSnackBarState(error.toString()));
+    }
+  }
+
+
+  FutureOr<void> handleUserLogout(SettingsUserLogoutEvent event,
+      Emitter<SettingsState> emit) async {
     try {
       final response = await AuthRepository.logoutUser();
       if (response) {
@@ -82,8 +119,8 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     }
   }
 
-  FutureOr<void> handleUserVerification(
-      SettingsUserAccountVerifyEvent event, Emitter<SettingsState> emit) async {
+  FutureOr<void> handleUserVerification(SettingsUserAccountVerifyEvent event,
+      Emitter<SettingsState> emit) async {
     try {
       await AuthRepository.sendAccountVerificationEmail().then((res) async {
         if (res.success) {
@@ -91,7 +128,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
           emit(SettingsUserLogoutState(
               title: 'Email sent!',
               body:
-                  'You will be logged out to reinitialise login credentials.\n(check spam folder for link if not in inbox)',
+              'You will be logged out to reinitialise login credentials.\n(check spam folder for link if not in inbox)',
               agreeLabel: 'continue',
               isBarrierDismissible: false,
               isSingleButton: true));
@@ -104,8 +141,8 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     }
   }
 
-  FutureOr<void> handleUserPasswordReset(
-      SettingsUserPasswordResetEvent event, Emitter<SettingsState> emit) async {
+  FutureOr<void> handleUserPasswordReset(SettingsUserPasswordResetEvent event,
+      Emitter<SettingsState> emit) async {
     try {
       await AuthRepository.sendPasswordResetLink().then((res) async {
         if (res.success) {
@@ -113,7 +150,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
           emit(SettingsUserLogoutState(
               title: 'Email sent!',
               body:
-                  'You will be logged out to reinitialise login credentials.\n(check spam folder for link if not in inbox)',
+              'You will be logged out to reinitialise login credentials.\n(check spam folder for link if not in inbox)',
               agreeLabel: 'continue',
               isBarrierDismissible: false,
               isSingleButton: true));
