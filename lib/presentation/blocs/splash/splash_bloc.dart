@@ -13,18 +13,11 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
     on<SplashInitialEvent>(splashInitialEvent);
   }
 
-  FutureOr<void> splashInitialEvent(
-      SplashInitialEvent event, Emitter<SplashState> emit) async {
-    emit(SplashLoadingState());
-    await Future.delayed(const Duration(seconds: 1));
-    //initialize local db
-    await LOCAL_DB.init();
-    // initialize local settings
-    await SETTINGS.init();
+  Future<void> authenticateUser(Emitter emit) async{
     String? userToken = await SharedPreferencesRepository.getJwtToken();
     if (userToken != null) {
-      await AuthRepository.initUserToken().then(
-          (_) async {
+      await AuthRepository.init().then(
+              (_) async {
             bool isValid = JwtDecoderRepository.verifyJwtToken(userToken);
             if (isValid) {
               await USER.init();
@@ -34,6 +27,28 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
       );
     } else {
       emit(SplashUserNotAuthenticatedState());
+    }
+  }
+
+  FutureOr<void> splashInitialEvent(
+      SplashInitialEvent event, Emitter<SplashState> emit) async {
+    emit(SplashLoadingState());
+    await Future.delayed(const Duration(seconds: 1));
+
+    // initialize local settings
+    await SETTINGS.init();
+    if(SETTINGS.isAppLockEnabled){
+      await AuthRepository.authenticateUser(isNotes: false).then(
+          (response) async {
+            if(response){
+              await authenticateUser(emit);
+            } else{
+              emit(SplashUserLocalAuthenticationFailedState());
+            }
+          }
+      );
+    } else{
+      await authenticateUser(emit);
     }
   }
 }
