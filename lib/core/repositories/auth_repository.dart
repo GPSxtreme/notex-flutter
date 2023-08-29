@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:notex/core/config/api_routes.dart';
@@ -9,14 +10,17 @@ import 'package:notex/data/models/user_model.dart';
 
 import '../../data/models/login_response_model.dart';
 import '../../main.dart';
+import 'package:local_auth_android/local_auth_android.dart';
+import 'package:local_auth/local_auth.dart';
 
 
 
 class AuthRepository {
 
   static late String userToken;
+  static LocalAuthentication localAuth = LocalAuthentication();
 
-  static Future<void> initUserToken()async{
+  static Future<void> init()async{
     try{
       final token = await SharedPreferencesRepository.getJwtToken();
       userToken = 'Bearer $token';
@@ -110,5 +114,29 @@ class AuthRepository {
       body: body
     );
     return genericServerResponseFromJson(response.body);
+  }
+  static Future<bool> authenticateUser({bool isNotes = true})async{
+    final bool canAuthenticateWithBiometrics = await localAuth.canCheckBiometrics;
+    final bool canAuthenticate =
+        canAuthenticateWithBiometrics || await localAuth.isDeviceSupported();
+    final List<BiometricType> availableBiometrics =
+    await localAuth.getAvailableBiometrics();
+    if (canAuthenticate &&  availableBiometrics.isNotEmpty) {
+      // Some biometrics are enrolled.
+      bool response = await localAuth.authenticate(
+          localizedReason: isNotes?  'Please authenticate to show content' : 'App locked',
+          options: AuthenticationOptions(biometricOnly: SETTINGS.isBiometricOnly,useErrorDialogs: true,sensitiveTransaction: true,stickyAuth: true),
+          authMessages: const <AuthMessages>[
+            AndroidAuthMessages(
+              signInTitle: 'Oops! authentication required!',
+              cancelButton: 'Cancel',
+              goToSettingsButton: 'Open settings',
+              biometricSuccess: 'Success!'
+            ),
+          ]);
+      return response;
+    } else{
+      return false;
+    }
   }
 }
