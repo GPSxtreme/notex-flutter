@@ -14,11 +14,11 @@ import '../presentation/pages/notes.dart';
 import '../presentation/pages/todos.dart';
 
 class MyAppRouter {
-  static GoRouter getRouter(bool isAuth) {
+  static GoRouter getRouter() {
     // private navigators
     final rootNavigatorKey = GlobalKey<NavigatorState>();
     return GoRouter(
-        initialLocation: '/home',
+        initialLocation: '/',
         navigatorKey: rootNavigatorKey,
         routes: [
           GoRoute(
