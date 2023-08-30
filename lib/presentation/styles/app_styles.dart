@@ -16,6 +16,8 @@ const Color kPink = Color.fromRGBO(217, 155, 255, 1);
 const Color kPinkD1 = Color.fromRGBO(100, 65, 98, 1);
 // for tile card color
 const Color kPinkD2 = Color.fromRGBO(45, 30, 44, 1);
+// for drawer background
+const Color kPinkD3 = Color.fromRGBO(30, 24, 31,1);
 const Color kRed = Colors.red;
 const Color kPageBgStart = Color.fromRGBO(13, 12, 13, 1);
 const Color kPageBgEnd = Color.fromRGBO(50, 34, 49, 1);
