@@ -56,3 +56,17 @@ class SettingsUserLogoutEvent extends SettingsEvent{
 class SettingsUserAccountVerifyEvent extends SettingsEvent{}
 
 class SettingsUserPasswordResetEvent extends SettingsEvent{}
+
+class SettingsDeleteAllNotesEvent extends SettingsEvent{}
+
+class SettingsDeleteAllTodosEvent extends SettingsEvent{}
+
+class SettingsRedirectToGithubEvent extends SettingsEvent{}
+
+class SettingsRedirectToGithubBugReportEvent extends SettingsEvent{}
+
+class SettingsRedirectToGithubRequestFeatureEvent extends SettingsEvent{}
+
+class SettingsRedirectToDevSiteEvent extends SettingsEvent{}
+
+class SettingsRedirectToDevMailEvent extends SettingsEvent{}
