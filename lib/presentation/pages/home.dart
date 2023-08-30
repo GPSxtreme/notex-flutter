@@ -385,17 +385,6 @@ class _HomePageState extends State<HomePage> {
                             style: kInter,
                           ),
                         ),
-                        const Spacer(),
-                        DefaultTextStyle(
-                          style: kInter.copyWith(color: kWhite75, fontSize: 12),
-                          child: Container(
-                            margin: const EdgeInsets.symmetric(
-                              vertical: 16.0,
-                            ),
-                            child:
-                                const Text('Terms of Service | Privacy Policy'),
-                          ),
-                        ),
                       ],
                     ),
                   ),
