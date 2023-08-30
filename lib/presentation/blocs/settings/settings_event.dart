@@ -70,3 +70,5 @@ class SettingsRedirectToGithubRequestFeatureEvent extends SettingsEvent{}
 class SettingsRedirectToDevSiteEvent extends SettingsEvent{}
 
 class SettingsRedirectToDevMailEvent extends SettingsEvent{}
+
+class SettingsCheckForAppUpdatesEvent extends SettingsEvent{}
