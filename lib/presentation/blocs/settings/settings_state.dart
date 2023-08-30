@@ -34,13 +34,13 @@ class SettingsFetchedState extends SettingsState {
       required this.isBiometricOnly});
 }
 
-class SettingsSnackBarState extends SettingsActionState {
+class SettingsSnackBarAction extends SettingsActionState {
   final String reason;
 
-  SettingsSnackBarState(this.reason);
+  SettingsSnackBarAction(this.reason);
 }
 
-class SettingsUserLogoutState extends SettingsActionState {
+class SettingsUserLogoutAction extends SettingsActionState {
   final String? title;
   final String? body;
   final String? agreeLabel;
@@ -48,7 +48,7 @@ class SettingsUserLogoutState extends SettingsActionState {
   final bool isSingleButton;
   final bool isBarrierDismissible;
 
-  SettingsUserLogoutState(
+  SettingsUserLogoutAction(
       {this.title,
       this.body,
       this.agreeLabel,
@@ -56,3 +56,17 @@ class SettingsUserLogoutState extends SettingsActionState {
       this.isSingleButton = false,
       this.isBarrierDismissible = true});
 }
+
+class SettingsDeleteAllNotesAction extends SettingsActionState{}
+
+class SettingsDeleteAllTodosAction extends SettingsActionState{}
+
+class SettingsRedirectToGithubAction extends SettingsActionState{}
+
+class SettingsRedirectToGithubBugReportAction extends SettingsActionState{}
+
+class SettingsRedirectToGithubRequestFeatureAction extends SettingsActionState{}
+
+class SettingsRedirectToDevSiteAction extends SettingsActionState{}
+
+class SettingsRedirectToDevMailAction extends SettingsActionState{}
