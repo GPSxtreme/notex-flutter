@@ -5,12 +5,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:notex/core/repositories/util_repository.dart';
 import 'package:notex/presentation/blocs/settings/settings_bloc.dart';
 import 'package:notex/presentation/styles/app_styles.dart';
 import 'package:notex/presentation/styles/size_config.dart';
 import 'package:notex/presentation/widgets/common_widgets.dart';
 import 'package:notex/router/app_route_constants.dart';
-
 import '../../main.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -52,9 +52,9 @@ class _SettingsPageState extends State<SettingsPage> {
       listenWhen: (previous, current) => current is SettingsActionState,
       buildWhen: (previous, current) => current is! SettingsActionState,
       listener: (context, state) async {
-        if (state is SettingsSnackBarState) {
+        if (state is SettingsSnackBarAction) {
           kSnackBar(context, state.reason);
-        } else if (state is SettingsUserLogoutState) {
+        } else if (state is SettingsUserLogoutAction) {
           bool? response = await CommonWidgets.commonAlertDialog(context,
               title: state.title ?? "Logout?",
               body: state.body ?? "you will be redirected to login page.",
@@ -65,6 +65,32 @@ class _SettingsPageState extends State<SettingsPage> {
           if (response == true) {
             GoRouter.of(context).goNamed(AppRouteConstants.loginRouteName);
           }
+        } else if(state is SettingsDeleteAllNotesAction){
+          bool? res = await CommonWidgets.commonAlertDialog(context, title: "Delete all notes?", body: "All locally saved notes will be deleted.", agreeLabel: 'continue', denyLabel: 'cancel');
+          if(res == true){
+            await LOCAL_DB.dropNotes().then((_) {
+              GoRouter.of(context)
+                  .goNamed(AppRouteConstants.splashRouteName);
+            });
+          }
+        } else if(state is SettingsDeleteAllTodosAction){
+          bool? res = await CommonWidgets.commonAlertDialog(context, title: "Delete all todos?", body: "All locally saved todos will be deleted.", agreeLabel: 'continue', denyLabel: 'cancel');
+          if(res == true){
+            await LOCAL_DB.dropTodos().then((_) {
+              GoRouter.of(context)
+                  .goNamed(AppRouteConstants.splashRouteName);
+            });
+          }
+        } else if(state is SettingsRedirectToGithubAction){
+          await UtilRepository.launchLink('https://github.com/GPSxtreme/notex-flutter');
+        } else if(state is SettingsRedirectToGithubBugReportEvent){
+          await UtilRepository.launchLink('https://github.com/GPSxtreme/notex-flutter');
+        }else if(state is SettingsRedirectToGithubRequestFeatureEvent){
+          await UtilRepository.launchLink('https://github.com/GPSxtreme/notex-flutter');
+        } else if(state is SettingsRedirectToDevSiteAction){
+          await UtilRepository.launchLink('https://prudhvisuraaj.me/');
+        } else if(state is SettingsRedirectToDevMailAction){
+          await UtilRepository.launchEmail(emailAddresses: ['contact@prudhvisuraaj.me'],subject: 'Notex:query',body: '---query here---');
         }
       },
       builder: (context, state) {
@@ -216,14 +242,8 @@ class _SettingsPageState extends State<SettingsPage> {
                                 color: kPinkD1,
                                 size: 35,
                               ),
-                              onTap: () async {
-                                bool? res = await CommonWidgets.commonAlertDialog(context, title: "Delete all notes?", body: "All locally saved notes will be deleted.", agreeLabel: 'continue', denyLabel: 'cancel');
-                                if(res == true){
-                                  await LOCAL_DB.dropNotes().then((_) {
-                                    GoRouter.of(context)
-                                        .goNamed(AppRouteConstants.splashRouteName);
-                                  });
-                                }
+                              onTap: (){
+                                settingsBloc.add(SettingsDeleteAllNotesEvent());
                               },
                               title: Text(
                                 'Delete all notes',
@@ -242,14 +262,8 @@ class _SettingsPageState extends State<SettingsPage> {
                                 color: kPinkD1,
                                 size: 35,
                               ),
-                              onTap: () async {
-                                bool? res = await CommonWidgets.commonAlertDialog(context, title: "Delete all todos?", body: "All locally saved todos will be deleted.", agreeLabel: 'continue', denyLabel: 'cancel');
-                                if(res == true){
-                                  await LOCAL_DB.dropTodos().then((_) {
-                                    GoRouter.of(context)
-                                        .goNamed(AppRouteConstants.splashRouteName);
-                                  });
-                                }
+                              onTap: (){
+                                settingsBloc.add(SettingsDeleteAllTodosEvent());
                               },
                               title: Text(
                                 'Delete all todos',
@@ -369,6 +383,102 @@ class _SettingsPageState extends State<SettingsPage> {
                                       SettingsSetBiometricOnlyEvent(value));
                                 },
                               ),
+                            ),
+                            label('About app'),
+                            ListTile(
+                              leading: const Icon(
+                                Icons.engineering,
+                                color: kPinkD1,
+                                size: 35,
+                              ),
+                              title: Text(
+                                'Checkout developer',
+                                style: kInter.copyWith(fontSize: 15),
+                              ),
+                              subtitle: Text(
+                                'Made with ❤️ by prudhvi suraaj.',
+                                style: kInter.copyWith(
+                                    color: kWhite75, fontSize: 12),
+                              ),
+                              onTap: (){
+                                settingsBloc.add(SettingsRedirectToDevSiteEvent());
+                              },
+                            ),
+                            ListTile(
+                              leading: const Icon(
+                                Ionicons.logo_github,
+                                color: kPinkD1,
+                                size: 35,
+                              ),
+                              title: Text(
+                                'Open source',
+                                style: kInter.copyWith(fontSize: 15),
+                              ),
+                              subtitle: Text(
+                                'Check out code & make contributions.',
+                                style: kInter.copyWith(
+                                    color: kWhite75, fontSize: 12),
+                              ),
+                              onTap: (){
+                                settingsBloc.add(SettingsRedirectToGithubEvent());
+                              },
+                            ),
+                            ListTile(
+                              leading: const Icon(
+                                Icons.bug_report_outlined,
+                                color: kPinkD1,
+                                size: 35,
+                              ),
+                              title: Text(
+                                'Report a bug',
+                                style: kInter.copyWith(fontSize: 15),
+                              ),
+                              subtitle: Text(
+                                'Help us fix issues by reporting in app bugs.',
+                                style: kInter.copyWith(
+                                    color: kWhite75, fontSize: 12),
+                              ),
+                              onTap: (){
+                                settingsBloc.add(SettingsRedirectToGithubBugReportEvent());
+                              },
+                            ),
+                            ListTile(
+                              leading: const Icon(
+                                Icons.device_hub_outlined,
+                                color: kPinkD1,
+                                size: 35,
+                              ),
+                              title: Text(
+                                'Request feature',
+                                style: kInter.copyWith(fontSize: 15),
+                              ),
+                              subtitle: Text(
+                                'Request for a desired feature on github.',
+                                style: kInter.copyWith(
+                                    color: kWhite75, fontSize: 12),
+                              ),
+                              onTap: (){
+                                settingsBloc.add(SettingsRedirectToGithubRequestFeatureEvent());
+                              },
+                            ),
+                            ListTile(
+                              leading: const Icon(
+                                Icons.mail_outline,
+                                color: kPinkD1,
+                                size: 35,
+                              ),
+                              title: Text(
+                                'Contact',
+                                style: kInter.copyWith(fontSize: 15),
+                              ),
+                              subtitle: Text(
+                                'Contact us for any problems related.',
+                                style: kInter.copyWith(
+                                    color: kWhite75, fontSize: 12),
+                              ),
+                              onTap: (){
+                                settingsBloc.add(SettingsRedirectToDevMailEvent());
+                              },
                             ),
                             label('Account Management'),
                             if (!USER.data!.isEmailVerified)
