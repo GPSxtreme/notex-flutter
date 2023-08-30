@@ -223,7 +223,13 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
                       .setIsSynced(true);
             }
           });
-        }).then((_) => emit(TodosFetchedState(_doneTodos, _notDoneTodos)));
+        }).then((_) {
+          if(_doneTodos.isEmpty && _notDoneTodos.isEmpty){
+            emit(TodosEmptyState());
+          }else{
+            emit(TodosFetchedState(_doneTodos, _notDoneTodos));
+          }
+        });
       }
     } catch (error) {
       emit(TodosOperationFailedState(error.toString()));
@@ -355,7 +361,11 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
       }
       if (toSyncTodos.isEmpty) {
         emit(TodosOperationFailedState('All todos are synced 🚀'));
-        emit(TodosFetchedState(_doneTodos, _notDoneTodos));
+        if (_doneTodos.isNotEmpty || _notDoneTodos.isNotEmpty) {
+          emit(TodosFetchedState(_doneTodos, _notDoneTodos));
+        } else {
+          emit(TodosEmptyState());
+        }
         return;
       }
       emit(TodosFetchedState(_doneTodos, _notDoneTodos,
@@ -372,7 +382,13 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
                     .setIsSynced(true);
           }
         });
-      }).then((_) => emit(TodosFetchedState(_doneTodos, _notDoneTodos)));
+      }).then((_) {
+        if (_doneTodos.isNotEmpty || _notDoneTodos.isNotEmpty) {
+          emit(TodosFetchedState(_doneTodos, _notDoneTodos));
+        } else {
+          emit(TodosEmptyState());
+        }
+      });
     } catch (error) {
       emit(TodosOperationFailedState(error.toString()));
     }
