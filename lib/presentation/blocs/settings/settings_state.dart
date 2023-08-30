@@ -70,3 +70,5 @@ class SettingsRedirectToGithubRequestFeatureAction extends SettingsActionState{}
 class SettingsRedirectToDevSiteAction extends SettingsActionState{}
 
 class SettingsRedirectToDevMailAction extends SettingsActionState{}
+
+class SettingsCheckForAppUpdateAction extends SettingsActionState{}
