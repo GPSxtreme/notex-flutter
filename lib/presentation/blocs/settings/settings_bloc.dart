@@ -42,6 +42,9 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     on<SettingsRedirectToDevMailEvent>((event,emit)async{
       emit(SettingsRedirectToDevMailAction());
     });
+    on<SettingsCheckForAppUpdatesEvent>((event,emit)async{
+      emit(SettingsCheckForAppUpdateAction());
+    });
   }
 
   SettingsFetchedState settingsFetchedState () => SettingsFetchedState(
