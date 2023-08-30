@@ -34,7 +34,8 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
       SplashInitialEvent event, Emitter<SplashState> emit) async {
     emit(SplashLoadingState());
     await Future.delayed(const Duration(seconds: 1));
-
+    //initialize local db
+    await LOCAL_DB.init();
     // initialize local settings
     await SETTINGS.init();
     if(SETTINGS.isAppLockEnabled){
