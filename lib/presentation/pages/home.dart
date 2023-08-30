@@ -183,11 +183,6 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildBottomNavigationBar() {
     return BottomNavigationBar(
-      backgroundColor: kPinkD1,
-      elevation: 0,
-      selectedLabelStyle: kInter.copyWith(color: kPink, fontSize: 14),
-      unselectedLabelStyle: kInter.copyWith(color: kWhite, fontSize: 14),
-      selectedItemColor: kPink,
       onTap: (index) {
         _pageController.animateToPage(index,
             duration: const Duration(milliseconds: 500), curve: Curves.ease);
@@ -271,7 +266,7 @@ class _HomePageState extends State<HomePage> {
                 width: double.infinity,
                 height: double.infinity,
                 decoration: const BoxDecoration(
-                  gradient: kPageBgGradient,
+                  color: kPinkD3
                 ),
               ),
               controller: _advancedDrawerController,
@@ -308,7 +303,7 @@ class _HomePageState extends State<HomePage> {
                           height: 128.0,
                           margin: EdgeInsets.only(
                               top: 24.0,
-                              bottom: !USER.data!.isEmailVerified ? 20 : 64),
+                              bottom: !USER.data!.isEmailVerified ? 20 : 30),
                           clipBehavior: Clip.antiAlias,
                           decoration: const BoxDecoration(
                             color: kPink,
@@ -341,7 +336,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                         if (!USER.data!.isEmailVerified)
                           Container(
-                            margin: const EdgeInsets.only(bottom: 30),
+                            margin: const EdgeInsets.only(bottom: 15),
                             child: ListTile(
                               splashColor: kPinkD1,
                               contentPadding:
@@ -371,7 +366,7 @@ class _HomePageState extends State<HomePage> {
                               const EdgeInsets.symmetric(horizontal: 30),
                           leading: const Icon(Icons.account_circle_rounded),
                           title: Text(
-                            'Profile',
+                            'profile',
                             style: kInter,
                           ),
                         ),
@@ -386,7 +381,7 @@ class _HomePageState extends State<HomePage> {
                               const EdgeInsets.symmetric(horizontal: 30),
                           leading: const Icon(Icons.settings),
                           title: Text(
-                            'Settings',
+                            'settings',
                             style: kInter,
                           ),
                         ),
@@ -566,7 +561,7 @@ class _HomePageState extends State<HomePage> {
                                       contentPadding:
                                           const EdgeInsets.symmetric(
                                               vertical: 0),
-                                      horizontalTitleGap: 5,
+                                      horizontalTitleGap: 15,
                                       leading: const Icon(
                                         Icons.refresh,
                                         color: kPinkD1,
@@ -584,7 +579,7 @@ class _HomePageState extends State<HomePage> {
                                       contentPadding:
                                           const EdgeInsets.symmetric(
                                               vertical: 0),
-                                      horizontalTitleGap: 5,
+                                      horizontalTitleGap: 15,
                                       leading: const Icon(
                                         Icons.sync,
                                         color: kPinkD1,
@@ -603,7 +598,7 @@ class _HomePageState extends State<HomePage> {
                                         contentPadding:
                                             const EdgeInsets.symmetric(
                                                 vertical: 0),
-                                        horizontalTitleGap: 5,
+                                        horizontalTitleGap: 15,
                                         leading: Icon(
                                           !_isNotesHiddenMode
                                               ? Icons.visibility
@@ -626,7 +621,7 @@ class _HomePageState extends State<HomePage> {
                                         contentPadding:
                                             const EdgeInsets.symmetric(
                                                 vertical: 0),
-                                        horizontalTitleGap: 5,
+                                        horizontalTitleGap: 15,
                                         leading: Icon(
                                          !_isNotesDeletedMode ? Icons.delete : Icons.hide_source,
                                           color: kPinkD1,
