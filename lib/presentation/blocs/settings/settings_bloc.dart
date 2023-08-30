@@ -21,7 +21,27 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     on<SettingsSetHiddenNotesLockEvent>(handleSetHiddenNotesLock);
     on<SettingsSetDeletedNotesLockEvent>(handleSetDeletedNotesLock);
     on<SettingsSetBiometricOnlyEvent>(handleSetBiometricOnly);
-
+    on<SettingsDeleteAllNotesEvent>((event,emit)async{
+      emit(SettingsDeleteAllNotesAction());
+    });
+    on<SettingsDeleteAllTodosEvent>((event,emit)async{
+      emit(SettingsDeleteAllTodosAction());
+    });
+    on<SettingsRedirectToGithubEvent>((event,emit)async{
+      emit(SettingsRedirectToGithubAction());
+    });
+    on<SettingsRedirectToGithubBugReportEvent>((event,emit)async{
+      emit(SettingsRedirectToGithubBugReportAction());
+    });
+    on<SettingsRedirectToGithubRequestFeatureEvent>((event,emit)async{
+      emit(SettingsRedirectToGithubRequestFeatureAction());
+    });
+    on<SettingsRedirectToDevSiteEvent>((event,emit)async{
+      emit(SettingsRedirectToDevSiteAction());
+    });
+    on<SettingsRedirectToDevMailEvent>((event,emit)async{
+      emit(SettingsRedirectToDevMailAction());
+    });
   }
 
   SettingsFetchedState settingsFetchedState () => SettingsFetchedState(
@@ -48,7 +68,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
       await SETTINGS.setAutoSyncEnabled(event.value).then((_)=>emit(settingsFetchedState()));
 
     } catch (error) {
-      emit(SettingsSnackBarState(error.toString()));
+      emit(SettingsSnackBarAction(error.toString()));
     }
   }
 
@@ -58,7 +78,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     try {
       await SETTINGS.setNotesOnlinePrefetch(event.value).then((_)=>emit(settingsFetchedState()));
     } catch (error) {
-      emit(SettingsSnackBarState(error.toString()));
+      emit(SettingsSnackBarAction(error.toString()));
     }
   }
 
@@ -68,7 +88,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     try {
       await SETTINGS.setTodosOnlinePrefetch(event.value).then((_)=>emit(settingsFetchedState()));
     } catch (error) {
-      emit(SettingsSnackBarState(error.toString()));
+      emit(SettingsSnackBarAction(error.toString()));
     }
   }
 
@@ -76,7 +96,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     try {
       await SETTINGS.setAppLockEnabled(event.value).then((_)=>emit(settingsFetchedState()));
     } catch (error) {
-      emit(SettingsSnackBarState(error.toString()));
+      emit(SettingsSnackBarAction(error.toString()));
     }
   }
 
@@ -84,7 +104,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     try {
       await SETTINGS.setHiddenNotesLockEnabled(event.value).then((_)=>emit(settingsFetchedState()));
     } catch (error) {
-      emit(SettingsSnackBarState(error.toString()));
+      emit(SettingsSnackBarAction(error.toString()));
     }
   }
 
@@ -92,7 +112,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     try {
       await SETTINGS.setDeletedNotesLockEnabled(event.value).then((_)=>emit(settingsFetchedState()));
     } catch (error) {
-      emit(SettingsSnackBarState(error.toString()));
+      emit(SettingsSnackBarAction(error.toString()));
     }
   }
 
@@ -100,7 +120,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     try {
       await SETTINGS.setBiometricOnly(event.value).then((_)=>emit(settingsFetchedState()));
     } catch (error) {
-      emit(SettingsSnackBarState(error.toString()));
+      emit(SettingsSnackBarAction(error.toString()));
     }
   }
 
@@ -110,12 +130,12 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     try {
       final response = await AuthRepository.logoutUser();
       if (response) {
-        emit(SettingsUserLogoutState(body: event.body, title: event.title));
+        emit(SettingsUserLogoutAction(body: event.body, title: event.title));
       } else {
-        emit(SettingsSnackBarState("Failed to logout user"));
+        emit(SettingsSnackBarAction("Failed to logout user"));
       }
     } catch (error) {
-      emit(SettingsSnackBarState(error.toString()));
+      emit(SettingsSnackBarAction(error.toString()));
     }
   }
 
@@ -125,7 +145,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
       await AuthRepository.sendAccountVerificationEmail().then((res) async {
         if (res.success) {
           await AuthRepository.logoutUser();
-          emit(SettingsUserLogoutState(
+          emit(SettingsUserLogoutAction(
               title: 'Email sent!',
               body:
               'You will be logged out to reinitialise login credentials.\n(check spam folder for link if not in inbox)',
@@ -133,11 +153,11 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
               isBarrierDismissible: false,
               isSingleButton: true));
         } else {
-          emit(SettingsSnackBarState(res.message));
+          emit(SettingsSnackBarAction(res.message));
         }
       });
     } catch (error) {
-      emit(SettingsSnackBarState(error.toString()));
+      emit(SettingsSnackBarAction(error.toString()));
     }
   }
 
@@ -147,7 +167,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
       await AuthRepository.sendPasswordResetLink().then((res) async {
         if (res.success) {
           await AuthRepository.logoutUser();
-          emit(SettingsUserLogoutState(
+          emit(SettingsUserLogoutAction(
               title: 'Email sent!',
               body:
               'You will be logged out to reinitialise login credentials.\n(check spam folder for link if not in inbox)',
@@ -155,11 +175,11 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
               isBarrierDismissible: false,
               isSingleButton: true));
         } else {
-          emit(SettingsSnackBarState(res.message));
+          emit(SettingsSnackBarAction(res.message));
         }
       });
     } catch (error) {
-      emit(SettingsSnackBarState(error.toString()));
+      emit(SettingsSnackBarAction(error.toString()));
     }
   }
 }
