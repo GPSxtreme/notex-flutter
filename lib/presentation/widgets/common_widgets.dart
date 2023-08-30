@@ -24,20 +24,20 @@ class CommonWidgets{
             borderRadius: BorderRadius.all(Radius.circular(18.0))),
         contentPadding:
         const EdgeInsets.symmetric(horizontal: 25, vertical: 25),
-        backgroundColor: kPinkD1,
+        backgroundColor: kPinkD2,
         title: Text(
           title,
           style: kInter.copyWith(
               color: titleColor ?? kWhite,
               fontSize: 18,
-              fontWeight: FontWeight.w600),
+              fontWeight: FontWeight.w400),
         ),
         content: Text(
           body,
           style: kInter.copyWith(
               color: titleColor ?? kWhite,
-              fontSize: 15,
-              fontWeight: FontWeight.w600),
+              fontSize: 14,
+              fontWeight: FontWeight.w400),
         ),
         actions: [
           Column(
@@ -49,12 +49,12 @@ class CommonWidgets{
                     Navigator.of(context).pop(true);
                   },
                   child: Padding(
-                    padding: const EdgeInsets.all(10.0),
+                    padding: const EdgeInsets.all(5.0),
                     child: Text(
                       agreeLabel,
                       style: kInter.copyWith(
                           color: titleColor ?? kPink,
-                          fontSize: 16,
+                          fontSize: 12,
                           fontWeight: FontWeight.w600),
                     ),
                   ),
@@ -72,12 +72,12 @@ class CommonWidgets{
                       Navigator.of(context).pop(false);
                     },
                     child: Padding(
-                      padding: const EdgeInsets.all(10.0),
+                      padding: const EdgeInsets.all(5.0),
                       child: Text(
                         denyLabel,
                         style: kInter.copyWith(
                             color: titleColor ?? kWhite,
-                            fontSize: 16,
+                            fontSize: 12,
                             fontWeight: FontWeight.w600),
                       ),
                     ),
