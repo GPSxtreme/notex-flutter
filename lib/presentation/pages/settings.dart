@@ -91,6 +91,8 @@ class _SettingsPageState extends State<SettingsPage> {
           await UtilRepository.launchLink('https://prudhvisuraaj.me/');
         } else if(state is SettingsRedirectToDevMailAction){
           await UtilRepository.launchEmail(emailAddresses: ['contact@prudhvisuraaj.me'],subject: 'Notex:query',body: '---query here---');
+        } else if(state is SettingsCheckForAppUpdateAction){
+          await UtilRepository.checkForUpdate();
         }
       },
       builder: (context, state) {
@@ -480,6 +482,25 @@ class _SettingsPageState extends State<SettingsPage> {
                                 settingsBloc.add(SettingsRedirectToDevMailEvent());
                               },
                             ),
+                            ListTile(
+                              leading: const Icon(
+                                Icons.update,
+                                color: kPinkD1,
+                                size: 35,
+                              ),
+                              title: Text(
+                                'Updates',
+                                style: kInter.copyWith(fontSize: 15),
+                              ),
+                              subtitle: Text(
+                                'Check for app updates.',
+                                style: kInter.copyWith(
+                                    color: kWhite75, fontSize: 12),
+                              ),
+                              onTap: (){
+                                settingsBloc.add(SettingsCheckForAppUpdatesEvent());
+                              },
+                            ),
                             label('Account Management'),
                             if (!USER.data!.isEmailVerified)
                               ListTile(
@@ -491,8 +512,8 @@ class _SettingsPageState extends State<SettingsPage> {
                                         size: 35,
                                       )
                                     : const SizedBox(
-                                        width: 25,
-                                        height: 25,
+                                        width: 35,
+                                        height: 35,
                                         child: SpinKitRing(
                                             color: kPinkD1, lineWidth: 4.0)),
                                 onTap: !_isSendingEmailVerificationLink
@@ -525,12 +546,12 @@ class _SettingsPageState extends State<SettingsPage> {
                                         size: 35,
                                       )
                                     : const SizedBox(
-                                        width: 25,
-                                        height: 25,
+                                        width: 35,
+                                        height: 35,
                                         child: SpinKitRing(
                                             color: kPinkD1, lineWidth: 4.0)),
                                 onTap: !_isSendingPasswordResetLink
-                                    ? () {
+                                    ? (){
                                         setState(() {
                                           _isSendingPasswordResetLink = true;
                                         });
