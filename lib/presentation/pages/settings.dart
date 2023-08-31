@@ -164,7 +164,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                 style: kInter.copyWith(fontSize: 15),
                               ),
                               subtitle: Text(
-                                'This enables auto-sync for both notes and todos.',
+                                'This enables auto-sync for both notes and todos. Auto sync must be enabled for removal of note or todo in cloud.',
                                 style: kInter.copyWith(
                                     color: kWhite75, fontSize: 12),
                               ),
