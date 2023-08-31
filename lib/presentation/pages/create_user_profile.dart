@@ -79,7 +79,7 @@ class _CreateUserProfileState extends State<CreateUserProfile> {
             ),
             title: Text(
               'Take a photo',
-              style: kInter,
+              style: kAppFont,
             ),
             onTap: () {
               _pickImage(ImageSource.camera);
@@ -93,7 +93,7 @@ class _CreateUserProfileState extends State<CreateUserProfile> {
             ),
             title: Text(
               'Choose from gallery',
-              style: kInter,
+              style: kAppFont,
             ),
             onTap: () {
               _pickImage(ImageSource.gallery);
@@ -161,13 +161,13 @@ class _CreateUserProfileState extends State<CreateUserProfile> {
                                   children: [
                                     Text(
                                       "Setup ",
-                                      style: kInter.copyWith(
+                                      style: kAppFont.copyWith(
                                           fontSize: 30,
                                           fontWeight: FontWeight.w300),
                                     ),
                                     Text(
                                       "profile",
-                                      style: kInter.copyWith(
+                                      style: kAppFont.copyWith(
                                           fontSize: 30,
                                           color: kPink,
                                           fontWeight: FontWeight.w300),
@@ -204,7 +204,7 @@ class _CreateUserProfileState extends State<CreateUserProfile> {
                                                   children: [
                                                     if (_imageFile == null) ...[
                                                       Icon(Icons.person, color: kPink, size: SizeConfig.blockSizeHorizontal! * 17,),
-                                                      Text("Add picture", style: kInter.copyWith(fontSize: 11),)
+                                                      Text("Add picture", style: kAppFont.copyWith(fontSize: 11),)
                                                     ]
                                                   ],
                                                 ),
@@ -247,7 +247,7 @@ class _CreateUserProfileState extends State<CreateUserProfile> {
                                   height: SizeConfig.blockSizeVertical! * 10,
                                 ),
                                 TextField(
-                                  style: kInter.copyWith(fontSize: 18),
+                                  style: kAppFont.copyWith(fontSize: 18),
                                   controller: _nameController,
                                   keyboardType: TextInputType.emailAddress,
                                   cursorColor: kWhite,
@@ -261,7 +261,7 @@ class _CreateUserProfileState extends State<CreateUserProfile> {
                                   children: [
                                     Flexible(
                                       child: TextField(
-                                        style: kInter.copyWith(fontSize: 18),
+                                        style: kAppFont.copyWith(fontSize: 18),
                                         controller: _dobController,
                                         keyboardType: TextInputType.datetime,
                                         cursorColor: kWhite,
@@ -280,7 +280,7 @@ class _CreateUserProfileState extends State<CreateUserProfile> {
                                   ],
                                 ),
                                 SizedBox(height: SizeConfig.blockSizeHorizontal! * 5,),
-                                Text(" country",style: kInter.copyWith(color: kWhite24),),
+                                Text(" country",style: kAppFont.copyWith(color: kWhite24),),
                                 SizedBox(height: SizeConfig.blockSizeHorizontal! * 2,),
                                 Material(
                                   color: kWhite.withOpacity(0.03),
@@ -303,21 +303,21 @@ class _CreateUserProfileState extends State<CreateUserProfile> {
                                         emptySearchBuilder: (context){
                                           return Padding(
                                             padding: const EdgeInsets.all(10.0),
-                                            child: Text("Please enter your country code / telephone code if no results are shown.",style: kInter.copyWith(fontSize: 13),textAlign: TextAlign.center,),
+                                            child: Text("Please enter your country code / telephone code if no results are shown.",style: kAppFont.copyWith(fontSize: 13),textAlign: TextAlign.center,),
                                           );
                                         },
                                         showOnlyCountryWhenClosed: true,
                                         showCountryOnly: true,
                                         dialogSize: Size(SizeConfig.screenWidth! * 0.8, SizeConfig.screenHeight! * 0.8),
-                                        searchStyle: kInter,
+                                        searchStyle: kAppFont,
                                         barrierColor: kPinkD2,
                                         flagWidth: SizeConfig.blockSizeHorizontal! * 10,
                                         alignLeft: true,
-                                        dialogTextStyle: kInter,
+                                        dialogTextStyle: kAppFont,
                                         // dialogBackgroundColor: kPinkD1.withOpacity(0.7),
                                         searchDecoration: kTextFieldDecorationT1,
                                         showDropDownButton: true,
-                                        textStyle: kInter,
+                                        textStyle: kAppFont,
                                         closeIcon: const Icon(Icons.close,color: kWhite,size: 25,),
                                         backgroundColor: kPinkD2,
                                         dialogBackgroundColor: kPinkD1.withOpacity(0.3),
@@ -346,7 +346,7 @@ class _CreateUserProfileState extends State<CreateUserProfile> {
                                     style: kBtnStyleT1,
                                     child: state is! CreateUserProfileLoadingState ? Text(
                                       "Continue",
-                                      style: kInter.copyWith(fontSize: 20),
+                                      style: kAppFont.copyWith(fontSize: 20),
                                     ) :const SpinKitCircle(color: kWhite,size: 22,),
                                   ),
                                 ),
