@@ -39,7 +39,7 @@ Widget kDevLogo = Text(
   style: GoogleFonts.fugazOne(color: Colors.white.withOpacity(0.13),fontSize: 20),
 );
 
-TextStyle kInter = GoogleFonts.inter(
+TextStyle kAppFont = GoogleFonts.openSans(
   color: kWhite,
   fontSize: 18,
   fontWeight: FontWeight.w400
@@ -113,7 +113,7 @@ ButtonStyle kBtnStyleT2 = ButtonStyle(
 kSnackBar(BuildContext context,String text){
   ScaffoldMessenger.of(context)
       .showSnackBar(SnackBar(
-      content: Text(text,style: kInter.copyWith(fontSize: 15,fontWeight: FontWeight.w400),),
+      content: Text(text,style: kAppFont.copyWith(fontSize: 15,fontWeight: FontWeight.w400),),
     backgroundColor: kPinkD1,
     padding: const EdgeInsets.symmetric(vertical: 20,horizontal: 30),
   ));
