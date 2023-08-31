@@ -115,7 +115,7 @@ class _NotesPageState extends State<NotesPage>
                             children: [
                               Text(
                                 'No',
-                                style: kInter.copyWith(
+                                style: kAppFont.copyWith(
                                     fontSize: 30, fontWeight: FontWeight.w500),
                               ),
                               SizedBox(
@@ -123,7 +123,7 @@ class _NotesPageState extends State<NotesPage>
                               ),
                               Text(
                                 ' notes',
-                                style: kInter.copyWith(
+                                style: kAppFont.copyWith(
                                   color: kPink,
                                   fontSize: 30,
                                   fontWeight: FontWeight.w500,
@@ -133,7 +133,7 @@ class _NotesPageState extends State<NotesPage>
                           ),
                           Text(
                             _isHiddenMode ? 'Hidden' : _isDeletedMode ? 'Deleted' : 'Found',
-                            style: kInter.copyWith(
+                            style: kAppFont.copyWith(
                                 fontSize: 30, fontWeight: FontWeight.w500),
                           ),
                           SizedBox(
@@ -144,7 +144,7 @@ class _NotesPageState extends State<NotesPage>
                             "You can hide a note by long pressing and selecting hide option from the bottom action bar":
                             _isDeletedMode ? "All deleted notes are retained for 30 days and can be restored.":"You can add new note by pressing\nAdd button at the bottom",
                             style:
-                                kInter.copyWith(fontSize: 15, color: kWhite24),
+                                kAppFont.copyWith(fontSize: 15, color: kWhite24),
                             textAlign: TextAlign.center,
                           )
                         ],
@@ -160,7 +160,7 @@ class _NotesPageState extends State<NotesPage>
                       const SizedBox(height: 10,),
                       Text(
                         'This might take a while',
-                        style: kInter.copyWith(color: kWhite75,fontSize: 15),textAlign: TextAlign.center,
+                        style: kAppFont.copyWith(color: kWhite75,fontSize: 15),textAlign: TextAlign.center,
                       )
                     ],
                   )
@@ -171,7 +171,7 @@ class _NotesPageState extends State<NotesPage>
                       children: [
                         Text(
                           'Failed to load notes',
-                          style: kInter.copyWith(
+                          style: kAppFont.copyWith(
                               fontSize: 22, fontWeight: FontWeight.w600),
                         ),
                         SizedBox(
@@ -179,7 +179,7 @@ class _NotesPageState extends State<NotesPage>
                         ),
                         Text(
                           state.reason,
-                          style: kInter.copyWith(fontSize: 14),
+                          style: kAppFont.copyWith(fontSize: 14),
                         ),
                       ],
                     ),
@@ -225,7 +225,7 @@ class _NotesPageState extends State<NotesPage>
                                               children: [
                                                 Text(
                                                   '$_noOfNotesSyncing ${_noOfNotesSyncing == 1 ? 'note is' : "notes are"} syncing',
-                                                  style: kInter.copyWith(
+                                                  style: kAppFont.copyWith(
                                                       fontSize: 15),
                                                 ),
                                                 const SizedBox(
@@ -233,7 +233,7 @@ class _NotesPageState extends State<NotesPage>
                                                 ),
                                                 Text(
                                                   'Please do not quit',
-                                                  style: kInter.copyWith(
+                                                  style: kAppFont.copyWith(
                                                       fontSize: 15),
                                                 )
                                               ],
@@ -265,7 +265,7 @@ class _NotesPageState extends State<NotesPage>
                                             vertical: 20),
                                         child: Text(
                                           'Selected (${selectedNotesCount.toString()})',
-                                          style: kInter.copyWith(
+                                          style: kAppFont.copyWith(
                                               fontSize: 35,
                                               fontWeight: FontWeight.w500),
                                         ),
@@ -291,11 +291,11 @@ class _NotesPageState extends State<NotesPage>
                                 children: [
                                   Text(
                                     'Hidden',
-                                    style: kInter.copyWith(fontSize: 30,fontWeight: FontWeight.w500),
+                                    style: kAppFont.copyWith(fontSize: 30,fontWeight: FontWeight.w500),
                                   ),
                                   Text(
                                     ' Notes (${_notes.length})',
-                                    style: kInter.copyWith(fontSize: 30,fontWeight: FontWeight.w500,color: kPink),
+                                    style: kAppFont.copyWith(fontSize: 30,fontWeight: FontWeight.w500,color: kPink),
                                   ),
                                 ],
                               ),
@@ -315,11 +315,11 @@ class _NotesPageState extends State<NotesPage>
                                 children: [
                                   Text(
                                     'Deleted',
-                                    style: kInter.copyWith(fontSize: 30,fontWeight: FontWeight.w500),
+                                    style: kAppFont.copyWith(fontSize: 30,fontWeight: FontWeight.w500),
                                   ),
                                   Text(
                                     ' Notes (${_notes.length})',
-                                    style: kInter.copyWith(fontSize: 30,fontWeight: FontWeight.w500,color: kPink),
+                                    style: kAppFont.copyWith(fontSize: 30,fontWeight: FontWeight.w500,color: kPink),
                                   ),
                                 ],
                               ),
@@ -328,7 +328,7 @@ class _NotesPageState extends State<NotesPage>
                                 child: Center(
                                   child: Text(
                                     '(Deleted notes are retained for 30 days)',
-                                    style: kInter.copyWith(fontSize: 12,color: kWhite75),
+                                    style: kAppFont.copyWith(fontSize: 12,color: kWhite75),
                                   ),
                                 ),
                               ),
