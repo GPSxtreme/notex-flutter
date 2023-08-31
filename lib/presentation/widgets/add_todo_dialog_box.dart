@@ -40,7 +40,7 @@ Future<DateTime?> showDateTimePicker({
 
   final TimeOfDay? selectedTime = await showTimePicker(
     context: context,
-    initialTime: TimeOfDay.fromDateTime(DateTime.now()),
+    initialTime: TimeOfDay.fromDateTime(DateTime.now().add(const Duration(seconds: 70))),
   );
 
   return selectedTime == null
@@ -55,7 +55,7 @@ Future<DateTime?> showDateTimePicker({
 }
 class _AddTodoDialogBoxState extends State<AddTodoDialogBox> {
   final TextEditingController _todoController = TextEditingController();
-  DateTime? _expireTime;
+  DateTime? _expireTime = DateTime.now().add(const Duration(hours: 6)).toUtc();
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -113,7 +113,7 @@ class _AddTodoDialogBoxState extends State<AddTodoDialogBox> {
                         isCompleted: false,
                         createdTime: DateTime.now().toUtc(),
                         editedTime: DateTime.now().toUtc(),
-                        expireTime: _expireTime ?? DateTime.now().add(const Duration(hours: 6)).toUtc(),
+                        expireTime: _expireTime!,
                         v: 0);
                     widget.todosBloc.add(TodosAddTodoEvent(todo));
                     Navigator.of(context).pop(); // Close the dialog
