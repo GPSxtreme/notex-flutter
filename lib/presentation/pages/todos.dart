@@ -142,7 +142,7 @@ class _TodosPageState extends State<TodosPage>
                             children: [
                               Text(
                                 'No',
-                                style: kInter.copyWith(
+                                style: kAppFont.copyWith(
                                     fontSize: 30, fontWeight: FontWeight.w500),
                               ),
                               SizedBox(
@@ -150,7 +150,7 @@ class _TodosPageState extends State<TodosPage>
                               ),
                               Text(
                                 ' todos',
-                                style: kInter.copyWith(
+                                style: kAppFont.copyWith(
                                   color: kPink,
                                   fontSize: 30,
                                   fontWeight: FontWeight.w500,
@@ -160,7 +160,7 @@ class _TodosPageState extends State<TodosPage>
                           ),
                           Text(
                             'Found',
-                            style: kInter.copyWith(
+                            style: kAppFont.copyWith(
                                 fontSize: 30, fontWeight: FontWeight.w500),
                           ),
                           SizedBox(
@@ -169,7 +169,7 @@ class _TodosPageState extends State<TodosPage>
                           Text(
                             "You can add new todo by pressing\nAdd button at the bottom",
                             style:
-                                kInter.copyWith(fontSize: 15, color: kWhite24),
+                                kAppFont.copyWith(fontSize: 15, color: kWhite24),
                             textAlign: TextAlign.center,
                           )
                         ],
@@ -187,7 +187,7 @@ class _TodosPageState extends State<TodosPage>
                       ),
                       Text(
                         'This might take a while',
-                        style: kInter.copyWith(color: kWhite75, fontSize: 15),
+                        style: kAppFont.copyWith(color: kWhite75, fontSize: 15),
                       )
                     ],
                   )
@@ -198,7 +198,7 @@ class _TodosPageState extends State<TodosPage>
                       children: [
                         Text(
                           'Failed to load notes',
-                          style: kInter.copyWith(
+                          style: kAppFont.copyWith(
                               fontSize: 22, fontWeight: FontWeight.w600),
                         ),
                         SizedBox(
@@ -206,7 +206,7 @@ class _TodosPageState extends State<TodosPage>
                         ),
                         Text(
                           state.reason,
-                          style: kInter.copyWith(fontSize: 14),
+                          style: kAppFont.copyWith(fontSize: 14),
                         ),
                       ],
                     ),
@@ -254,7 +254,7 @@ class _TodosPageState extends State<TodosPage>
                                                 children: [
                                                   Text(
                                                     '$_noOfTodosNotUploaded ${_noOfTodosNotUploaded == 1 ? 'todo is' : "todos are"} not uploaded',
-                                                    style: kInter.copyWith(
+                                                    style: kAppFont.copyWith(
                                                         fontSize: 15),
                                                   ),
                                                   const SizedBox(
@@ -262,7 +262,7 @@ class _TodosPageState extends State<TodosPage>
                                                   ),
                                                   Text(
                                                     'Click on the icon to upload',
-                                                    style: kInter.copyWith(
+                                                    style: kAppFont.copyWith(
                                                         fontSize: 13,color: kWhite24),
                                                   )
                                                 ],
@@ -318,7 +318,7 @@ class _TodosPageState extends State<TodosPage>
                                               children: [
                                                 Text(
                                                   '$_noOfTodosSyncing ${_noOfTodosSyncing == 1 ? 'todo is' : "todos are"} syncing',
-                                                  style: kInter.copyWith(
+                                                  style: kAppFont.copyWith(
                                                       fontSize: 15),
                                                 ),
                                                 const SizedBox(
@@ -326,7 +326,7 @@ class _TodosPageState extends State<TodosPage>
                                                 ),
                                                 Text(
                                                   'Please do not quit',
-                                                  style: kInter.copyWith(
+                                                  style: kAppFont.copyWith(
                                                       fontSize: 15),
                                                 )
                                               ],
@@ -358,7 +358,7 @@ class _TodosPageState extends State<TodosPage>
                                             vertical: 20),
                                         child: Text(
                                           'Selected (${selectedTodosCount.toString()})',
-                                          style: kInter.copyWith(
+                                          style: kAppFont.copyWith(
                                               fontSize: 35,
                                               fontWeight: FontWeight.w500),
                                         ),
@@ -378,7 +378,7 @@ class _TodosPageState extends State<TodosPage>
                                     vertical: SizeConfig.blockSizeVertical!),
                                 child: Text(
                                   "Todo (${notDoneTodos.length})",
-                                  style: kInter.copyWith(color: kWhite75),
+                                  style: kAppFont.copyWith(color: kWhite75),
                                 ),
                               ),
                               ListView.builder(
@@ -402,7 +402,7 @@ class _TodosPageState extends State<TodosPage>
                                     vertical: SizeConfig.blockSizeVertical!),
                                 child: Text(
                                   "Done (${doneTodos.length})",
-                                  style: kInter.copyWith(color: kWhite75),
+                                  style: kAppFont.copyWith(color: kWhite75),
                                 ),
                               ),
                               ListView.builder(
