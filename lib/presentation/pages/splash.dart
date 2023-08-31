@@ -53,7 +53,7 @@ class _SplashPageState extends State<SplashPage>{
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Center(child: FadeInAnimation(child: SvgPicture.asset('assets/svg/app_logo.svg')))
+                    Center(child: FadeInAnimation(child: SvgPicture.asset('assets/svg/app_logo_v2.svg',width: SizeConfig.blockSizeHorizontal! * 50,)))
                   ],
                 ),
                 Positioned(
