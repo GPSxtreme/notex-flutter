@@ -144,13 +144,20 @@ class _ViewNotePageState extends State<ViewNotePage> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          key,style: kInter.copyWith(fontSize: 15,fontWeight: FontWeight.w400),
+          key,style: kAppFont.copyWith(fontSize: 15,fontWeight: FontWeight.w400),
         ),
         Text(
-          value,style: kInter.copyWith(fontSize: 15,fontWeight: FontWeight.w400),
+          value,style: kAppFont.copyWith(fontSize: 15,fontWeight: FontWeight.w400),
         )
       ],
     ),
+  );
+
+  divider() => Divider(
+    color: kPinkD1.withOpacity(0.3),
+    thickness: 1.0,
+    indent: 20,
+    endIndent: 20,
   );
 
   void _showNoteDetails() => showModalBottomSheet(
@@ -162,10 +169,17 @@ class _ViewNotePageState extends State<ViewNotePage> {
         mainAxisSize: MainAxisSize.min,
         children: [
           detailTile('Created on', DateFormat('d MMMM, h:mm a').format(note.createdTime.toLocal()).toString()),
+          divider(),
           detailTile('Last edited', DateFormat('d MMMM, h:mm a').format(note.editedTime.toLocal()).toString()),
+          divider(),
+          detailTile('Changes made', note.v.toString()),
+          divider(),
           detailTile('Is synced', note.isSynced ? 'yes' : 'no'),
+          divider(),
           detailTile('Is uploaded', note.isUploaded ? 'yes' : 'no'),
+          divider(),
           detailTile('Is favorite', note.isFavorite ? 'yes' : 'no'),
+          divider(),
           detailTile('Is hidden', note.isHidden ? 'yes' : 'no')
         ],
       );
@@ -316,7 +330,7 @@ class _ViewNotePageState extends State<ViewNotePage> {
                         ),
                         title: Text(
                           'share',
-                          style: kInter.copyWith(fontSize: 13),
+                          style: kAppFont.copyWith(fontSize: 13),
                         ),
                         tileColor: Colors.transparent,
                       ),
@@ -334,7 +348,7 @@ class _ViewNotePageState extends State<ViewNotePage> {
                         ),
                         title: Text(
                           'details',
-                          style: kInter.copyWith(fontSize: 13),
+                          style: kAppFont.copyWith(fontSize: 13),
                         ),
                         tileColor: Colors.transparent,
                       ),
@@ -358,7 +372,7 @@ class _ViewNotePageState extends State<ViewNotePage> {
                     const SizedBox(width: 5,),
                     Text(
                       DateFormat('d MMMM, h:mm a').format(note.editedTime.toLocal()).toString(),
-                      style: kInter.copyWith(color: kWhite75, fontSize: 10),
+                      style: kAppFont.copyWith(color: kWhite75, fontSize: 10),
                     ),
                   ],
                 ),
@@ -373,12 +387,12 @@ class _ViewNotePageState extends State<ViewNotePage> {
                 focusNode: _headingFocusNode,
                 minLines: 1,
                 maxLines: 3,
-                style: kInter.copyWith(fontSize: 30),
+                style: kAppFont.copyWith(fontSize: 30),
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.symmetric(horizontal: 25),
                   hintText: 'Heading',
-                  hintStyle: kInter.copyWith(
+                  hintStyle: kAppFont.copyWith(
                       color: kWhite.withOpacity(0.2),
                       fontSize: 30,
                       fontWeight: FontWeight.w300),
@@ -393,14 +407,14 @@ class _ViewNotePageState extends State<ViewNotePage> {
                   expands: true,
                   focusNode: _bodyFocusNode,
                   onChanged: (_) => _onBodyTextChanged(),
-                  style: kInter.copyWith(fontSize: 20),
+                  style: kAppFont.copyWith(fontSize: 20),
                   cursorColor: kWhite,
                   maxLines: null,
                   decoration: InputDecoration(
                     border: InputBorder.none,
                     contentPadding: const EdgeInsets.symmetric(horizontal: 25),
                     hintText: 'Content',
-                    hintStyle: kInter.copyWith(
+                    hintStyle: kAppFont.copyWith(
                         color: kWhite.withOpacity(0.2),
                         fontSize: 20,
                         fontWeight: FontWeight.w300),
