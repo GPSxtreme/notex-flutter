@@ -4,8 +4,6 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:notex/core/repositories/auth_repository.dart';
 
-import '../../../main.dart';
-
 part 'register_event.dart';
 
 part 'register_state.dart';
@@ -28,7 +26,6 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
           .then((response) async {
         if (response.success) {
           await AuthRepository.init().then((_) async {
-            await USER.init();
             emit(RegisterSuccessState());
           });
         } else {
