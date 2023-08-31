@@ -231,7 +231,7 @@ class _NoteTileState extends State<NoteTile> {
                                 widget.note.title,
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
-                                style: kInter.copyWith(
+                                style: kAppFont.copyWith(
                                     color: kWhite, fontSize: 18),
                               ),
                             ),
@@ -240,60 +240,72 @@ class _NoteTileState extends State<NoteTile> {
                         SizedBox(height: SizeConfig.blockSizeVertical! * 0.5),
                         Text(
                           widget.note.body,
-                          maxLines: 6,
+                          maxLines: 7,
                           overflow: TextOverflow.ellipsis,
-                          style: kInter.copyWith(color: kWhite24, fontSize: 12),
+                          style: kAppFont.copyWith(color: kWhite24, fontSize: 12),
                         ),
+                        /* Detailed stats for debugging
                         SizedBox(
                           height: SizeConfig.blockSizeVertical! * 2,
                         ),
                         Text(
                           'created on : ${DateFormat('d MMMM, h:mm a').format(widget.note.createdTime.toLocal()).toString()}',
-                          style: kInter.copyWith(color: kWhite75, fontSize: 10),
+                          style: kAppFont.copyWith(color: kWhite75, fontSize: 10),
                         ),
                         SizedBox(
                           height: SizeConfig.blockSizeVertical! * 0.5,
                         ),
                         Text(
                           'last edited : ${DateFormat('d MMMM, h:mm a').format(widget.note.editedTime.toLocal()).toString()}',
-                          style: kInter.copyWith(color: kWhite75, fontSize: 10),
+                          style: kAppFont.copyWith(color: kWhite75, fontSize: 10),
                         ),
                         Text(
                           'is uploaded : ${widget.note.isUploaded}',
-                          style: kInter.copyWith(color: kWhite75, fontSize: 10),
+                          style: kAppFont.copyWith(color: kWhite75, fontSize: 10),
                         ),
                         Text(
                           'is hidden : ${widget.note.isHidden}',
-                          style: kInter.copyWith(color: kWhite75, fontSize: 10),
+                          style: kAppFont.copyWith(color: kWhite75, fontSize: 10),
                         ),
                         Text(
                           'is deleted : ${widget.note.isDeleted}',
-                          style: kInter.copyWith(color: kWhite75, fontSize: 10),
+                          style: kAppFont.copyWith(color: kWhite75, fontSize: 10),
                         ),
                         Text(
                           'deleted time : ${widget.note.deletedTime != null ? DateFormat('d MMMM, h:mm a').format(widget.note.deletedTime.toLocal()).toString() : null}',
-                          style: kInter.copyWith(color: kWhite75, fontSize: 10),
+                          style: kAppFont.copyWith(color: kWhite75, fontSize: 10),
                         ),
                         Text(
                           'is favorite : ${widget.note.isFavorite}',
-                          style: kInter.copyWith(color: kWhite75, fontSize: 10),
+                          style: kAppFont.copyWith(color: kWhite75, fontSize: 10),
                         ),
                         Text(
                           'version : ${widget.note.v}',
-                          style: kInter.copyWith(color: kWhite75, fontSize: 10),
+                          style: kAppFont.copyWith(color: kWhite75, fontSize: 10),
                         ),
+                        */
                         if (!_isSyncing) ...[
-                          Text(
-                            'is synced : ${widget.note.isSynced}',
-                            style:
-                                kInter.copyWith(color: kWhite75, fontSize: 10),
+                          const SizedBox(
+                            height: 10,
                           ),
+                          Row(
+                            children: [
+                              Icon(widget.note.isSynced ? Icons.sync : Icons.sync_disabled,color: kWhite,size: 20,),
+                              const SizedBox(width: 3,),
+                              Expanded(
+                                child: Text(
+                                  DateFormat('h:mm a, dd/MM/yyyy').format(widget.note.editedTime.toLocal()).toString(),
+                                  style: kAppFont.copyWith(color: kWhite75, fontSize: 10),
+                                ),
+                              )
+                            ],
+                          )
                         ] else ...[
                           Row(
                             children: [
                               Text(
                                 'syncing',
-                                style: kInter.copyWith(
+                                style: kAppFont.copyWith(
                                     color: kWhite75, fontSize: 10),
                               ),
                               SizedBox(
