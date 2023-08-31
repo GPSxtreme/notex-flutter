@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:notex/data/models/todo_model.dart';
 import 'package:notex/presentation/styles/app_styles.dart';
 import '../blocs/todos/todos_bloc.dart';
@@ -50,6 +51,50 @@ class _TodoTileState extends State<TodoTile> {
       widget.todosBloc.add(TodosIsTodoSelectedEvent(_isSelected, widget.todo));
     }
   }
+  detailTile(String key,String value) => Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          key,style: kAppFont.copyWith(fontSize: 15,fontWeight: FontWeight.w400),
+        ),
+        Text(
+          value,style: kAppFont.copyWith(fontSize: 15,fontWeight: FontWeight.w400),
+        )
+      ],
+    ),
+  );
+
+  divider() => Divider(
+    color: kPinkD1.withOpacity(0.3),
+    thickness: 1.0,
+    indent: 20,
+    endIndent: 20,
+  );
+
+  void _showNoteDetails() => showModalBottomSheet(
+    showDragHandle: true,
+    backgroundColor: kPinkD2,
+    context: context,
+    builder: (BuildContext context) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          detailTile('Created on', DateFormat('d MMMM, h:mm a').format(widget.todo.createdTime.toLocal()).toString()),
+          divider(),
+          detailTile('Remainder time', DateFormat('d MMMM, h:mm a').format(widget.todo.expireTime.toLocal()).toString()),
+          divider(),
+          detailTile('Is completed', widget.todo.isCompleted ? 'yes' : 'no'),
+          divider(),
+          detailTile('Is synced', widget.todo.isSynced ? 'yes' : 'no'),
+          divider(),
+          detailTile('Is uploaded', widget.todo.isUploaded ? 'yes' : 'no'),
+        ],
+      );
+    },
+  );
+
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +134,9 @@ class _TodoTileState extends State<TodoTile> {
         return Container(
           width: double.maxFinite,
           decoration: BoxDecoration(
-              color: DateTime.now().isAfter(widget.todo.expireTime.toLocal()) ? kPinkD2 : kPinkD2,
+              color: DateTime.now().isAfter(widget.todo.expireTime.toLocal())
+                  ? kPinkD2
+                  : kPinkD2,
               borderRadius: BorderRadius.circular(20.0),
               border: Border.all(width: 1.0, color: kPinkD1)),
           child: Material(
@@ -136,7 +183,7 @@ class _TodoTileState extends State<TodoTile> {
                               }
                             }),
                       ),
-                    ] else if(state is! TodosEditingState && _isSyncing)...[
+                    ] else if (state is! TodosEditingState && _isSyncing) ...[
                       const Padding(
                         padding: EdgeInsets.only(left: 10),
                         child: SizedBox(
@@ -156,14 +203,15 @@ class _TodoTileState extends State<TodoTile> {
                           children: [
                             Text(
                               widget.todo.body,
-                              style: kInter,
+                              style: kAppFont,
                             ),
                             SizedBox(
                               height: SizeConfig.blockSizeVertical! * 0.5,
                             ),
+                            /*
                             Text(
                               'created on : ${DateFormat('d MMMM, h:mm a').format(widget.todo.createdTime.toLocal()).toString()}',
-                              style: kInter.copyWith(
+                              style: kAppFont.copyWith(
                                   color: kWhite75, fontSize: 12),
                             ),
                             SizedBox(
@@ -171,33 +219,44 @@ class _TodoTileState extends State<TodoTile> {
                             ),
                             Text(
                               'last edited : ${DateFormat('d MMMM, h:mm a').format(widget.todo.editedTime.toLocal()).toString()}',
-                              style: kInter.copyWith(
+                              style: kAppFont.copyWith(
                                   color: kWhite75, fontSize: 12),
                             ),
                             Text(
                               'is synced : ${widget.todo.isSynced}',
-                              style: kInter.copyWith(
+                              style: kAppFont.copyWith(
                                   color: kWhite75, fontSize: 12),
                             ),
                             Text(
                               'completion on : ${DateFormat('d MMMM, h:mm a').format(widget.todo.expireTime.toLocal()).toString()}',
-                              style: kInter.copyWith(
+                              style: kAppFont.copyWith(
                                   color: kWhite75, fontSize: 12),
                             ),
                             Text(
                               'is completed : ${widget.todo.isCompleted}',
-                              style: kInter.copyWith(
+                              style: kAppFont.copyWith(
                                   color: kWhite75, fontSize: 12),
                             ),
                             Text(
                               'is uploaded : ${widget.todo.isUploaded}',
-                              style: kInter.copyWith(
+                              style: kAppFont.copyWith(
                                   color: kWhite75, fontSize: 12),
                             ),
+                             */
                           ],
                         ),
                       ),
                     ),
+                    if (state is! TodosEditingState)
+                      IconButton(
+                          onPressed: () {
+                            _showNoteDetails();
+                          },
+                          splashRadius: 20,
+                          icon: const Icon(
+                            Ionicons.information,
+                            color: kWhite,
+                          )),
                     if (state is TodosEditingState)
                       Transform.scale(
                         scale: 1.3,
