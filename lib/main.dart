@@ -21,6 +21,8 @@ void main() async{
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: kPageBgStart,
   ));
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp,DeviceOrientation.portraitDown])
+      .then((value) => runApp(const MyApp()));
   tz.initializeTimeZones();
   runApp(const MyApp());
 }
