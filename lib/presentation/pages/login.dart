@@ -86,17 +86,17 @@ class _LoginPageState extends State<LoginPage> {
                             SizedBox(height: SizeConfig.blockSizeVertical! * 20,),
                             Text(
                               "Sign in to",
-                              style: kInter.copyWith(fontSize: 35),
+                              style: kAppFont.copyWith(fontSize: 35),
                             ),
                             Row(
                               children: [
                                 Text(
                                   "your ",
-                                  style: kInter.copyWith(fontSize: 35),
+                                  style: kAppFont.copyWith(fontSize: 35),
                                 ),
                                 Text(
                                   "account",
-                                  style: kInter.copyWith(fontSize: 35, color: kPink),
+                                  style: kAppFont.copyWith(fontSize: 35, color: kPink),
                                 ),
                               ],
                             ),
@@ -104,7 +104,7 @@ class _LoginPageState extends State<LoginPage> {
                               height: SizeConfig.blockSizeVertical! * 15,
                             ),
                             TextField(
-                              style: kInter.copyWith(fontSize: 18),
+                              style: kAppFont.copyWith(fontSize: 18),
                               controller: _emailController,
                               keyboardType: TextInputType.emailAddress,
                               cursorColor: kWhite,
@@ -115,7 +115,7 @@ class _LoginPageState extends State<LoginPage> {
                               height: SizeConfig.blockSizeVertical! * 3,
                             ),
                             TextField(
-                              style: kInter.copyWith(fontSize: 18),
+                              style: kAppFont.copyWith(fontSize: 18),
                               keyboardType: TextInputType.text,
                               controller: _passwordController,
                               cursorColor: kWhite,
@@ -161,7 +161,7 @@ class _LoginPageState extends State<LoginPage> {
                                   },
                                   child: Text(
                                     "Remember device",
-                                    style: kInter.copyWith(
+                                    style: kAppFont.copyWith(
                                         fontSize: 16, color: kWhite24),
                                   ),
                                 )
@@ -185,7 +185,7 @@ class _LoginPageState extends State<LoginPage> {
                                 style: kBtnStyleT1,
                                 child: state is! LoginLoadingSate ? Text(
                                   "Login",
-                                  style: kInter.copyWith(fontSize: 20),
+                                  style: kAppFont.copyWith(fontSize: 20),
                                 ) :const SpinKitCircle(color: kWhite,size: 22,),
                               ),
                             ),
@@ -197,7 +197,7 @@ class _LoginPageState extends State<LoginPage> {
                               children: [
                                 Text(
                                   "Don't have an account? ",
-                                  style: kInter.copyWith(fontSize: 16),
+                                  style: kAppFont.copyWith(fontSize: 16),
                                 ),
                                 GestureDetector(
                                     onTap: () {
@@ -206,7 +206,7 @@ class _LoginPageState extends State<LoginPage> {
                                     },
                                     child: Text(
                                       "Register ",
-                                      style: kInter.copyWith(fontSize: 16, color: kPink),
+                                      style: kAppFont.copyWith(fontSize: 16, color: kPink),
                                     )),
                               ],
                             )
