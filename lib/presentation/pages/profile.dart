@@ -100,7 +100,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 title: Text(
                   'Take a photo',
-                  style: kInter,
+                  style: kAppFont,
                 ),
                 onTap: () {
                   _pickImage(ImageSource.camera);
@@ -114,7 +114,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 title: Text(
                   'Choose from gallery',
-                  style: kInter,
+                  style: kAppFont,
                 ),
                 onTap: () {
                   _pickImage(ImageSource.gallery);
@@ -178,7 +178,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             title: Text(
               "Profile",
-              style: kInter.copyWith(fontWeight: FontWeight.w600, fontSize: 19),
+              style: kAppFont.copyWith(fontWeight: FontWeight.w600, fontSize: 19),
             ),
             backgroundColor: kPinkD1,
           ),
@@ -287,7 +287,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ),
                                 Text(
                                   state.user.name,
-                                  style: kInter.copyWith(
+                                  style: kAppFont.copyWith(
                                       color: kWhite,
                                       fontSize: 25,
                                       fontWeight: FontWeight.w500),
@@ -305,7 +305,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       state.user.isEmailVerified
                                           ? 'Verified'
                                           : 'Not verified',
-                                      style: kInter.copyWith(
+                                      style: kAppFont.copyWith(
                                           color: kWhite24,
                                           fontSize: 13,
                                           fontWeight: FontWeight.w700),
@@ -351,7 +351,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       children: [
                                         Text(
                                           "user id",
-                                          style: kInter.copyWith(
+                                          style: kAppFont.copyWith(
                                               color: kWhite24,
                                               fontSize: 12,
                                               fontWeight: FontWeight.w700),
@@ -386,7 +386,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             height: SizeConfig.blockSizeVertical! * 8,
                           ),
                           TextField(
-                            style: kInter.copyWith(fontSize: 18),
+                            style: kAppFont.copyWith(fontSize: 18),
                             controller: _emailController,
                             keyboardType: TextInputType.text,
                             readOnly: true,
@@ -399,7 +399,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             height: SizeConfig.blockSizeVertical! * 2,
                           ),
                           TextField(
-                            style: kInter.copyWith(fontSize: 18),
+                            style: kAppFont.copyWith(fontSize: 18),
                             controller: _nameController,
                             keyboardType: TextInputType.text,
                             cursorColor: kWhite,
@@ -413,7 +413,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             children: [
                               Flexible(
                                 child: TextField(
-                                  style: kInter.copyWith(fontSize: 18),
+                                  style: kAppFont.copyWith(fontSize: 18),
                                   controller: _dobController,
                                   keyboardType: TextInputType.datetime,
                                   cursorColor: kWhite,
@@ -441,7 +441,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                           Text(
                             " country",
-                            style: kInter.copyWith(color: kWhite24),
+                            style: kAppFont.copyWith(color: kWhite24),
                           ),
                           SizedBox(
                             height: SizeConfig.blockSizeHorizontal! * 2,
@@ -470,7 +470,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       padding: const EdgeInsets.all(10.0),
                                       child: Text(
                                         "Please enter your country code / telephone code if no results are shown.",
-                                        style: kInter.copyWith(fontSize: 13),
+                                        style: kAppFont.copyWith(fontSize: 13),
                                         textAlign: TextAlign.center,
                                       ),
                                     );
@@ -480,16 +480,16 @@ class _ProfilePageState extends State<ProfilePage> {
                                   dialogSize: Size(
                                       SizeConfig.screenWidth! * 0.8,
                                       SizeConfig.screenHeight! * 0.8),
-                                  searchStyle: kInter,
+                                  searchStyle: kAppFont,
                                   barrierColor: kPinkD2,
                                   flagWidth:
                                       SizeConfig.blockSizeHorizontal! * 10,
                                   alignLeft: true,
-                                  dialogTextStyle: kInter,
+                                  dialogTextStyle: kAppFont,
                                   // dialogBackgroundColor: kPinkD1.withOpacity(0.7),
                                   searchDecoration: kTextFieldDecorationT1,
                                   showDropDownButton: true,
-                                  textStyle: kInter,
+                                  textStyle: kAppFont,
                                   closeIcon: const Icon(
                                     Icons.close,
                                     color: kWhite,
@@ -524,7 +524,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   style: kBtnStyleT1,
                                   child: !state.isUpdating ? Text(
                                     "Save",
-                                    style: kInter.copyWith(fontSize: 20),
+                                    style: kAppFont.copyWith(fontSize: 20),
                                   ) : const SpinKitCircle(color: kWhite,size: 20,),
                                 ),
                               ),
