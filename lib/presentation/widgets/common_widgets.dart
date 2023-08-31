@@ -24,17 +24,18 @@ class CommonWidgets{
             borderRadius: BorderRadius.all(Radius.circular(18.0))),
         contentPadding:
         const EdgeInsets.symmetric(horizontal: 25, vertical: 25),
+        actionsPadding:EdgeInsets.zero,
         backgroundColor: kPinkD2,
         title: Text(
           title,
-          style: kInter.copyWith(
+          style: kAppFont.copyWith(
               color: titleColor ?? kWhite,
               fontSize: 18,
               fontWeight: FontWeight.w400),
         ),
         content: Text(
           body,
-          style: kInter.copyWith(
+          style: kAppFont.copyWith(
               color: titleColor ?? kWhite,
               fontSize: 14,
               fontWeight: FontWeight.w400),
@@ -43,19 +44,24 @@ class CommonWidgets{
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Center(
-                child: GestureDetector(
+              Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  splashColor: kPinkD2,
                   onTap: () {
                     Navigator.of(context).pop(true);
                   },
-                  child: Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: Text(
-                      agreeLabel,
-                      style: kInter.copyWith(
-                          color: titleColor ?? kPink,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    width: double.maxFinite,
+                    child: Center(
+                      child: Text(
+                        agreeLabel,
+                        style: kAppFont.copyWith(
+                            color: titleColor ?? kPink,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600),
+                      ),
                     ),
                   ),
                 ),
@@ -63,22 +69,27 @@ class CommonWidgets{
               if(!isSingleBtn) ...[
                 Divider(
                   color: kWhite.withOpacity(0.3),
-                  indent: 20,
-                  endIndent: 20,
+                  indent: 40,
+                  endIndent: 40,
                 ),
-                Center(
-                  child: GestureDetector(
+                Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    splashColor: kPinkD2,
                     onTap: () {
                       Navigator.of(context).pop(false);
                     },
-                    child: Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: Text(
-                        denyLabel,
-                        style: kInter.copyWith(
-                            color: titleColor ?? kWhite,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      width: double.maxFinite,
+                      child: Center(
+                        child: Text(
+                          denyLabel,
+                          style: kAppFont.copyWith(
+                              color: titleColor ?? kPink,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600),
+                        ),
                       ),
                     ),
                   ),
