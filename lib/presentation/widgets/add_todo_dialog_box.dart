@@ -89,7 +89,7 @@ class _AddTodoDialogBoxState extends State<AddTodoDialogBox> {
             Center(
               child: Text(
                 'New To-Do',
-                style: kInter.copyWith(fontWeight: FontWeight.w600),
+                style: kAppFont.copyWith(fontWeight: FontWeight.w600),
               ),
             ),
             Align(
@@ -125,7 +125,7 @@ class _AddTodoDialogBoxState extends State<AddTodoDialogBox> {
         ),
       ),
       content: TextField(
-        style: kInter.copyWith(fontSize: 18),
+        style: kAppFont.copyWith(fontSize: 18),
         controller: _todoController,
         maxLines: 3,
         minLines: 1,
@@ -161,7 +161,7 @@ class _AddTodoDialogBoxState extends State<AddTodoDialogBox> {
               padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 6),
               child: Text(
                 DateFormat('h:mm a, d MMMM y').format(_expireTime!),
-                style: kInter.copyWith(fontSize: 13,color: kWhite,fontWeight: FontWeight.w600),
+                style: kAppFont.copyWith(fontSize: 13,color: kWhite,fontWeight: FontWeight.w600),
               ),
             )
           ],
