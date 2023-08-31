@@ -32,7 +32,7 @@ class _CreateUserProfileState extends State<CreateUserProfile> {
   final CreateUserProfileBloc createUserProfileBloc = CreateUserProfileBloc();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _dobController = TextEditingController();
-  String _selectedCountry = 'India';
+  String _selectedCountry = 'IN';
   File? _imageFile;
 
 
@@ -59,9 +59,11 @@ class _CreateUserProfileState extends State<CreateUserProfile> {
         imageQuality: IMAGE_QUALITY,
         maxHeight: IMAGE_HEIGHT,
         maxWidth: IMAGE_WIDTH);
-    setState(() {
-      _imageFile = File(pickedFile!.path);
+    if(pickedFile != null) {
+      setState(() {
+      _imageFile = File(pickedFile.path);
     });
+    }
   }
 
   void _showPickOptions() => showModalBottomSheet(
@@ -266,7 +268,7 @@ class _CreateUserProfileState extends State<CreateUserProfile> {
                                         keyboardType: TextInputType.datetime,
                                         cursorColor: kWhite,
                                         decoration: kTextFieldDecorationT1.copyWith(
-                                            labelText: "Date of birth"),
+                                            labelText: "Date of birth",hintText: '15/12/2003',hintStyle: kAppFont.copyWith(color: kWhite.withOpacity(0.2))),
                                       ),
                                     ),
                                     SizedBox(width: SizeConfig.blockSizeHorizontal! * 2,),
