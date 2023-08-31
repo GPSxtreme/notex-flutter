@@ -116,26 +116,30 @@ class AuthRepository {
     return genericServerResponseFromJson(response.body);
   }
   static Future<bool> authenticateUser({bool isNotes = true})async{
-    final bool canAuthenticateWithBiometrics = await localAuth.canCheckBiometrics;
-    final bool canAuthenticate =
-        canAuthenticateWithBiometrics || await localAuth.isDeviceSupported();
-    final List<BiometricType> availableBiometrics =
-    await localAuth.getAvailableBiometrics();
-    if (canAuthenticate &&  availableBiometrics.isNotEmpty) {
-      // Some biometrics are enrolled.
-      bool response = await localAuth.authenticate(
-          localizedReason: isNotes?  'Please authenticate to show content' : 'App locked',
-          options: AuthenticationOptions(biometricOnly: SETTINGS.isBiometricOnly,useErrorDialogs: true,sensitiveTransaction: true,stickyAuth: true),
-          authMessages: const <AuthMessages>[
-            AndroidAuthMessages(
-              signInTitle: 'Oops! authentication required!',
-              cancelButton: 'Cancel',
-              goToSettingsButton: 'Open settings',
-              biometricSuccess: 'Success!'
-            ),
-          ]);
-      return response;
-    } else{
+    try{
+      final bool canAuthenticateWithBiometrics = await localAuth.canCheckBiometrics;
+      final bool canAuthenticate =
+          canAuthenticateWithBiometrics || await localAuth.isDeviceSupported();
+      final List<BiometricType> availableBiometrics =
+      await localAuth.getAvailableBiometrics();
+      if (canAuthenticate &&  availableBiometrics.isNotEmpty) {
+        // Some biometrics are enrolled.
+        bool response = await localAuth.authenticate(
+            localizedReason: isNotes?  'Please authenticate to show content' : 'App locked',
+            options: AuthenticationOptions(biometricOnly: SETTINGS.isBiometricOnly,useErrorDialogs: true,sensitiveTransaction: true,stickyAuth: true),
+            authMessages: const <AuthMessages>[
+              AndroidAuthMessages(
+                  signInTitle: 'Verify that its you!',
+                  cancelButton: 'Cancel',
+                  goToSettingsButton: 'Open settings',
+                  biometricSuccess: 'Success!'
+              ),
+            ]);
+        return response;
+      } else{
+        return false;
+      }
+    }catch(e){
       return false;
     }
   }
