@@ -53,9 +53,9 @@ class _RegisterPageState extends State<RegisterPage> {
             kSnackBar(context, state.reason);
           } else if (state is RegisterRedirectToLoginState) {
             GoRouter.of(context).pop();
-          } else if(state is RegisterEmptyCredentialsState) {
+          } else if (state is RegisterEmptyCredentialsState) {
             kSnackBar(context, "Please fill in all fields");
-          } else if(state is RegisterPasswordsDoNotMatchState){
+          } else if (state is RegisterPasswordsDoNotMatchState) {
             kSnackBar(context, "Passwords do not match");
             _confirmPasswordController.clear();
           }
@@ -99,23 +99,25 @@ class _RegisterPageState extends State<RegisterPage> {
                               ),
                               Center(
                                   child: SvgPicture.asset(
-                                      "assets/svg/app_logo.svg")),
+                                "assets/svg/app_logo_v2.svg",
+                                width: SizeConfig.blockSizeHorizontal! * 40,
+                              )),
                               SizedBox(
-                                height: SizeConfig.blockSizeVertical! * 10,
+                                height: SizeConfig.blockSizeVertical! * 7,
                               ),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
                                     "Register ",
-                                    style: kInter.copyWith(
-                                        fontSize: 30,
+                                    style: kAppFont.copyWith(
+                                        fontSize: 25,
                                         fontWeight: FontWeight.w300),
                                   ),
                                   Text(
                                     "account",
-                                    style: kInter.copyWith(
-                                        fontSize: 30,
+                                    style: kAppFont.copyWith(
+                                        fontSize: 25,
                                         color: kPink,
                                         fontWeight: FontWeight.w300),
                                   ),
@@ -125,7 +127,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 height: SizeConfig.blockSizeVertical! * 10,
                               ),
                               TextField(
-                                style: kInter.copyWith(fontSize: 18),
+                                style: kAppFont.copyWith(fontSize: 18),
                                 controller: _emailController,
                                 keyboardType: TextInputType.emailAddress,
                                 cursorColor: kWhite,
@@ -136,7 +138,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 height: SizeConfig.blockSizeVertical! * 3,
                               ),
                               TextField(
-                                style: kInter.copyWith(fontSize: 18),
+                                style: kAppFont.copyWith(fontSize: 18),
                                 keyboardType: TextInputType.text,
                                 controller: _passwordController,
                                 cursorColor: kWhite,
@@ -160,7 +162,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 height: SizeConfig.blockSizeVertical! * 3,
                               ),
                               TextField(
-                                style: kInter.copyWith(fontSize: 18),
+                                style: kAppFont.copyWith(fontSize: 18),
                                 keyboardType: TextInputType.text,
                                 controller: _confirmPasswordController,
                                 cursorColor: kWhite,
@@ -203,14 +205,14 @@ class _RegisterPageState extends State<RegisterPage> {
                                         }),
                                   ),
                                   GestureDetector(
-                                    onTap: (){
+                                    onTap: () {
                                       setState(() {
                                         _rememberDevice = !_rememberDevice;
                                       });
                                     },
                                     child: Text(
                                       "Remember device",
-                                      style: kInter.copyWith(
+                                      style: kAppFont.copyWith(
                                           fontSize: 16, color: kWhite24),
                                     ),
                                   )
@@ -249,7 +251,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                   child: state is! RegisterLoadingState
                                       ? Text(
                                           "Register",
-                                          style: kInter.copyWith(fontSize: 20),
+                                          style: kAppFont.copyWith(fontSize: 20),
                                         )
                                       : const SpinKitCircle(
                                           color: kWhite,
@@ -265,16 +267,17 @@ class _RegisterPageState extends State<RegisterPage> {
                                 children: [
                                   Text(
                                     "Have an account? ",
-                                    style: kInter.copyWith(fontSize: 16),
+                                    style: kAppFont.copyWith(fontSize: 16),
                                   ),
                                   GestureDetector(
                                       onTap: () {
                                         // go to login page
-                                        registerBloc.add(RegisterPageLoginButtonPressedEvent());
+                                        registerBloc.add(
+                                            RegisterPageLoginButtonPressedEvent());
                                       },
                                       child: Text(
                                         "Login",
-                                        style: kInter.copyWith(
+                                        style: kAppFont.copyWith(
                                             fontSize: 16, color: kPink),
                                       )),
                                 ],
