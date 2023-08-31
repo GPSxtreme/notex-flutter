@@ -28,7 +28,7 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget label(String label) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         child: Text(label,
-            style: kInter.copyWith(
+            style: kAppFont.copyWith(
                 fontSize: 17, color: kWhite, fontWeight: FontWeight.w600)),
       );
 
@@ -113,7 +113,7 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
             title: Text(
               "Settings",
-              style: kInter,
+              style: kAppFont,
             ),
             backgroundColor: kPageBgStart,
           ),
@@ -138,7 +138,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       Center(
                         child: Text(
                           'Something went wrong \n ${state.reason}',
-                          style: kInter,
+                          style: kAppFont,
                           textAlign: TextAlign.center,
                         ),
                       )
@@ -161,11 +161,11 @@ class _SettingsPageState extends State<SettingsPage> {
                               ),
                               title: Text(
                                 'Auto sync',
-                                style: kInter.copyWith(fontSize: 15),
+                                style: kAppFont.copyWith(fontSize: 15),
                               ),
                               subtitle: Text(
                                 'This enables auto-sync for both notes and todos. Auto sync must be enabled for removal of note or todo in cloud.',
-                                style: kInter.copyWith(
+                                style: kAppFont.copyWith(
                                     color: kWhite75, fontSize: 12),
                               ),
                               trailing: Switch(
@@ -188,11 +188,11 @@ class _SettingsPageState extends State<SettingsPage> {
                               ),
                               title: Text(
                                 'Prefetch cloud notes',
-                                style: kInter.copyWith(fontSize: 15),
+                                style: kAppFont.copyWith(fontSize: 15),
                               ),
                               subtitle: Text(
                                 'This enables prefetch of cloud notes on startup.',
-                                style: kInter.copyWith(
+                                style: kAppFont.copyWith(
                                     color: kWhite75, fontSize: 12),
                               ),
                               trailing: Switch(
@@ -216,11 +216,11 @@ class _SettingsPageState extends State<SettingsPage> {
                               ),
                               title: Text(
                                 'Prefetch cloud todos',
-                                style: kInter.copyWith(fontSize: 15),
+                                style: kAppFont.copyWith(fontSize: 15),
                               ),
                               subtitle: Text(
                                 'This enables prefetch of cloud todos on startup.',
-                                style: kInter.copyWith(
+                                style: kAppFont.copyWith(
                                     color: kWhite75, fontSize: 12),
                               ),
                               trailing: Switch(
@@ -249,11 +249,11 @@ class _SettingsPageState extends State<SettingsPage> {
                               },
                               title: Text(
                                 'Delete all notes',
-                                style: kInter.copyWith(fontSize: 15),
+                                style: kAppFont.copyWith(fontSize: 15),
                               ),
                               subtitle: Text(
                                 'This will remove all the notes locally saved. Notes synced to cloud will not be affected.',
-                                style: kInter.copyWith(
+                                style: kAppFont.copyWith(
                                     color: kWhite75, fontSize: 12),
                               ),
                             ),
@@ -269,11 +269,11 @@ class _SettingsPageState extends State<SettingsPage> {
                               },
                               title: Text(
                                 'Delete all todos',
-                                style: kInter.copyWith(fontSize: 15),
+                                style: kAppFont.copyWith(fontSize: 15),
                               ),
                               subtitle: Text(
                                 'This will remove all the todos locally saved. Todos synced to cloud will not be affected.',
-                                style: kInter.copyWith(
+                                style: kAppFont.copyWith(
                                     color: kWhite75, fontSize: 12),
                               ),
                             ),
@@ -286,11 +286,11 @@ class _SettingsPageState extends State<SettingsPage> {
                               ),
                               title: Text(
                                 'App lock',
-                                style: kInter.copyWith(fontSize: 15),
+                                style: kAppFont.copyWith(fontSize: 15),
                               ),
                               subtitle: Text(
                                 'Sets up app lock to enter app.',
-                                style: kInter.copyWith(
+                                style: kAppFont.copyWith(
                                     color: kWhite75, fontSize: 12),
                               ),
                               trailing: Switch(
@@ -313,11 +313,11 @@ class _SettingsPageState extends State<SettingsPage> {
                               ),
                               title: Text(
                                 'Lock hidden notes',
-                                style: kInter.copyWith(fontSize: 15),
+                                style: kAppFont.copyWith(fontSize: 15),
                               ),
                               subtitle: Text(
                                 'Sets up app lock to access hidden notes.',
-                                style: kInter.copyWith(
+                                style: kAppFont.copyWith(
                                     color: kWhite75, fontSize: 12),
                               ),
                               trailing: Switch(
@@ -340,11 +340,11 @@ class _SettingsPageState extends State<SettingsPage> {
                               ),
                               title: Text(
                                 'Lock deleted notes',
-                                style: kInter.copyWith(fontSize: 15),
+                                style: kAppFont.copyWith(fontSize: 15),
                               ),
                               subtitle: Text(
                                 'Sets up app lock to access deleted notes.',
-                                style: kInter.copyWith(
+                                style: kAppFont.copyWith(
                                     color: kWhite75, fontSize: 12),
                               ),
                               trailing: Switch(
@@ -367,11 +367,11 @@ class _SettingsPageState extends State<SettingsPage> {
                               ),
                               title: Text(
                                 'Biometric only',
-                                style: kInter.copyWith(fontSize: 15),
+                                style: kAppFont.copyWith(fontSize: 15),
                               ),
                               subtitle: Text(
                                 'Prevent authentications from using non-biometric local authentication such as pin, passcode, or pattern.',
-                                style: kInter.copyWith(
+                                style: kAppFont.copyWith(
                                     color: kWhite75, fontSize: 12),
                               ),
                               trailing: Switch(
@@ -395,11 +395,11 @@ class _SettingsPageState extends State<SettingsPage> {
                               ),
                               title: Text(
                                 'Checkout developer',
-                                style: kInter.copyWith(fontSize: 15),
+                                style: kAppFont.copyWith(fontSize: 15),
                               ),
                               subtitle: Text(
                                 'Made with ❤️ by prudhvi suraaj.',
-                                style: kInter.copyWith(
+                                style: kAppFont.copyWith(
                                     color: kWhite75, fontSize: 12),
                               ),
                               onTap: (){
@@ -414,11 +414,11 @@ class _SettingsPageState extends State<SettingsPage> {
                               ),
                               title: Text(
                                 'Open source',
-                                style: kInter.copyWith(fontSize: 15),
+                                style: kAppFont.copyWith(fontSize: 15),
                               ),
                               subtitle: Text(
                                 'Check out code & make contributions.',
-                                style: kInter.copyWith(
+                                style: kAppFont.copyWith(
                                     color: kWhite75, fontSize: 12),
                               ),
                               onTap: (){
@@ -433,11 +433,11 @@ class _SettingsPageState extends State<SettingsPage> {
                               ),
                               title: Text(
                                 'Report a bug',
-                                style: kInter.copyWith(fontSize: 15),
+                                style: kAppFont.copyWith(fontSize: 15),
                               ),
                               subtitle: Text(
                                 'Help us fix issues by reporting in app bugs.',
-                                style: kInter.copyWith(
+                                style: kAppFont.copyWith(
                                     color: kWhite75, fontSize: 12),
                               ),
                               onTap: (){
@@ -452,11 +452,11 @@ class _SettingsPageState extends State<SettingsPage> {
                               ),
                               title: Text(
                                 'Request feature',
-                                style: kInter.copyWith(fontSize: 15),
+                                style: kAppFont.copyWith(fontSize: 15),
                               ),
                               subtitle: Text(
                                 'Request for a desired feature on github.',
-                                style: kInter.copyWith(
+                                style: kAppFont.copyWith(
                                     color: kWhite75, fontSize: 12),
                               ),
                               onTap: (){
@@ -471,11 +471,11 @@ class _SettingsPageState extends State<SettingsPage> {
                               ),
                               title: Text(
                                 'Contact',
-                                style: kInter.copyWith(fontSize: 15),
+                                style: kAppFont.copyWith(fontSize: 15),
                               ),
                               subtitle: Text(
                                 'Contact us for any problems related.',
-                                style: kInter.copyWith(
+                                style: kAppFont.copyWith(
                                     color: kWhite75, fontSize: 12),
                               ),
                               onTap: (){
@@ -490,11 +490,11 @@ class _SettingsPageState extends State<SettingsPage> {
                               ),
                               title: Text(
                                 'Updates',
-                                style: kInter.copyWith(fontSize: 15),
+                                style: kAppFont.copyWith(fontSize: 15),
                               ),
                               subtitle: Text(
                                 'Check for app updates.',
-                                style: kInter.copyWith(
+                                style: kAppFont.copyWith(
                                     color: kWhite75, fontSize: 12),
                               ),
                               onTap: (){
@@ -528,11 +528,11 @@ class _SettingsPageState extends State<SettingsPage> {
                                     : null,
                                 title: Text(
                                   'Verify account',
-                                  style: kInter.copyWith(fontSize: 15),
+                                  style: kAppFont.copyWith(fontSize: 15),
                                 ),
                                 subtitle: Text(
                                   'Secure your account by verifying your email.\nPassword can only be reset if the account is verified.',
-                                  style: kInter.copyWith(
+                                  style: kAppFont.copyWith(
                                       color: kWhite75, fontSize: 12),
                                 ),
                               ),
@@ -561,11 +561,11 @@ class _SettingsPageState extends State<SettingsPage> {
                                     : null,
                                 title: Text(
                                   'Reset password',
-                                  style: kInter.copyWith(fontSize: 15),
+                                  style: kAppFont.copyWith(fontSize: 15),
                                 ),
                                 subtitle: Text(
                                   'You will be sent a password reset link to your registered email.',
-                                  style: kInter.copyWith(
+                                  style: kAppFont.copyWith(
                                       color: kWhite75, fontSize: 12),
                                 ),
                               ),
@@ -581,11 +581,11 @@ class _SettingsPageState extends State<SettingsPage> {
                               },
                               title: Text(
                                 'Logout',
-                                style: kInter.copyWith(fontSize: 15),
+                                style: kAppFont.copyWith(fontSize: 15),
                               ),
                               subtitle: Text(
                                 'You will be redirected to login screen',
-                                style: kInter.copyWith(
+                                style: kAppFont.copyWith(
                                     color: kWhite75, fontSize: 12),
                               ),
                             ),
