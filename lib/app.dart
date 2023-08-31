@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
               selectedItemColor: kPink,
               backgroundColor: kPinkD1,
               elevation: 0,
-              selectedLabelStyle: kInter.copyWith(color: kWhite)),
+              selectedLabelStyle: kAppFont.copyWith(color: kWhite)),
           listTileTheme: const ListTileThemeData(horizontalTitleGap: 30)),
       debugShowCheckedModeBanner: false,
       routerConfig: MyAppRouter.getRouter(),
