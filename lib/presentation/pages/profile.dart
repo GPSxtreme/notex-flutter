@@ -1,7 +1,6 @@
 // ignore_for_file: constant_identifier_names
 
 import 'package:country_code_picker/country_code_picker.dart';
-import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,6 +8,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:notex/data/models/updatable_user_data_model.dart';
 import 'package:notex/presentation/blocs/user/user_bloc.dart';
 import 'dart:io';
@@ -181,6 +181,52 @@ class _ProfilePageState extends State<ProfilePage> {
               style: kAppFont.copyWith(fontWeight: FontWeight.w600, fontSize: 19),
             ),
             backgroundColor: kPinkD1,
+            actions: [
+              if(state is UserSettingsFetchedState)
+              Padding(
+                padding: EdgeInsets.only(right: SizeConfig.blockSizeHorizontal! * 5),
+                child: PopupMenuButton<String>(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  color: kPinkD2,
+                  icon: const Icon(
+                    Ionicons.ellipsis_vertical,
+                    color: kWhite,
+                  ),
+                  splashRadius: 20,
+                  onSelected: (value) {
+                    switch (value) {
+                      case 'copyId':
+                        Clipboard.setData(
+                            ClipboardData(text: state.user.userId));
+                    }
+                  },
+                  itemBuilder: (BuildContext context) {
+                    return [
+                      PopupMenuItem<String>(
+                        value: 'copyId',
+                        child: ListTile(
+                          contentPadding:
+                          const EdgeInsets.symmetric(
+                              vertical: 0),
+                          horizontalTitleGap: 15,
+                          leading: const Icon(
+                            Icons.copy_outlined,
+                            color: kPinkD1,
+                          ),
+                          title: Text(
+                            'user id',
+                            style: kAppFont.copyWith(fontSize: 13),
+                          ),
+                          tileColor: Colors.transparent,
+                        ),
+                      ),
+                    ];
+                  },
+                ),
+              ),
+            ],
           ),
           body: Container(
             height: double.maxFinite,
@@ -333,43 +379,6 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ),
                                 const SizedBox(
                                   height: 5,
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    // copy user id to users clipboard.
-                                    Clipboard.setData(
-                                        ClipboardData(text: state.user.userId));
-                                  },
-                                  child: DottedBorder(
-                                    color: kWhite,
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 2, horizontal: 4),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          "user id",
-                                          style: kAppFont.copyWith(
-                                              color: kWhite24,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w700),
-                                          textAlign: TextAlign.center,
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        const SizedBox(
-                                          width: 3,
-                                        ),
-                                        const Icon(
-                                          Icons.copy,
-                                          color: kWhite,
-                                          size: 12,
-                                        )
-                                      ],
-                                    ),
-                                  ),
                                 ),
                               ],
                             ),
