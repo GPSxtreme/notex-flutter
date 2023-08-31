@@ -327,7 +327,14 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
           refNote.setIsDeleted(true);
           refNote.setDelTs(DateTime.now());
           await NotesRepository.removeNote(note
-              .id); // should go to next iteration until this operation is completed
+              .id).then(
+              (res)async{
+                if(res){
+                  refNote.setIsUploaded(false);
+                  await LOCAL_DB.setNoteUploaded(refNote.id, false);
+                }
+              }
+          );
         }).then((_) {
           // after all the iterations of the for loop the remaining code should execute
           _selectedNotes.clear();
