@@ -88,7 +88,7 @@ class _HomePageState extends State<HomePage> {
                         padding: const EdgeInsets.only(top: 5),
                         child: Text(
                           'Delete',
-                          style: kInter.copyWith(color: kWhite, fontSize: 12),
+                          style: kAppFont.copyWith(color: kWhite, fontSize: 12),
                         ),
                       ), // text
                     ],
@@ -128,7 +128,7 @@ class _HomePageState extends State<HomePage> {
                         padding: const EdgeInsets.only(top: 5),
                         child: Text(
                           'sync',
-                          style: kInter.copyWith(color: kWhite, fontSize: 12),
+                          style: kAppFont.copyWith(color: kWhite, fontSize: 12),
                         ),
                       ), // text
                     ],
@@ -167,7 +167,7 @@ class _HomePageState extends State<HomePage> {
                           padding: const EdgeInsets.only(top: 5),
                           child: Text(
                             !_isNotesHiddenMode ? 'Hide' : 'Unhide',
-                            style: kInter.copyWith(color: kWhite, fontSize: 12),
+                            style: kAppFont.copyWith(color: kWhite, fontSize: 12),
                           ),
                         ), // text
                       ],
@@ -348,11 +348,11 @@ class _HomePageState extends State<HomePage> {
                               ),
                               title: Text(
                                 'Account not verified',
-                                style: kInter.copyWith(fontSize: 16),
+                                style: kAppFont.copyWith(fontSize: 16),
                               ),
                               subtitle: Text(
                                 'Go to settings to start verification',
-                                style: kInter.copyWith(fontSize: 12),
+                                style: kAppFont.copyWith(fontSize: 12),
                               ),
                             ),
                           ),
@@ -367,7 +367,7 @@ class _HomePageState extends State<HomePage> {
                           leading: const Icon(Icons.account_circle_rounded),
                           title: Text(
                             'profile',
-                            style: kInter,
+                            style: kAppFont,
                           ),
                         ),
                         ListTile(
@@ -382,7 +382,7 @@ class _HomePageState extends State<HomePage> {
                           leading: const Icon(Icons.settings),
                           title: Text(
                             'settings',
-                            style: kInter,
+                            style: kAppFont,
                           ),
                         ),
                       ],
@@ -428,8 +428,8 @@ class _HomePageState extends State<HomePage> {
                       : null,
                   title: !isInEditing
                       ? SvgPicture.asset(
-                          'assets/svg/app_logo.svg',
-                          height: SizeConfig.blockSizeVertical! * 5,
+                          'assets/svg/app_logo_v2.svg',
+                          height: SizeConfig.blockSizeVertical! * 4,
                         )
                       : SizedBox(
                           width: SizeConfig.screenWidth! * 0.95,
@@ -557,7 +557,7 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                       title: Text(
                                         'Reload',
-                                        style: kInter.copyWith(fontSize: 13),
+                                        style: kAppFont.copyWith(fontSize: 13),
                                       ),
                                       tileColor: Colors.transparent,
                                     ),
@@ -575,7 +575,7 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                       title: Text(
                                         'Sync All',
-                                        style: kInter.copyWith(fontSize: 13),
+                                        style: kAppFont.copyWith(fontSize: 13),
                                       ),
                                       tileColor: Colors.transparent,
                                     ),
@@ -598,7 +598,7 @@ class _HomePageState extends State<HomePage> {
                                           !_isNotesHiddenMode
                                               ? 'Show Hidden'
                                               : 'Hide Hidden',
-                                          style: kInter.copyWith(fontSize: 13),
+                                          style: kAppFont.copyWith(fontSize: 13),
                                         ),
                                         tileColor: Colors.transparent,
                                       ),
@@ -617,7 +617,7 @@ class _HomePageState extends State<HomePage> {
                                         ),
                                         title: Text(
                                           !_isNotesDeletedMode ? 'Show Deleted' :'Hide Deleted',
-                                          style: kInter.copyWith(fontSize: 13),
+                                          style: kAppFont.copyWith(fontSize: 13),
                                         ),
                                         tileColor: Colors.transparent,
                                       ),
