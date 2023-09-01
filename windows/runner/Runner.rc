@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.gpsxtreme.notex" "\0"
-            VALUE "FileDescription", "notex" "\0"
+            VALUE "FileDescription", "Notex" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "notex" "\0"
+            VALUE "InternalName", "Notex" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2023 com.gpsxtreme.notex. All rights reserved." "\0"
             VALUE "OriginalFilename", "notex.exe" "\0"
-            VALUE "ProductName", "notex" "\0"
+            VALUE "ProductName", "Notex" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END
