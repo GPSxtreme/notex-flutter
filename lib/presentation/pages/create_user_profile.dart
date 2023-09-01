@@ -126,6 +126,11 @@ class _CreateUserProfileState extends State<CreateUserProfile> {
       },
       builder: (context, state) {
         return Scaffold(
+          backgroundColor: kPageBgStart,
+          appBar: AppBar(
+            backgroundColor: kPageBgStart,
+            elevation: 0,
+          ),
           body: SafeArea(
             child: Container(
               height: SizeConfig.screenHeight,
@@ -156,7 +161,7 @@ class _CreateUserProfileState extends State<CreateUserProfile> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 SizedBox(
-                                  height: SizeConfig.blockSizeVertical! * 5,
+                                  height: SizeConfig.blockSizeVertical!,
                                 ),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
