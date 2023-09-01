@@ -20,8 +20,12 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
               (_) async {
             bool isValid = JwtDecoderRepository.verifyJwtToken(userToken);
             if (isValid) {
-              await USER.init();
-              emit(SplashUserAuthenticatedState());
+              try{
+                await USER.init();
+                emit(SplashUserAuthenticatedState());
+              }catch(error){
+                emit(SplashRedirectToCreateUserProfilePageAction());
+              }
             }
           }
       );
