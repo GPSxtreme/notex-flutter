@@ -54,12 +54,14 @@ class _LoginPageState extends State<LoginPage> {
           GoRouter.of(context).pushReplacementNamed(AppRouteConstants.homeRouteName);
         } else if(state is LoginFailedState){
           kSnackBar(context, state.reason);
+        } else if ( state is LoginRedirectToCreateUserProfilePageAction){
+          GoRouter.of(context).pushNamed(AppRouteConstants.createUserProfileName);
         }
       },
       builder: (context,state){
         return Scaffold(
           resizeToAvoidBottomInset: true,
-          backgroundColor: kPinkD2,
+          backgroundColor: kPageBgStart,
           body: SafeArea(
             child: Container(
               width: SizeConfig.screenWidth,
