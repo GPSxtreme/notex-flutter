@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:notex/core/repositories/auth_repository.dart';
 import 'package:notex/core/repositories/jwt_decoder_repository.dart';
 import 'package:notex/core/repositories/shared_preferences_repository.dart';
+import 'package:notex/core/repositories/util_repository.dart';
 import 'package:notex/main.dart';
 part 'splash_event.dart';
 part 'splash_state.dart';
@@ -14,6 +15,7 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
   }
 
   Future<void> authenticateUser(Emitter emit) async{
+    await UtilRepository.checkForUpdate();
     String? userToken = await SharedPreferencesRepository.getJwtToken();
     if (userToken != null) {
       await AuthRepository.init().then(
