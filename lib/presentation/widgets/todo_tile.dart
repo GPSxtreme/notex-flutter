@@ -254,7 +254,8 @@ class _TodoTileState extends State<TodoTile> {
                           },
                           splashRadius: 20,
                           icon: const Icon(
-                            Ionicons.information,
+                            Ionicons.ellipsis_vertical,
+                            size: 15,
                             color: kWhite,
                           )),
                     if (state is TodosEditingState)
