@@ -14,3 +14,5 @@ class SplashUserNotAuthenticatedState extends SplashActionState {}
 class SplashUserAuthenticatedState extends SplashActionState{}
 
 class SplashUserLocalAuthenticationFailedState extends SplashState{}
+
+class SplashRedirectToCreateUserProfilePageAction extends SplashActionState {}
