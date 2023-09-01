@@ -8,7 +8,7 @@
 PRODUCT_NAME = Notex;
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.gpsxtreme.notex;
+PRODUCT_BUNDLE_IDENTIFIER = com.gpsxtreme.notex.notex;
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2023 com.gpsxtreme.notex. All rights reserved.
