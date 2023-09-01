@@ -91,6 +91,7 @@ class AuthRepository {
   }
   static Future<bool> logoutUser()async{
     await SharedPreferencesRepository.removeJwtToken();
+    USER.destroy();
     return true;
   }
   static Future<GenericServerResponse> sendAccountVerificationEmail()async{
