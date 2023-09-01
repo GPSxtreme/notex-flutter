@@ -25,8 +25,12 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           .then((response) async {
         if (response.success) {
           await AuthRepository.init().then((_) async {
-            await USER.init();
-            emit(LoginSuccessState());
+            try {
+              await USER.init();
+              emit(LoginSuccessState());
+            } catch (error) {
+              emit(LoginRedirectToCreateUserProfilePageAction());
+            }
           });
         } else {
           emit(LoginFailedState(response.message));
