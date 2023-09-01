@@ -83,10 +83,10 @@ class _SettingsPageState extends State<SettingsPage> {
           }
         } else if(state is SettingsRedirectToGithubAction){
           await UtilRepository.launchLink('https://github.com/GPSxtreme/notex-flutter');
-        } else if(state is SettingsRedirectToGithubBugReportEvent){
-          await UtilRepository.launchLink('https://github.com/GPSxtreme/notex-flutter');
-        }else if(state is SettingsRedirectToGithubRequestFeatureEvent){
-          await UtilRepository.launchLink('https://github.com/GPSxtreme/notex-flutter');
+        } else if(state is SettingsRedirectToGithubBugReportAction){
+          await UtilRepository.launchLink('https://github.com/GPSxtreme/notex-flutter/issues/new/choose');
+        }else if(state is SettingsRedirectToGithubRequestFeatureAction){
+          await UtilRepository.launchLink('https://github.com/GPSxtreme/notex-flutter/issues/new/choose');
         } else if(state is SettingsRedirectToDevSiteAction){
           await UtilRepository.launchLink('https://prudhvisuraaj.me/');
         } else if(state is SettingsRedirectToDevMailAction){
