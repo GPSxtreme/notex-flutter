@@ -13,6 +13,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   LoginBloc() : super(LoginInitialState()) {
     on<LoginPageLoginButtonClickedEvent>(processLogin);
     on<LoginPageRegisterButtonClickedEvent>(processRedirectToRegisterPage);
+    on<LoginPageForgotPasswordButtonClickedEvent>(processRedirectToPasswordResetPage);
   }
 
   FutureOr<void> processLogin(
@@ -45,5 +46,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   FutureOr<void> processRedirectToRegisterPage(
       LoginPageRegisterButtonClickedEvent event, Emitter<LoginState> emit) {
     emit(LoginNavigateToRegisterPageActionState());
+  }
+  FutureOr<void> processRedirectToPasswordResetPage(LoginPageForgotPasswordButtonClickedEvent event,Emitter<LoginState> emit){
+    emit(LoginRedirectToPasswordResetPageAction());
   }
 }
