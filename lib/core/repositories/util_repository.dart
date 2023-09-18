@@ -23,7 +23,7 @@ class UtilRepository{
     try{
       final updateInfo = await InAppUpdate.checkForUpdate();
       if (updateInfo.updateAvailability == UpdateAvailability.updateAvailable) {
-        InAppUpdate.performImmediateUpdate();
+        InAppUpdate.completeFlexibleUpdate();
         return true;
       }
     }catch (e){
