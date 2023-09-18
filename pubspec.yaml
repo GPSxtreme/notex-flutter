@@ -68,6 +68,9 @@ dependencies:
   url_launcher: ^6.1.12
   fluttertoast: ^8.2.2
   in_app_update: ^4.2.0
+  share_plus: ^7.1.0
+  pdf: ^3.10.4
+  path_provider: ^2.1.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
