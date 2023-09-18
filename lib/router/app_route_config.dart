@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:notex/presentation/pages/create_user_profile.dart';
+import 'package:notex/presentation/pages/password_reset.dart';
 import 'package:notex/presentation/pages/profile.dart';
 import 'package:notex/presentation/pages/register.dart';
 import 'package:notex/presentation/pages/settings.dart';
@@ -32,6 +33,12 @@ class MyAppRouter {
               path: '/login',
               pageBuilder: (BuildContext context, GoRouterState state) {
                 return const MaterialPage(child: LoginPage());
+              }),
+          GoRoute(
+              name: AppRouteConstants.passwordResetRouteName,
+              path: '/passwordReset',
+              pageBuilder: (BuildContext context, GoRouterState state) {
+                return const MaterialPage(child: PasswordResetPage());
               }),
           GoRoute(
               name: AppRouteConstants.registerRouteName,
