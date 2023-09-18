@@ -188,6 +188,7 @@ class _HomePageState extends State<HomePage> {
             duration: const Duration(milliseconds: 500), curve: Curves.ease);
       },
       currentIndex: _currentPageIndex,
+      backgroundColor: kPinkD1,
       items: [
         BottomNavigationBarItem(
             icon: SvgPicture.asset(
