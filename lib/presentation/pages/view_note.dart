@@ -245,7 +245,7 @@ class _ViewNotePageState extends State<ViewNotePage> {
               padding:const EdgeInsets.symmetric(vertical: 0,horizontal: 10) ,
               decoration: BoxDecoration(
                 color: kPinkD1,
-                borderRadius: BorderRadius.circular(20)
+                borderRadius: BorderRadius.circular(10)
               ),
               child: Row(
                 children: [
