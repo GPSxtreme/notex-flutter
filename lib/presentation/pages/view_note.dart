@@ -9,9 +9,14 @@ import 'package:notex/data/models/note_model.dart';
 import 'package:notex/presentation/blocs/notes/notes_bloc.dart';
 import 'package:notex/presentation/styles/app_styles.dart';
 import 'package:notex/presentation/widgets/common_widgets.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../core/repositories/notes_repository.dart';
 import '../../main.dart';
 import '../styles/size_config.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'dart:io';
 
 class ViewNotePage extends StatefulWidget {
   const ViewNotePage({super.key, this.noteId, required this.notesBloc,this.isInHiddenMode = false});
@@ -186,6 +191,99 @@ class _ViewNotePageState extends State<ViewNotePage> {
     },
   );
 
+  Future<void> shareNoteAsPdf() async {// Generate PDF file from note content
+    final pdf = pw.Document();
+    final text = _bodyController.text.trim();
+    final List<String> lines = text.split('\n'); // Split text into paragraphs using '\n' as the delimiter
+
+    pdf.addPage(
+      pw.MultiPage(
+        maxPages: 1000,
+        build: (pw.Context context) => [
+          pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Center(
+                child: pw.Text(
+                  _headingController.text.trim(),
+                  style: const pw.TextStyle(fontSize: 25),
+                ),
+              ),
+              pw.SizedBox(height: 25),
+              pw.Row(
+                children: [
+                  pw.Text('Notex',
+                    style: const pw.TextStyle(fontSize: 20),
+                  ),
+                  pw.Spacer(),
+                  pw.Text(DateFormat('d MMMM, h:mm a').format(note.editedTime.toLocal()).toString(),
+                    style: const pw.TextStyle(fontSize: 15),
+                  ),
+                ]
+              ),
+              pw.SizedBox(height: 5),
+              pw.Divider(thickness: 2.0, color: PdfColors.pink, height: 0),
+              pw.SizedBox(height: 25),
+              for (var line in lines)
+                pw.Text(
+                  line.trim(),
+                  style: const pw.TextStyle(fontSize: 17),
+                  textAlign: pw.TextAlign.left
+                )
+            ],
+          ),
+        ],
+      ),
+    );
+    // Save the PDF file to a temporary directory
+    final tempDir = await getTemporaryDirectory();
+    final tempPath = '${tempDir.path}/note.pdf';
+    final file = File(tempPath);
+    await file.writeAsBytes(await pdf.save());
+
+    // Share the PDF file
+    await Share.shareXFiles(<XFile>[XFile(tempPath)], text: 'My Note', subject: 'Sharing Note from Notex');
+  }
+
+  void _showShareOptions() => showModalBottomSheet(
+    backgroundColor: kPinkD2,
+    showDragHandle: true,
+    context: context,
+    builder: (BuildContext context) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListTile(
+            leading: const Icon(
+              Icons.text_fields,
+              color: kWhite,
+            ),
+            title: Text(
+              'Share as text',
+              style: kAppFont,
+            ),
+            onTap: () async {
+              await Share.shareWithResult('${_headingController.text}\n${_bodyController.text}',subject: 'Sharing note from notex.');
+            },
+          ),
+          ListTile(
+            leading: const Icon(
+              Icons.picture_as_pdf,
+              color: kWhite,
+            ),
+            title: Text(
+              'Share as pdf',
+              style: kAppFont,
+            ),
+            onTap: () async {
+              await shareNoteAsPdf();
+            },
+          ),
+        ],
+      );
+    },
+  );
+
   @override
   void dispose() {
     _headingController.dispose();
@@ -309,10 +407,13 @@ class _ViewNotePageState extends State<ViewNotePage> {
                   color: kWhite,
                 ),
                 splashRadius: 20,
-                onSelected: (value) {
+                onSelected: (value) async {
                   switch (value) {
+                    case 'share' :
+                      _showShareOptions();
                     case 'details':
                       _showNoteDetails();
+                      break;
                   }
                 },
                 itemBuilder: (BuildContext context) {
