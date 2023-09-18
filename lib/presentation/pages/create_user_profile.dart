@@ -343,7 +343,11 @@ class _CreateUserProfileState extends State<CreateUserProfile> {
                                   child: ElevatedButton(
                                     onPressed: state is! CreateUserProfileLoadingState ? (){
                                       if(_imageFile == null || _nameController.text.isEmpty || _dobController.text.isEmpty || _selectedCountry.isEmpty){
-                                        kSnackBar(context, "Please fill in all fields");
+                                        if(_imageFile == null){
+                                          kSnackBar(context, "Please add a profile picture");
+                                        }else{
+                                          kSnackBar(context, "Please fill in all fields");
+                                        }
                                       }else{
                                         // create user profile
                                        createUserProfileBloc.add(CreateUserProfileCreateEvent(UpdatableUserDataModel(countryCode: _selectedCountry,dob:DateFormat('MM/dd/yyyy')
