@@ -1,5 +1,4 @@
 // ignore_for_file: use_build_context_synchronously
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -92,7 +91,10 @@ class _SettingsPageState extends State<SettingsPage> {
         } else if(state is SettingsRedirectToDevMailAction){
           await UtilRepository.launchEmail(emailAddresses: ['contact@prudhvisuraaj.me'],subject: 'Notex:query',body: '---query here---');
         } else if(state is SettingsCheckForAppUpdateAction){
-          await UtilRepository.checkForUpdate();
+          bool response = await UtilRepository.checkForUpdate();
+          if(!response){
+            kSnackBar(context, "No updates found");
+          }
         }
       },
       builder: (context, state) {
