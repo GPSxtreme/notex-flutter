@@ -9,4 +9,5 @@ class AppRouteConstants {
   static const String todosRouteName = 'todos';
   static const String settingsRouteName = 'settings';
   static const String profileRouteName = 'profile';
+  static const String passwordResetRouteName = 'passwordReset';
 }
