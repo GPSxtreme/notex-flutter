@@ -56,6 +56,8 @@ class _LoginPageState extends State<LoginPage> {
           kSnackBar(context, state.reason);
         } else if ( state is LoginRedirectToCreateUserProfilePageAction){
           GoRouter.of(context).pushNamed(AppRouteConstants.createUserProfileName);
+        } else if(state is LoginRedirectToPasswordResetPageAction){
+          GoRouter.of(context).pushNamed(AppRouteConstants.passwordResetRouteName);
         }
       },
       builder: (context,state){
@@ -103,7 +105,28 @@ class _LoginPageState extends State<LoginPage> {
                               ],
                             ),
                             SizedBox(
-                              height: SizeConfig.blockSizeVertical! * 15,
+                              height: SizeConfig.blockSizeVertical! * 4,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Don't have an account? ",
+                                  style: kAppFont.copyWith(fontSize: 18),
+                                ),
+                                GestureDetector(
+                                    onTap: () {
+                                      // go to register page
+                                      loginBloc.add(LoginPageRegisterButtonClickedEvent());
+                                    },
+                                    child: Text(
+                                      "Register ",
+                                      style: kAppFont.copyWith(fontSize: 18, color: kPink),
+                                    )),
+                              ],
+                            ),
+                            SizedBox(
+                              height: SizeConfig.blockSizeVertical! * 7,
                             ),
                             TextField(
                               style: kAppFont.copyWith(fontSize: 18),
@@ -136,7 +159,7 @@ class _LoginPageState extends State<LoginPage> {
                                       ))),
                             ),
                             SizedBox(
-                              height: SizeConfig.blockSizeVertical! * 2,
+                              height: SizeConfig.blockSizeVertical,
                             ),
                             Row(
                               children: [
@@ -192,26 +215,25 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             ),
                             SizedBox(
-                              height: SizeConfig.blockSizeVertical! * 5,
+                              height: SizeConfig.blockSizeVertical! * 2,
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  "Don't have an account? ",
-                                  style: kAppFont.copyWith(fontSize: 16),
+                            GestureDetector(
+                              onTap: () {
+                                loginBloc.add(LoginPageForgotPasswordButtonClickedEvent());
+                              },
+                              child: RichText(
+                                text: TextSpan(
+                                  text: 'Forgot',
+                                  style: kAppFont.copyWith(fontSize: 15),
+                                  children: [
+                                    TextSpan(
+                                      text: ' password?',
+                                      style: kAppFont.copyWith(fontSize: 15,color: kPink)
+                                    )
+                                  ]
                                 ),
-                                GestureDetector(
-                                    onTap: () {
-                                      // go to register page
-                                      loginBloc.add(LoginPageRegisterButtonClickedEvent());
-                                    },
-                                    child: Text(
-                                      "Register ",
-                                      style: kAppFont.copyWith(fontSize: 16, color: kPink),
-                                    )),
-                              ],
-                            )
+                              ),
+                            ),
                           ],
                         ),
                       ),
