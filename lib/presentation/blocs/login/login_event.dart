@@ -12,3 +12,5 @@ class LoginPageLoginButtonClickedEvent extends LoginEvent {
 }
 
 class LoginPageRegisterButtonClickedEvent extends LoginEvent {}
+
+class LoginPageForgotPasswordButtonClickedEvent extends LoginEvent{}
