@@ -20,3 +20,5 @@ class LoginSuccessState extends LoginActionState {}
 class LoginNavigateToRegisterPageActionState extends LoginActionState {}
 
 class LoginRedirectToCreateUserProfilePageAction extends LoginActionState {}
+
+class LoginRedirectToPasswordResetPageAction extends LoginActionState{}
