@@ -102,11 +102,11 @@ class AuthRepository {
       );
     return genericServerResponseFromJson(response.body);
   }
-  static Future<GenericServerResponse> sendPasswordResetLink()async{
+  static Future<GenericServerResponse> sendPasswordResetLink({String? email})async{
     final url = Uri.parse(USER_PASSWORD_RESET_ROUTE);
     final body = json.encode(
       {
-        'email' : USER.data!.email
+        'email' : email ?? USER.data!.email
       }
     );
     final response = await http.post(
