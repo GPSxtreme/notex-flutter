@@ -32,7 +32,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Cloning
 
-1. Fork the repository from GitHub: [Syncia on GitHub](https://github.com/GPSxtreme/notex-flutter)
+1. Fork the repository from GitHub: [Notex-flutter on GitHub](https://github.com/GPSxtreme/notex-flutter)
 
 2. Clone your forked repository onto your local machine:
     ```
