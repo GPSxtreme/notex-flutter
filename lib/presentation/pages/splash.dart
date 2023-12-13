@@ -17,44 +17,48 @@ class SplashPage extends StatefulWidget {
   State<SplashPage> createState() => _SplashPageState();
 }
 
-class _SplashPageState extends State<SplashPage>{
+class _SplashPageState extends State<SplashPage> {
   final SplashBloc splashBloc = SplashBloc();
   @override
   void initState() {
     splashBloc.add(SplashInitialEvent());
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
 
-    return BlocConsumer<SplashBloc,SplashState>(
+    return BlocConsumer<SplashBloc, SplashState>(
       bloc: splashBloc,
-      listenWhen: (previous,current) => current is SplashActionState,
-      buildWhen: (previous,current) => current is! SplashActionState,
-      listener: (context,state){
-        if(state is SplashUserNotAuthenticatedState){
+      listenWhen: (previous, current) => current is SplashActionState,
+      buildWhen: (previous, current) => current is! SplashActionState,
+      listener: (context, state) {
+        if (state is SplashUserNotAuthenticatedState) {
           GoRouter.of(context).goNamed(AppRouteConstants.loginRouteName);
-        } else if (state is  SplashUserAuthenticatedState){
+        } else if (state is SplashUserAuthenticatedState) {
           GoRouter.of(context).goNamed(AppRouteConstants.homeRouteName);
-        } else if(state is SplashRedirectToCreateUserProfilePageAction){
+        } else if (state is SplashRedirectToCreateUserProfilePageAction) {
           GoRouter.of(context).goNamed(AppRouteConstants.createUserProfileName);
         }
       },
-      builder: (context, state){
+      builder: (context, state) {
         return Scaffold(
           body: Container(
             width: SizeConfig.screenWidth,
             height: SizeConfig.screenHeight,
-            decoration: const BoxDecoration(
-                gradient: kPageBgGradient
-            ),
+            decoration: const BoxDecoration(gradient: kPageBgGradient),
             child: Stack(
               children: [
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Center(child: FadeInAnimation(child: SvgPicture.asset('assets/svg/app_logo_v2.svg',width: SizeConfig.blockSizeHorizontal! * 50,)))
+                    Center(
+                        child: FadeInAnimation(
+                            child: SvgPicture.asset(
+                      'assets/svg/app_logo_v2.svg',
+                      width: SizeConfig.blockSizeHorizontal! * 50,
+                    )))
                   ],
                 ),
                 Positioned(
@@ -63,14 +67,35 @@ class _SplashPageState extends State<SplashPage>{
                   right: 0,
                   child: Column(
                     children: [
-                      if(state is SplashLoadingState) ...[
-                        const SpinKitRing(color: kPinkD1,size: 30,),
-                        SizedBox(height: SizeConfig.blockSizeVertical,),
-                      ]else if(state is SplashUserLocalAuthenticationFailedState) ...[
-                        const Icon(Icons.error_outline,color: kRed,size: 35,),
-                        SizedBox(height: SizeConfig.blockSizeVertical,),
+                      if (state is SplashLoadingState) ...[
+                        const SpinKitRing(
+                          color: kPinkD1,
+                          size: 30,
+                        ),
+                        SizedBox(
+                          height: SizeConfig.blockSizeVertical,
+                        ),
+                      ] else if (state
+                          is SplashUserLocalAuthenticationFailedState) ...[
+                        const Icon(
+                          Icons.error_outline,
+                          color: kRed,
+                          size: 35,
+                        ),
+                        SizedBox(
+                          height: SizeConfig.blockSizeVertical,
+                        ),
+                        const Text(
+                          'Failed to authenticate',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                        SizedBox(
+                          height: SizeConfig.blockSizeVertical,
+                        ),
                       ],
-                      Center(child: kDevLogo,),
+                      Center(
+                        child: kDevLogo,
+                      ),
                     ],
                   ),
                 )
