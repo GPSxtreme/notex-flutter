@@ -14,23 +14,21 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
     on<SplashInitialEvent>(splashInitialEvent);
   }
 
-  Future<void> authenticateUser(Emitter emit) async{
+  Future<void> authenticateUser(Emitter emit) async {
     await UtilRepository.checkForUpdate();
     String? userToken = await SharedPreferencesRepository.getJwtToken();
     if (userToken != null) {
-      await AuthRepository.init().then(
-              (_) async {
-            bool isValid = JwtDecoderRepository.verifyJwtToken(userToken);
-            if (isValid) {
-              try{
-                await USER.init();
-                emit(SplashUserAuthenticatedState());
-              }catch(error){
-                emit(SplashRedirectToCreateUserProfilePageAction());
-              }
-            }
+      await AuthRepository.init().then((_) async {
+        bool isValid = JwtDecoderRepository.verifyJwtToken(userToken);
+        if (isValid) {
+          try {
+            await USER.init();
+            emit(SplashUserAuthenticatedState());
+          } catch (error) {
+            emit(SplashRedirectToCreateUserProfilePageAction());
           }
-      );
+        }
+      });
     } else {
       emit(SplashUserNotAuthenticatedState());
     }
@@ -44,17 +42,16 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
     await LOCAL_DB.init();
     // initialize local settings
     await SETTINGS.init();
-    if(SETTINGS.isAppLockEnabled){
-      await AuthRepository.authenticateUser(isNotes: false).then(
-          (response) async {
-            if(response){
-              await authenticateUser(emit);
-            } else{
-              emit(SplashUserLocalAuthenticationFailedState());
-            }
-          }
-      );
-    } else{
+    if (SETTINGS.isAppLockEnabled) {
+      await AuthRepository.authenticateUser(isNotes: false)
+          .then((response) async {
+        if (response) {
+          await authenticateUser(emit);
+        } else {
+          emit(SplashUserLocalAuthenticationFailedState());
+        }
+      });
+    } else {
       await authenticateUser(emit);
     }
   }
