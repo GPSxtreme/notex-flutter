@@ -167,7 +167,8 @@ class _HomePageState extends State<HomePage> {
                           padding: const EdgeInsets.only(top: 5),
                           child: Text(
                             !_isNotesHiddenMode ? 'Hide' : 'Unhide',
-                            style: kAppFont.copyWith(color: kWhite, fontSize: 12),
+                            style:
+                                kAppFont.copyWith(color: kWhite, fontSize: 12),
                           ),
                         ), // text
                       ],
@@ -266,9 +267,7 @@ class _HomePageState extends State<HomePage> {
               backdrop: Container(
                 width: double.infinity,
                 height: double.infinity,
-                decoration: const BoxDecoration(
-                  color: kPinkD3
-                ),
+                decoration: const BoxDecoration(color: kPinkD3),
               ),
               controller: _advancedDrawerController,
               animationCurve: Curves.easeInOut,
@@ -299,39 +298,47 @@ class _HomePageState extends State<HomePage> {
                     child: Column(
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        Container(
-                          width: 128.0,
-                          height: 128.0,
-                          margin: EdgeInsets.only(
-                              top: 24.0,
-                              bottom: !USER.data!.isEmailVerified ? 20 : 30),
-                          clipBehavior: Clip.antiAlias,
-                          decoration: const BoxDecoration(
-                            color: kPink,
-                            shape: BoxShape.circle,
-                          ),
-                          child: ClipOval(
-                            child: CachedNetworkImage(
-                              fit: BoxFit.cover,
-                              imageUrl: USER_PROFILE_PICTURE_GET_ROUTE,
-                              httpHeaders: {
-                                'Content-Type': 'application/json',
-                                'Authorization': AuthRepository.userToken
-                              },
-                              cacheKey: USER.profilePictureCacheKey,
-                              progressIndicatorBuilder:
-                                  (context, url, downloadProgress) =>
-                                  CircularProgressIndicator(
-                                    value: downloadProgress.progress,
-                                    color: kPink,
-                                  ),
-                              errorWidget: (context, url, error) => const Icon(
-                                Icons.person,
-                                size: 70,
-                                color: kWhite,
+                        GestureDetector(
+                          onTap: () {
+                            _advancedDrawerController.hideDrawer();
+                            GoRouter.of(context)
+                                .pushNamed(AppRouteConstants.profileRouteName);
+                          },
+                          child: Container(
+                            width: 128.0,
+                            height: 128.0,
+                            margin: EdgeInsets.only(
+                                top: 24.0,
+                                bottom: !USER.data!.isEmailVerified ? 20 : 30),
+                            clipBehavior: Clip.antiAlias,
+                            decoration: const BoxDecoration(
+                              color: kPink,
+                              shape: BoxShape.circle,
+                            ),
+                            child: ClipOval(
+                              child: CachedNetworkImage(
+                                fit: BoxFit.cover,
+                                imageUrl: USER_PROFILE_PICTURE_GET_ROUTE,
+                                httpHeaders: {
+                                  'Content-Type': 'application/json',
+                                  'Authorization': AuthRepository.userToken
+                                },
+                                cacheKey: USER.profilePictureCacheKey,
+                                progressIndicatorBuilder:
+                                    (context, url, downloadProgress) =>
+                                        CircularProgressIndicator(
+                                  value: downloadProgress.progress,
+                                  color: kPink,
+                                ),
+                                errorWidget: (context, url, error) =>
+                                    const Icon(
+                                  Icons.person,
+                                  size: 70,
+                                  color: kWhite,
+                                ),
+                                width: 128.0,
+                                height: 128.0,
                               ),
-                              width: 128.0,
-                              height: 128.0,
                             ),
                           ),
                         ),
@@ -361,7 +368,8 @@ class _HomePageState extends State<HomePage> {
                           splashColor: kPinkD1,
                           onTap: () {
                             _advancedDrawerController.hideDrawer();
-                            GoRouter.of(context).pushNamed(AppRouteConstants.profileRouteName);
+                            GoRouter.of(context)
+                                .pushNamed(AppRouteConstants.profileRouteName);
                           },
                           contentPadding:
                               const EdgeInsets.symmetric(horizontal: 30),
@@ -517,7 +525,9 @@ class _HomePageState extends State<HomePage> {
                                   case 'refetch':
                                     if (_currentPageIndex == 0) {
                                       notesBloc.add(NotesInitialEvent(
-                                          isInHiddenMode: _isNotesHiddenMode,isInDeletedMode: _isNotesDeletedMode));
+                                          isInHiddenMode: _isNotesHiddenMode,
+                                          isInDeletedMode:
+                                              _isNotesDeletedMode));
                                     } else if (_currentPageIndex == 1) {
                                       todosBloc.add(TodosInitialEvent());
                                     }
@@ -525,14 +535,16 @@ class _HomePageState extends State<HomePage> {
                                   case 'sync':
                                     if (_currentPageIndex == 0) {
                                       notesBloc.add(NotesSyncAllNotesEvent(
-                                          isInHiddenMode: _isNotesHiddenMode,isInDeletedMode: _isNotesDeletedMode));
+                                          isInHiddenMode: _isNotesHiddenMode,
+                                          isInDeletedMode:
+                                              _isNotesDeletedMode));
                                     } else if (_currentPageIndex == 1) {
                                       todosBloc.add(TodosSyncAllTodosEvent());
                                     }
                                     break;
                                   case 'showHidden':
                                     // Handle show hidden action for notes
-                                  // todo : to ask user for privacy password provided by android
+                                    // todo : to ask user for privacy password provided by android
                                     notesBloc.add(NotesShowHiddenNotesEvent(
                                         value: !_isNotesHiddenMode));
                                     break;
@@ -599,7 +611,8 @@ class _HomePageState extends State<HomePage> {
                                           !_isNotesHiddenMode
                                               ? 'Show Hidden'
                                               : 'Hide Hidden',
-                                          style: kAppFont.copyWith(fontSize: 13),
+                                          style:
+                                              kAppFont.copyWith(fontSize: 13),
                                         ),
                                         tileColor: Colors.transparent,
                                       ),
@@ -613,12 +626,17 @@ class _HomePageState extends State<HomePage> {
                                                 vertical: 0),
                                         horizontalTitleGap: 15,
                                         leading: Icon(
-                                         !_isNotesDeletedMode ? Icons.delete : Icons.hide_source,
+                                          !_isNotesDeletedMode
+                                              ? Icons.delete
+                                              : Icons.hide_source,
                                           color: kPinkD1,
                                         ),
                                         title: Text(
-                                          !_isNotesDeletedMode ? 'Show Deleted' :'Hide Deleted',
-                                          style: kAppFont.copyWith(fontSize: 13),
+                                          !_isNotesDeletedMode
+                                              ? 'Show Deleted'
+                                              : 'Hide Deleted',
+                                          style:
+                                              kAppFont.copyWith(fontSize: 13),
                                         ),
                                         tileColor: Colors.transparent,
                                       ),
@@ -632,7 +650,8 @@ class _HomePageState extends State<HomePage> {
                 ),
                 floatingActionButton: !isInEditing &&
                         !isFetching &&
-                        !(_currentPageIndex == 0 && (_isNotesHiddenMode || _isNotesDeletedMode))
+                        !(_currentPageIndex == 0 &&
+                            (_isNotesHiddenMode || _isNotesDeletedMode))
                     ? FloatingActionButton(
                         backgroundColor: kPink,
                         onPressed: () {
