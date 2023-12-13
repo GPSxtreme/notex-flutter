@@ -326,15 +326,12 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
           refNote.updateIsSynced(false);
           refNote.setIsDeleted(true);
           refNote.setDelTs(DateTime.now());
-          await NotesRepository.removeNote(note
-              .id).then(
-              (res)async{
-                if(res){
-                  refNote.setIsUploaded(false);
-                  await LOCAL_DB.setNoteUploaded(refNote.id, false);
-                }
-              }
-          );
+          await NotesRepository.removeNote(note.id).then((res) async {
+            if (res) {
+              refNote.setIsUploaded(false);
+              await LOCAL_DB.setNoteUploaded(refNote.id, false);
+            }
+          });
         }).then((_) {
           // after all the iterations of the for loop the remaining code should execute
           _selectedNotes.clear();
@@ -423,24 +420,23 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
   Future<FutureOr<void>> handleShowHiddenNotes(
       NotesShowHiddenNotesEvent event, Emitter<NotesState> emit) async {
     try {
-      if(event.value) {
-        if(SETTINGS.isHiddenNotesLockEnabled) {
-          await AuthRepository.authenticateUser().then(
-            (response) {
-              if(response){
-                emitNotesFetchedState(emit, isInHiddenMode: event.value);
-              } else{
-                emit(NotesOperationFailedState('Failed to authenticate'));
-              }
+      if (event.value) {
+        if (SETTINGS.isHiddenNotesLockEnabled) {
+          await AuthRepository.authenticateUser().then((response) {
+            if (response) {
+              emitNotesFetchedState(emit, isInHiddenMode: event.value);
+            } else {
+              emit(NotesOperationFailedState(
+                  'Failed to authenticate\nDisable lock from settings menu.'));
             }
-        );
-        }else{
+          });
+        } else {
           emitNotesFetchedState(emit, isInHiddenMode: event.value);
         }
-      }else{
+      } else {
         emitNotesFetchedState(emit, isInHiddenMode: event.value);
       }
-      } catch (error) {
+    } catch (error) {
       emit(NotesOperationFailedState(error.toString()));
     }
   }
@@ -448,21 +444,19 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
   Future<FutureOr<void>> handleShowDeletedNotes(
       NotesShowDeletedNotesEvent event, Emitter<NotesState> emit) async {
     try {
-      if(event.value) {
-        if(SETTINGS.isDeletedNotesLockEnabled) {
-          await AuthRepository.authenticateUser().then(
-                  (response) {
-                if(response){
-                  emitNotesFetchedState(emit, isInDeletedMode: event.value);
-                } else{
-                  emit(NotesOperationFailedState('Failed to authenticate'));
-                }
-              }
-          );
-        }else{
+      if (event.value) {
+        if (SETTINGS.isDeletedNotesLockEnabled) {
+          await AuthRepository.authenticateUser().then((response) {
+            if (response) {
+              emitNotesFetchedState(emit, isInDeletedMode: event.value);
+            } else {
+              emit(NotesOperationFailedState('Failed to authenticate'));
+            }
+          });
+        } else {
           emitNotesFetchedState(emit, isInDeletedMode: event.value);
         }
-      }else{
+      } else {
         emitNotesFetchedState(emit, isInDeletedMode: event.value);
       }
     } catch (error) {
@@ -517,7 +511,7 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
           .updateIsSynced(false);
       _notes[_notes.indexWhere((n) => n.id == event.note.id)]
           .setEditedTime(DateTime.now());
-      emitNotesFetchedState(emit,isInHiddenMode: event.isInHiddenMode);
+      emitNotesFetchedState(emit, isInHiddenMode: event.isInHiddenMode);
     } catch (error) {
       emit(NotesOperationFailedState(error.toString()));
     }
@@ -539,7 +533,9 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
       }
       if (toSyncNotes.isEmpty) {
         emit(NotesOperationFailedState('All notes are synced 🚀'));
-        emitNotesFetchedState(emit, isInHiddenMode: event.isInHiddenMode,isInDeletedMode: event.isInDeletedMode);
+        emitNotesFetchedState(emit,
+            isInHiddenMode: event.isInHiddenMode,
+            isInDeletedMode: event.isInDeletedMode);
         return;
       }
       emitNotesFetchedState(emit,
@@ -561,9 +557,13 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
         _selectedNotes.clear();
         _temp.clear();
         if (_notes.isNotEmpty) {
-          emitNotesFetchedState(emit, isInHiddenMode: event.isInHiddenMode,isInDeletedMode: event.isInDeletedMode);
+          emitNotesFetchedState(emit,
+              isInHiddenMode: event.isInHiddenMode,
+              isInDeletedMode: event.isInDeletedMode);
         } else {
-          emit(NotesEmptyState(isInHiddenMode: event.isInHiddenMode,isInDeletedMode: event.isInDeletedMode));
+          emit(NotesEmptyState(
+              isInHiddenMode: event.isInHiddenMode,
+              isInDeletedMode: event.isInDeletedMode));
         }
       });
     } catch (error) {
