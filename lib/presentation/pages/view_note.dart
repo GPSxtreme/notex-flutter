@@ -144,9 +144,11 @@ class _ViewNotePageState extends State<ViewNotePage> {
     } else {
       // update made changes to note.
       note.updateIsSynced(false);
+      kSnackBar(context, "Saving changes...");
       await NotesRepository.updateNote(note).then((_) {
         widget.notesBloc.add(NotesRefetchNotesEvent(note,
             isInHiddenMode: widget.isInHiddenMode));
+        kSnackBar(context, "Saved note");
         Navigator.of(context).pop();
       });
     }
