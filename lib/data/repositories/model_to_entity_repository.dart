@@ -20,7 +20,7 @@ class ModelToEntityRepository {
       id: model.id,
       userId: model.userId,
       title: model.title,
-      body: model.body,
+      body: model.body.toString(),
       createdTime: model.createdTime,
       editedTime: model.editedTime,
       v: model.v,
