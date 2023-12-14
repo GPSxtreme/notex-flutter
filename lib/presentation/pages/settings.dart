@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:notex/core/config/api_routes.dart';
 import 'package:notex/core/repositories/util_repository.dart';
 import 'package:notex/presentation/blocs/settings/settings_bloc.dart';
 import 'package:notex/presentation/styles/app_styles.dart';
@@ -88,6 +89,8 @@ class _SettingsPageState extends State<SettingsPage> {
           await UtilRepository.launchLink('https://github.com/GPSxtreme/notex-flutter/issues/new/choose');
         } else if(state is SettingsRedirectToDevSiteAction){
           await UtilRepository.launchLink('https://prudhvisuraaj.me/');
+        }else if(state is SettingsUserAccountDeletionAction){
+          await UtilRepository.launchLink("$apiEndPoint/user/requestAccountDeletion");
         } else if(state is SettingsRedirectToDevMailAction){
           await UtilRepository.launchEmail(emailAddresses: ['contact@prudhvisuraaj.me'],subject: 'Notex:query',body: '---query here---');
         } else if(state is SettingsCheckForAppUpdateAction){
@@ -166,7 +169,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                 style: kAppFont.copyWith(fontSize: 15),
                               ),
                               subtitle: Text(
-                                'This enables auto-sync for both notes and todos. Auto sync must be enabled for removal of note or todo in cloud.',
+                                'This enables auto-sync for both notes and todos. Auto sync must be enabled for removal of note or todo in cloud',
                                 style: kAppFont.copyWith(
                                     color: kWhite75, fontSize: 12),
                               ),
@@ -193,7 +196,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                 style: kAppFont.copyWith(fontSize: 15),
                               ),
                               subtitle: Text(
-                                'This enables prefetch of cloud notes on startup.',
+                                'This enables prefetch of cloud notes on startup',
                                 style: kAppFont.copyWith(
                                     color: kWhite75, fontSize: 12),
                               ),
@@ -221,7 +224,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                 style: kAppFont.copyWith(fontSize: 15),
                               ),
                               subtitle: Text(
-                                'This enables prefetch of cloud todos on startup.',
+                                'This enables prefetch of cloud todos on startup',
                                 style: kAppFont.copyWith(
                                     color: kWhite75, fontSize: 12),
                               ),
@@ -254,7 +257,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                 style: kAppFont.copyWith(fontSize: 15),
                               ),
                               subtitle: Text(
-                                'This will remove all the notes locally saved. Notes synced to cloud will not be affected.',
+                                'This will remove all the notes locally saved. Notes synced to cloud will not be affected',
                                 style: kAppFont.copyWith(
                                     color: kWhite75, fontSize: 12),
                               ),
@@ -274,7 +277,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                 style: kAppFont.copyWith(fontSize: 15),
                               ),
                               subtitle: Text(
-                                'This will remove all the todos locally saved. Todos synced to cloud will not be affected.',
+                                'This will remove all the todos locally saved. Todos synced to cloud will not be affected',
                                 style: kAppFont.copyWith(
                                     color: kWhite75, fontSize: 12),
                               ),
@@ -291,7 +294,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                 style: kAppFont.copyWith(fontSize: 15),
                               ),
                               subtitle: Text(
-                                'Sets up app lock to enter app.',
+                                'Sets up app lock to enter app',
                                 style: kAppFont.copyWith(
                                     color: kWhite75, fontSize: 12),
                               ),
@@ -318,7 +321,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                 style: kAppFont.copyWith(fontSize: 15),
                               ),
                               subtitle: Text(
-                                'Sets up app lock to access hidden notes.',
+                                'Sets up app lock to access hidden notes',
                                 style: kAppFont.copyWith(
                                     color: kWhite75, fontSize: 12),
                               ),
@@ -345,7 +348,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                 style: kAppFont.copyWith(fontSize: 15),
                               ),
                               subtitle: Text(
-                                'Sets up app lock to access deleted notes.',
+                                'Sets up app lock to access deleted notes',
                                 style: kAppFont.copyWith(
                                     color: kWhite75, fontSize: 12),
                               ),
@@ -372,7 +375,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                 style: kAppFont.copyWith(fontSize: 15),
                               ),
                               subtitle: Text(
-                                'Prevent authentications from using non-biometric local authentication such as pin, passcode, or pattern.',
+                                'Prevent authentications from using non-biometric local authentication such as pin, passcode, or pattern',
                                 style: kAppFont.copyWith(
                                     color: kWhite75, fontSize: 12),
                               ),
@@ -400,7 +403,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                 style: kAppFont.copyWith(fontSize: 15),
                               ),
                               subtitle: Text(
-                                'Made with ❤️ by prudhvi suraaj.',
+                                'Made with ❤️ by prudhvi suraaj',
                                 style: kAppFont.copyWith(
                                     color: kWhite75, fontSize: 12),
                               ),
@@ -419,7 +422,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                 style: kAppFont.copyWith(fontSize: 15),
                               ),
                               subtitle: Text(
-                                'Check out code & make contributions.',
+                                'Check out code & make contributions',
                                 style: kAppFont.copyWith(
                                     color: kWhite75, fontSize: 12),
                               ),
@@ -438,7 +441,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                 style: kAppFont.copyWith(fontSize: 15),
                               ),
                               subtitle: Text(
-                                'Help us fix issues by reporting in app bugs.',
+                                'Help us fix issues by reporting in app bugs',
                                 style: kAppFont.copyWith(
                                     color: kWhite75, fontSize: 12),
                               ),
@@ -457,7 +460,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                 style: kAppFont.copyWith(fontSize: 15),
                               ),
                               subtitle: Text(
-                                'Request for a desired feature on github.',
+                                'Request for a desired feature on github',
                                 style: kAppFont.copyWith(
                                     color: kWhite75, fontSize: 12),
                               ),
@@ -476,7 +479,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                 style: kAppFont.copyWith(fontSize: 15),
                               ),
                               subtitle: Text(
-                                'Contact us for any problems related.',
+                                'Contact us for any problems related',
                                 style: kAppFont.copyWith(
                                     color: kWhite75, fontSize: 12),
                               ),
@@ -495,7 +498,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                 style: kAppFont.copyWith(fontSize: 15),
                               ),
                               subtitle: Text(
-                                'Check for app updates.',
+                                'Check for app updates',
                                 style: kAppFont.copyWith(
                                     color: kWhite75, fontSize: 12),
                               ),
@@ -533,7 +536,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                   style: kAppFont.copyWith(fontSize: 15),
                                 ),
                                 subtitle: Text(
-                                  'Secure your account by verifying your email.\nPassword can only be reset if the account is verified.',
+                                  'Secure your account by verifying your email.\nPassword can only be reset if the account is verified',
                                   style: kAppFont.copyWith(
                                       color: kWhite75, fontSize: 12),
                                 ),
@@ -566,11 +569,31 @@ class _SettingsPageState extends State<SettingsPage> {
                                   style: kAppFont.copyWith(fontSize: 15),
                                 ),
                                 subtitle: Text(
-                                  'You will be sent a password reset link to your registered email.',
+                                  'You will be sent a password reset link to your registered email',
                                   style: kAppFont.copyWith(
                                       color: kWhite75, fontSize: 12),
                                 ),
                               ),
+                            ListTile(
+                              splashColor: kPinkD1,
+                              leading: const Icon(
+                                Icons.account_box,
+                                color: kPinkD1,
+                                size: 35,
+                              ),
+                              onTap: () {
+                                settingsBloc.add(SettingsUserAccountDeletionEvent());
+                              },
+                              title: Text(
+                                'Account deletion',
+                                style: kAppFont.copyWith(fontSize: 15),
+                              ),
+                              subtitle: Text(
+                                'You will be redirected to account deletion page',
+                                style: kAppFont.copyWith(
+                                    color: kWhite75, fontSize: 12),
+                              ),
+                            ),
                             ListTile(
                               splashColor: kPinkD1,
                               leading: const Icon(
