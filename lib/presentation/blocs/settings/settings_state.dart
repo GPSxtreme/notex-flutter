@@ -72,3 +72,5 @@ class SettingsRedirectToDevSiteAction extends SettingsActionState{}
 class SettingsRedirectToDevMailAction extends SettingsActionState{}
 
 class SettingsCheckForAppUpdateAction extends SettingsActionState{}
+
+class SettingsUserAccountDeletionAction extends SettingsActionState{}
