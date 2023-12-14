@@ -108,24 +108,28 @@ class _NoteTileState extends State<NoteTile> {
             child: InkWell(
               splashColor: kPink,
               borderRadius: BorderRadius.circular(20.0),
-              onLongPress: !_inDeletedMode ?() {
-                widget.notesBloc.add(NotesEnteredEditingEvent(
-                    isInHiddenMode: widget.note.isHidden));
-                _inEditOnTap();
-              } : null,
-              onTap: !_inDeletedMode ? () {
-                if (state is! NotesEditingState) {
-                  GoRouter.of(context).pushNamed(
-                      AppRouteConstants.noteViewRouteName,
-                      pathParameters: {
-                        'noteId': widget.note.id,
-                        'isInHiddenMode': _inHiddenMode.toString()
-                      },
-                      extra: widget.notesBloc);
-                } else {
-                  _inEditOnTap();
-                }
-              } : null,
+              onLongPress: !_inDeletedMode
+                  ? () {
+                      widget.notesBloc.add(NotesEnteredEditingEvent(
+                          isInHiddenMode: widget.note.isHidden));
+                      _inEditOnTap();
+                    }
+                  : null,
+              onTap: !_inDeletedMode
+                  ? () {
+                      if (state is! NotesEditingState) {
+                        GoRouter.of(context).pushNamed(
+                            AppRouteConstants.noteViewRouteName,
+                            pathParameters: {
+                              'noteId': widget.note.id,
+                              'isInHiddenMode': _inHiddenMode.toString()
+                            },
+                            extra: widget.notesBloc);
+                      } else {
+                        _inEditOnTap();
+                      }
+                    }
+                  : null,
               child: Stack(
                 children: [
                   Positioned(
@@ -141,7 +145,8 @@ class _NoteTileState extends State<NoteTile> {
                                       color: kPink, lineWidth: 4.0, size: 20),
                                 )
                               else ...[
-                                if (!widget.note.isUploaded && !widget.note.isDeleted)
+                                if (!widget.note.isUploaded &&
+                                    !widget.note.isDeleted)
                                   IconButton(
                                     icon: const Icon(
                                       Icons.cloud_upload_outlined,
@@ -156,7 +161,8 @@ class _NoteTileState extends State<NoteTile> {
                                     tooltip: "upload to cloud",
                                     splashRadius: 15,
                                   ),
-                                if (widget.note.isUploaded && !widget.note.isDeleted)
+                                if (widget.note.isUploaded &&
+                                    !widget.note.isDeleted)
                                   IconButton(
                                     icon: widget.note.isFavorite
                                         ? const Icon(
@@ -176,18 +182,26 @@ class _NoteTileState extends State<NoteTile> {
                                     tooltip: 'Favorite note',
                                     splashRadius: 15,
                                   ),
-                                if(widget.note.isDeleted)
+                                if (widget.note.isDeleted)
                                   IconButton(
                                     icon: const Icon(
                                       Icons.restore_from_trash,
                                       color: kPink,
                                     ),
-                                    onPressed: () async{
+                                    onPressed: () async {
                                       //restore note
-                                      bool? response = await CommonWidgets.commonAlertDialog(context, title: 'Restore note?', body: 'This will restore the deleted note.', agreeLabel: 'Yes', denyLabel: "No");
-                                      if(response == true) {
+                                      bool? response =
+                                          await CommonWidgets.commonAlertDialog(
+                                              context,
+                                              title: 'Restore note?',
+                                              body:
+                                                  'This will restore the deleted note.',
+                                              agreeLabel: 'Yes',
+                                              denyLabel: "No");
+                                      if (response == true) {
                                         widget.notesBloc.add(
-                                          NotesRestoreDeletedNoteEvent(widget.note));
+                                            NotesRestoreDeletedNoteEvent(
+                                                widget.note));
                                       }
                                     },
                                     tooltip: 'restore note',
@@ -242,7 +256,8 @@ class _NoteTileState extends State<NoteTile> {
                           widget.note.body,
                           maxLines: 7,
                           overflow: TextOverflow.ellipsis,
-                          style: kAppFont.copyWith(color: kWhite24, fontSize: 12),
+                          style:
+                              kAppFont.copyWith(color: kWhite24, fontSize: 12),
                         ),
                         /* Detailed stats for debugging
                         SizedBox(
@@ -290,12 +305,23 @@ class _NoteTileState extends State<NoteTile> {
                           ),
                           Row(
                             children: [
-                              Icon(widget.note.isSynced ? Icons.sync : Icons.sync_disabled,color: kWhite,size: 20,),
-                              const SizedBox(width: 3,),
+                              Icon(
+                                widget.note.isSynced
+                                    ? Icons.sync
+                                    : Icons.sync_disabled,
+                                color: kWhite,
+                                size: 20,
+                              ),
+                              const SizedBox(
+                                width: 3,
+                              ),
                               Expanded(
                                 child: Text(
-                                  DateFormat('h:mm a, dd/MM/yyyy').format(widget.note.editedTime.toLocal()).toString(),
-                                  style: kAppFont.copyWith(color: kWhite75, fontSize: 10),
+                                  DateFormat('h:mm a, dd/MM/yyyy')
+                                      .format(widget.note.editedTime.toLocal())
+                                      .toString(),
+                                  style: kAppFont.copyWith(
+                                      color: kWhite75, fontSize: 10),
                                 ),
                               )
                             ],
