@@ -45,6 +45,9 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     on<SettingsCheckForAppUpdatesEvent>((event,emit)async{
       emit(SettingsCheckForAppUpdateAction());
     });
+    on<SettingsUserAccountDeletionEvent>((event,emit)async{
+      emit(SettingsUserAccountDeletionAction());
+    });
   }
 
   SettingsFetchedState settingsFetchedState () => SettingsFetchedState(
