@@ -50,8 +50,9 @@ class SettingsUserLogoutEvent extends SettingsEvent{
   final String? title;
   final String? body;
   SettingsUserLogoutEvent({this.title, this.body});
-
 }
+
+class SettingsUserAccountDeletionEvent extends SettingsEvent{}
 
 class SettingsUserAccountVerifyEvent extends SettingsEvent{}
 
