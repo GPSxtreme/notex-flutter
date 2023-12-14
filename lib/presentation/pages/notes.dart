@@ -59,7 +59,7 @@ class _NotesPageState extends State<NotesPage>
     return BlocConsumer(
       bloc: notesBloc,
       listenWhen: (previous, current) => current is NotesActionState,
-      buildWhen: (previous, current) => current is! NotesActionState,
+      buildWhen: (previous, current) => current is! NotesActionState || current is NotesEditingState,
       listener: (context, state) {
         if (state is NotesOperationFailedState) {
           kSnackBar(context, state.reason);
@@ -78,8 +78,9 @@ class _NotesPageState extends State<NotesPage>
           } else {
             _isSyncing = false;
           }
-        } else if (state is NotesEditingState) {
-          _notes = state.notes;
+        }
+        if (state is NotesEditingState) {
+          _notes = state.notes.where((n) => n.isDeleted == false).toList();
         }
         int numberOfColumns = SizeConfig.screenWidth! > 600 ? 3 : 2;
         return Scaffold(
@@ -256,8 +257,8 @@ class _NotesPageState extends State<NotesPage>
                                 stream: notesBloc.selectedNotesStream,
                                 builder: (context, snapshot) {
                                   if (snapshot.hasData) {
-                                    final selectedNotes = snapshot.data;
-                                    if (selectedNotes != null) {
+                                    if (snapshot.data != null) {
+                                      final selectedNotes = snapshot.data!;
                                       final selectedNotesCount =
                                           selectedNotes.length;
                                       return Padding(
