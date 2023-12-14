@@ -602,11 +602,11 @@ class _ViewNotePageState extends State<ViewNotePage> {
                             hintText: 'Content',
                             hintStyle: kAppFont.copyWith(
                                 color: kWhite.withOpacity(0.2),
-                                fontSize: 20,
+                                fontSize:  16,
                                 fontWeight: FontWeight.w300),
                           ),
                           onChanged: (_) => _onBodyTextChanged(),
-                          style: kAppFont.copyWith(fontSize: 20),
+                          style: kAppFont.copyWith(fontSize: 16),
                           cursorColor: kWhite,
                         ),
                       ),
@@ -630,6 +630,7 @@ class _ViewNotePageState extends State<ViewNotePage> {
               if (!_isInEditing)
                 Flexible(
                   child: MarkdownWidget(
+                    loadingWidget: const SpinKitCircle(color: kWhite,),
                     shrinkWrap: true,
                     padding: const EdgeInsets.only(
                         top: 0, bottom: 30, left: 25, right: 25),
