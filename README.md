@@ -51,16 +51,12 @@ These instructions will get you a copy of the project up and running on your loc
     flutter pub get
     ```
 
-3. Configure your OpenAI API key. Make sure you have an OpenAI API key ready. 
-
 ## Usage
 
 1. Run the application on your emulator or physical device:
     ```
     flutter run
     ```
-
-2. Follow the instructions within the application to enter your OpenAI API key and start using the application.
 
 ## Contributing
 
