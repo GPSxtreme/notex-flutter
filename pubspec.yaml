@@ -68,11 +68,13 @@ dependencies:
   fluttertoast: ^8.2.2
   in_app_update: ^4.2.0
   share_plus: ^7.1.0
-  pdf: ^3.10.4
   path_provider: ^2.1.1
   simple_markdown_editor: ^0.2.0
   markdown_widget: ^1.2.8
   flutter_blurhash: ^0.8.2
+  markdown: ^4.0.1
+  flutter_html_to_pdf: ^0.7.0
+  pdf: ^3.10.7
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -93,7 +95,6 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
-
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/
