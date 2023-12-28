@@ -17,33 +17,27 @@ const Color kPinkD1 = Color.fromRGBO(100, 65, 98, 1);
 // for tile card color
 const Color kPinkD2 = Color.fromRGBO(45, 30, 44, 1);
 // for drawer background
-const Color kPinkD3 = Color.fromRGBO(30, 24, 31,1);
+const Color kPinkD3 = Color.fromRGBO(30, 24, 31, 1);
 const Color kRed = Colors.red;
 const Color kPageBgStart = Color.fromRGBO(13, 12, 13, 1);
 const Color kPageBgEnd = Color.fromRGBO(50, 34, 49, 1);
 /* end of color constants */
 
 const Gradient kPageBgGradient = LinearGradient(
-  colors: [
-    kPageBgStart,
-    kPageBgEnd
-  ],
-  begin: Alignment.topCenter,
-  end: Alignment.bottomCenter,
-  stops: [0.0,1.0],
-  tileMode: TileMode.clamp
-);
+    colors: [kPageBgStart, kPageBgEnd],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    stops: [0.0, 1.0],
+    tileMode: TileMode.clamp);
 
 Widget kDevLogo = Text(
   "GPS",
-  style: GoogleFonts.fugazOne(color: Colors.white.withOpacity(0.13),fontSize: 20),
+  style:
+      GoogleFonts.fugazOne(color: Colors.white.withOpacity(0.13), fontSize: 20),
 );
 
 TextStyle kAppFont = GoogleFonts.openSans(
-  color: kWhite,
-  fontSize: 18,
-  fontWeight: FontWeight.w400
-);
+    color: kWhite, fontSize: 18, fontWeight: FontWeight.w400);
 
 /// use cases : login , register page text fields etc
 InputDecoration kTextFieldDecorationT1 = InputDecoration(
@@ -73,61 +67,61 @@ InputDecoration kTextFieldDecorationT1 = InputDecoration(
 
 /// use cases : login page, register page (basically a pink btn)
 ButtonStyle kBtnStyleT1 = ButtonStyle(
-    backgroundColor: MaterialStateProperty.resolveWith<Color>(
-        (Set<MaterialState> states){
-          if(states.contains(MaterialState.disabled)){
-            return kPinkD1;
-          } else {
-            return kPink;
-          }
-        }
-    ),
-    padding: MaterialStateProperty.all<EdgeInsets>(const EdgeInsets.symmetric(vertical: 8)),
-    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-        RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20.0),
-        )
-    ),
+  backgroundColor:
+      MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) {
+    if (states.contains(MaterialState.disabled)) {
+      return kPinkD1;
+    } else {
+      return kPink;
+    }
+  }),
+  padding: MaterialStateProperty.all<EdgeInsets>(
+      const EdgeInsets.symmetric(vertical: 8)),
+  shape:
+      MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(20.0),
+  )),
 );
 
 /// looks like [kTextFieldDecorationT1] but a button
 ButtonStyle kBtnStyleT2 = ButtonStyle(
-  backgroundColor: MaterialStateProperty.resolveWith<Color>(
-          (Set<MaterialState> states){
-        if(states.contains(MaterialState.pressed)){
-          return kPinkD2;
-        } else {
-          return kPinkD1.withOpacity(0.3);
-        }
-      }
-  ),
-  padding: MaterialStateProperty.all<EdgeInsets>(const EdgeInsets.symmetric(vertical: 12)),
+  backgroundColor:
+      MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) {
+    if (states.contains(MaterialState.pressed)) {
+      return kPinkD2;
+    } else {
+      return kPinkD1.withOpacity(0.3);
+    }
+  }),
+  padding: MaterialStateProperty.all<EdgeInsets>(
+      const EdgeInsets.symmetric(vertical: 12)),
   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
       RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15.0),
-          side: const BorderSide(color: kPinkD1,width: 2.0)
-      )
-  ),
+          side: const BorderSide(color: kPinkD1, width: 2.0))),
 );
 
-kSnackBar(BuildContext context,String text){
-  ScaffoldMessenger.of(context)
-      .showSnackBar(SnackBar(
-      content: Text(text,style: kAppFont.copyWith(fontSize: 15,fontWeight: FontWeight.w400),),
+kSnackBar(BuildContext context, String text) {
+  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    content: Text(
+      text,
+      style: kAppFont.copyWith(fontSize: 15, fontWeight: FontWeight.w400),
+    ),
     backgroundColor: kPinkD1,
-    padding: const EdgeInsets.symmetric(vertical: 20,horizontal: 30),
+    padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
   ));
 }
 
-kFancySnackBar(BuildContext context, String title, String body,ContentType contentType){
+kFancySnackBar(
+    BuildContext context, String title, String body, ContentType contentType) {
   final snackBar = SnackBar(
     elevation: 0,
     behavior: SnackBarBehavior.floating,
     backgroundColor: Colors.transparent,
     content: AwesomeSnackbarContent(
       title: title,
-      message:
-      body,
+      message: body,
       contentType: contentType,
     ),
   );
