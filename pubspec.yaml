@@ -64,7 +64,7 @@ dependencies:
   dotted_border: ^2.0.0+3
   local_auth: ^2.1.6
   local_auth_android: ^1.0.32
-  url_launcher: ^6.1.12
+  url_launcher: ^6.2.2
   fluttertoast: ^8.2.2
   in_app_update: ^4.2.0
   share_plus: ^7.1.0
