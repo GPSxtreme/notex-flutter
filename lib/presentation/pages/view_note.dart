@@ -9,9 +9,11 @@ import 'package:notex/data/models/note_model.dart';
 import 'package:notex/presentation/blocs/notes/notes_bloc.dart';
 import 'package:notex/presentation/styles/app_styles.dart';
 import 'package:notex/presentation/widgets/common_widgets.dart';
+import 'package:notex/presentation/widgets/custom_image_builder.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:simple_markdown_editor/simple_markdown_editor.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../core/repositories/notes_repository.dart';
 import '../../main.dart';
 import '../styles/size_config.dart';
@@ -144,12 +146,17 @@ class _ViewNotePageState extends State<ViewNotePage> {
       // update made changes to note.
       note.updateIsSynced(false);
       kSnackBar(context, "Saving changes...");
-      await NotesRepository.updateNote(note).then((_) {
-        widget.notesBloc.add(NotesRefetchNotesEvent(note,
-            isInHiddenMode: widget.isInHiddenMode));
-        kSnackBar(context, "Saved note");
-        Navigator.of(context).pop();
-      });
+      try {
+        await NotesRepository.updateNote(note).then((_) {
+          widget.notesBloc.add(NotesRefetchNotesEvent(note,
+              isInHiddenMode: widget.isInHiddenMode));
+          kSnackBar(context, "Saved note");
+          Navigator.of(context).pop();
+        });
+      } catch (e) {
+        kSnackBar(
+            context, "Error encountered while saving.\nError: ${e.toString()}");
+      }
     }
   }
 
@@ -214,12 +221,13 @@ class _ViewNotePageState extends State<ViewNotePage> {
       );
 
   Future<void> shareNoteAsPdfWithHtmlToPdf() async {
-    // Convert Markdown to HTML
-    String markdownText = _bodyController.text;
-    String htmlText = md.markdownToHtml(markdownText,
-        extensionSet: md.ExtensionSet.gitHubWeb);
+    try {
+      // Convert Markdown to HTML
+      String markdownText = _bodyController.text;
+      String htmlText = md.markdownToHtml(markdownText,
+          extensionSet: md.ExtensionSet.gitHubWeb);
 
-    String fullHtml = '''
+      String fullHtml = '''
           <!DOCTYPE html>
     <html>
     <head>
@@ -254,15 +262,18 @@ class _ViewNotePageState extends State<ViewNotePage> {
     </html>
     ''';
 
-    // Convert HTML to PDF
-    final tempDir = await getTemporaryDirectory();
+      // Convert HTML to PDF
+      final tempDir = await getTemporaryDirectory();
 
-    var generatedPdfFile = await FlutterHtmlToPdf.convertFromHtmlContent(
-        fullHtml, tempDir.path, note.title);
+      var generatedPdfFile = await FlutterHtmlToPdf.convertFromHtmlContent(
+          fullHtml, tempDir.path, note.title);
 
-    // Share the PDF file
-    await Share.shareXFiles(<XFile>[XFile(generatedPdfFile.path)],
-        text: note.title, subject: 'Sharing Note from Notex');
+      // Share the PDF file
+      await Share.shareXFiles(<XFile>[XFile(generatedPdfFile.path)],
+          text: note.title, subject: 'Sharing Note from Notex');
+    } catch (e) {
+      kSnackBar(context, "Error generating pdf\nError: $e");
+    }
   }
 
   void _showShareOptions() => showModalBottomSheet(
@@ -305,6 +316,14 @@ class _ViewNotePageState extends State<ViewNotePage> {
           );
         },
       );
+  void _onTapLink(String url) async {
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+    } else {
+      // Handle the situation when the URL cannot be launched (optional)
+      kSnackBar(context, 'Could not launch $url');
+    }
+  }
 
   @override
   void dispose() {
@@ -633,11 +652,13 @@ class _ViewNotePageState extends State<ViewNotePage> {
                     data: _bodyController.text,
                     styleConfig: StyleConfig(
                       markdownTheme: MarkdownTheme.darkTheme,
-                      // pConfig: PConfig(
-                      //   textStyle: kAppFont.copyWith(fontSize: 20),
-                      //   linkStyle: const TextStyle(color: Colors.blue),
-                      // ),
-                      // Add more styling as per your need
+                      imgBuilder: (url, attributes) {
+                        return customImageBuilder(url, attributes, context);
+                      },
+                      pConfig: PConfig(
+                        onLinkTap: (url) =>
+                            url != null ? _onTapLink(url) : null,
+                      ),
                     ),
                   ),
                 )
