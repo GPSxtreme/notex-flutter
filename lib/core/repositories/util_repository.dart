@@ -20,17 +20,18 @@ class UtilRepository{
 
   /// checks for update from android play store.
   static Future<bool> checkForUpdate() async {
-    try{
+    try {
       final updateInfo = await InAppUpdate.checkForUpdate();
       if (updateInfo.updateAvailability == UpdateAvailability.updateAvailable) {
-        InAppUpdate.completeFlexibleUpdate();
+        await InAppUpdate.performImmediateUpdate();
         return true;
       }
-    }catch (e){
+    } catch (e) {
       UtilRepository.toast(e.toString());
     }
     return false;
   }
+
 
   ///Launches the given url
   static Future<void> launchLink(String url) async {
