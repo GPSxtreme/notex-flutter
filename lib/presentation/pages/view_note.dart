@@ -651,15 +651,26 @@ class _ViewNotePageState extends State<ViewNotePage> {
                         top: 0, bottom: 30, left: 25, right: 25),
                     data: _bodyController.text,
                     styleConfig: StyleConfig(
-                      markdownTheme: MarkdownTheme.darkTheme,
-                      imgBuilder: (url, attributes) {
-                        return customImageBuilder(url, attributes, context);
-                      },
-                      pConfig: PConfig(
-                        onLinkTap: (url) =>
-                            url != null ? _onTapLink(url) : null,
-                      ),
-                    ),
+                        markdownTheme: MarkdownTheme.darkTheme,
+                        imgBuilder: (url, attributes) {
+                          return customImageBuilder(url, attributes, context);
+                        },
+                        pConfig: PConfig(
+                          selectable: true,
+                          onLinkTap: (url) =>
+                              url != null ? _onTapLink(url) : null,
+                        ),
+                        blockQuoteConfig: BlockQuoteConfig(),
+                        checkBoxConfig: CheckBoxConfig(),
+                        tableConfig: TableConfig(),
+                        codeConfig: CodeConfig(),
+                        hrConfig: HrConfig(),
+                        imgConfig: ImgConfig(),
+                        olConfig: OlConfig(selectable: true),
+                        preConfig: PreConfig(),
+                        ulConfig: UlConfig(selectable: true),
+                        titleConfig: TitleConfig(),
+                        videoConfig: VideoConfig()),
                   ),
                 )
             ],
