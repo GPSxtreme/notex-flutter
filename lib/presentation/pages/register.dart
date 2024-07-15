@@ -4,6 +4,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:notex/presentation/blocs/register/register_bloc.dart';
+import 'package:notex/presentation/styles/app_colors.dart';
 import 'package:notex/router/app_route_constants.dart';
 
 import '../styles/app_styles.dart';
@@ -25,18 +26,6 @@ class _RegisterPageState extends State<RegisterPage> {
   bool _hide = true;
   bool _hideConfirm = true;
   bool _rememberDevice = false;
-
-  Color getColor(Set<MaterialState> states) {
-    const Set<MaterialState> interactiveStates = <MaterialState>{
-      MaterialState.pressed,
-      MaterialState.hovered,
-      MaterialState.focused,
-    };
-    if (states.any(interactiveStates.contains)) {
-      return kPinkD1;
-    }
-    return kPinkD1;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,14 +52,10 @@ class _RegisterPageState extends State<RegisterPage> {
         builder: (context, state) {
           return Scaffold(
             resizeToAvoidBottomInset: true,
-            backgroundColor: kPageBgStart,
             body: SafeArea(
               child: Container(
                 height: SizeConfig.screenHeight,
                 width: SizeConfig.screenWidth,
-                decoration: const BoxDecoration(
-                  gradient: kPageBgGradient,
-                ),
                 child: Stack(
                   children: [
                     Positioned(
@@ -110,16 +95,9 @@ class _RegisterPageState extends State<RegisterPage> {
                                 children: [
                                   Text(
                                     "Register ",
-                                    style: kAppFont.copyWith(
-                                        fontSize: 25,
-                                        fontWeight: FontWeight.w300),
                                   ),
                                   Text(
                                     "account",
-                                    style: kAppFont.copyWith(
-                                        fontSize: 25,
-                                        color: kPink,
-                                        fontWeight: FontWeight.w300),
                                   ),
                                 ],
                               ),
@@ -127,60 +105,24 @@ class _RegisterPageState extends State<RegisterPage> {
                                 height: SizeConfig.blockSizeVertical! * 10,
                               ),
                               TextField(
-                                style: kAppFont.copyWith(fontSize: 18),
                                 controller: _emailController,
                                 keyboardType: TextInputType.emailAddress,
-                                cursorColor: kWhite,
-                                decoration: kTextFieldDecorationT1.copyWith(
-                                    labelText: "Email"),
                               ),
                               SizedBox(
                                 height: SizeConfig.blockSizeVertical! * 3,
                               ),
                               TextField(
-                                style: kAppFont.copyWith(fontSize: 18),
                                 keyboardType: TextInputType.text,
                                 controller: _passwordController,
-                                cursorColor: kWhite,
                                 obscureText: _hide,
-                                decoration: kTextFieldDecorationT1.copyWith(
-                                    labelText: "Password",
-                                    suffixIcon: IconButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            _hide = !_hide;
-                                          });
-                                        },
-                                        icon: Icon(
-                                          _hide
-                                              ? Icons.visibility
-                                              : Icons.visibility_off,
-                                          color: kWhite,
-                                        ))),
                               ),
                               SizedBox(
                                 height: SizeConfig.blockSizeVertical! * 3,
                               ),
                               TextField(
-                                style: kAppFont.copyWith(fontSize: 18),
                                 keyboardType: TextInputType.text,
                                 controller: _confirmPasswordController,
-                                cursorColor: kWhite,
                                 obscureText: _hideConfirm,
-                                decoration: kTextFieldDecorationT1.copyWith(
-                                    labelText: "confirm password",
-                                    suffixIcon: IconButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            _hideConfirm = !_hideConfirm;
-                                          });
-                                        },
-                                        icon: Icon(
-                                          _hideConfirm
-                                              ? Icons.visibility
-                                              : Icons.visibility_off,
-                                          color: kWhite,
-                                        ))),
                               ),
                               SizedBox(
                                 height: SizeConfig.blockSizeVertical! * 2,
@@ -191,13 +133,9 @@ class _RegisterPageState extends State<RegisterPage> {
                                     scale: 1.3,
                                     child: Checkbox(
                                         value: _rememberDevice,
-                                        checkColor: kPink,
                                         shape: RoundedRectangleBorder(
                                             borderRadius:
                                                 BorderRadius.circular(5)),
-                                        fillColor:
-                                            MaterialStateProperty.resolveWith(
-                                                getColor),
                                         onChanged: (bool? value) {
                                           setState(() {
                                             _rememberDevice = value!;
@@ -212,8 +150,6 @@ class _RegisterPageState extends State<RegisterPage> {
                                     },
                                     child: Text(
                                       "Remember device",
-                                      style: kAppFont.copyWith(
-                                          fontSize: 16, color: kWhite24),
                                     ),
                                   )
                                 ],
@@ -247,14 +183,12 @@ class _RegisterPageState extends State<RegisterPage> {
                                           }
                                         }
                                       : null,
-                                  style: kBtnStyleT1,
                                   child: state is! RegisterLoadingState
                                       ? Text(
                                           "Register",
-                                          style: kAppFont.copyWith(fontSize: 20),
                                         )
-                                      : const SpinKitCircle(
-                                          color: kWhite,
+                                      : SpinKitCircle(
+                                          color: AppColors.primary,
                                           size: 22,
                                         ),
                                 ),
@@ -267,7 +201,6 @@ class _RegisterPageState extends State<RegisterPage> {
                                 children: [
                                   Text(
                                     "Have an account? ",
-                                    style: kAppFont.copyWith(fontSize: 16),
                                   ),
                                   GestureDetector(
                                       onTap: () {
@@ -277,8 +210,6 @@ class _RegisterPageState extends State<RegisterPage> {
                                       },
                                       child: Text(
                                         "Login",
-                                        style: kAppFont.copyWith(
-                                            fontSize: 16, color: kPink),
                                       )),
                                 ],
                               )
