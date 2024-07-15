@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:notex/core/repositories/local_database_repository.dart';
-import 'package:notex/presentation/styles/app_styles.dart';
 import 'package:notex/services/notification.dart';
 import 'app.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -15,16 +14,12 @@ User USER = User();
 Settings SETTINGS = Settings();
 NotificationService NOTIFICATION_SERVICES = NotificationService();
 
-void main() async{
+void main() async {
   await dotenv.load();
   await NOTIFICATION_SERVICES.init();
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: kPageBgStart,
-  ));
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp,DeviceOrientation.portraitDown])
+  SystemChrome.setPreferredOrientations(
+          [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown])
       .then((value) => runApp(const MyApp()));
   tz.initializeTimeZones();
   runApp(const MyApp());
 }
-
-
