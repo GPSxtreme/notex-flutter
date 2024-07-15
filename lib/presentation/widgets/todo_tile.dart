@@ -4,7 +4,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:notex/data/models/todo_model.dart';
-import 'package:notex/presentation/styles/app_styles.dart';
+import 'package:notex/presentation/styles/app_colors.dart';
 import '../blocs/todos/todos_bloc.dart';
 import '../styles/size_config.dart';
 
@@ -24,18 +24,6 @@ class _TodoTileState extends State<TodoTile> {
   bool _areAllSelected = false;
   bool _isSyncing = false;
 
-  Color getColor(Set<MaterialState> states) {
-    const Set<MaterialState> interactiveStates = <MaterialState>{
-      MaterialState.pressed,
-      MaterialState.hovered,
-      MaterialState.focused,
-    };
-    if (states.any(interactiveStates.contains)) {
-      return kPinkD1;
-    }
-    return kPinkD1;
-  }
-
   _isEditOnTap() {
     if (_areAllSelected) {
       widget.todosBloc.add(TodosSetAllTodosSelectedCheckBoxEvent(false));
@@ -51,50 +39,50 @@ class _TodoTileState extends State<TodoTile> {
       widget.todosBloc.add(TodosIsTodoSelectedEvent(_isSelected, widget.todo));
     }
   }
-  detailTile(String key,String value) => Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          key,style: kAppFont.copyWith(fontSize: 15,fontWeight: FontWeight.w400),
+
+  detailTile(String key, String value) => Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [Text(key), Text(value)],
         ),
-        Text(
-          value,style: kAppFont.copyWith(fontSize: 15,fontWeight: FontWeight.w400),
-        )
-      ],
-    ),
-  );
+      );
 
   divider() => Divider(
-    color: kPinkD1.withOpacity(0.3),
-    thickness: 1.0,
-    indent: 20,
-    endIndent: 20,
-  );
+        thickness: 1.0,
+        indent: 20,
+        endIndent: 20,
+      );
 
   void _showNoteDetails() => showModalBottomSheet(
-    showDragHandle: true,
-    backgroundColor: kPinkD2,
-    context: context,
-    builder: (BuildContext context) {
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          detailTile('Created on', DateFormat('d MMMM, h:mm a').format(widget.todo.createdTime.toLocal()).toString()),
-          divider(),
-          detailTile('Remainder time', DateFormat('d MMMM, h:mm a').format(widget.todo.expireTime.toLocal()).toString()),
-          divider(),
-          detailTile('Is completed', widget.todo.isCompleted ? 'yes' : 'no'),
-          divider(),
-          detailTile('Is synced', widget.todo.isSynced ? 'yes' : 'no'),
-          divider(),
-          detailTile('Is uploaded', widget.todo.isUploaded ? 'yes' : 'no'),
-        ],
+        showDragHandle: true,
+        context: context,
+        builder: (BuildContext context) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              detailTile(
+                  'Created on',
+                  DateFormat('d MMMM, h:mm a')
+                      .format(widget.todo.createdTime.toLocal())
+                      .toString()),
+              divider(),
+              detailTile(
+                  'Remainder time',
+                  DateFormat('d MMMM, h:mm a')
+                      .format(widget.todo.expireTime.toLocal())
+                      .toString()),
+              divider(),
+              detailTile(
+                  'Is completed', widget.todo.isCompleted ? 'yes' : 'no'),
+              divider(),
+              detailTile('Is synced', widget.todo.isSynced ? 'yes' : 'no'),
+              divider(),
+              detailTile('Is uploaded', widget.todo.isUploaded ? 'yes' : 'no'),
+            ],
+          );
+        },
       );
-    },
-  );
-
 
   @override
   Widget build(BuildContext context) {
@@ -134,16 +122,14 @@ class _TodoTileState extends State<TodoTile> {
         return Container(
           width: double.maxFinite,
           decoration: BoxDecoration(
-              color: DateTime.now().isAfter(widget.todo.expireTime.toLocal())
-                  ? kPinkD2
-                  : kPinkD2,
               borderRadius: BorderRadius.circular(20.0),
-              border: Border.all(width: 1.0, color: kPinkD1)),
+              border: Border.all(
+                width: 1.0,
+              )),
           child: Material(
             color: Colors.transparent,
             borderRadius: BorderRadius.circular(20.0),
             child: InkWell(
-              splashColor: kPink,
               borderRadius: BorderRadius.circular(20.0),
               onLongPress: () {
                 widget.todosBloc.add(TodosEnteredEditingEvent());
@@ -166,11 +152,8 @@ class _TodoTileState extends State<TodoTile> {
                         scale: 1.3,
                         child: Checkbox(
                             value: widget.todo.isCompleted,
-                            checkColor: kPink,
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10)),
-                            fillColor:
-                                MaterialStateProperty.resolveWith(getColor),
                             onChanged: (bool? value) {
                               if (value != null) {
                                 if (value) {
@@ -189,7 +172,8 @@ class _TodoTileState extends State<TodoTile> {
                         child: SizedBox(
                             width: 25,
                             height: 25,
-                            child: SpinKitRing(color: kPinkD1, lineWidth: 4.0)),
+                            child: SpinKitRing(
+                                color: AppColors.primary, lineWidth: 4.0)),
                       )
                     ],
                     SizedBox(
@@ -203,46 +187,10 @@ class _TodoTileState extends State<TodoTile> {
                           children: [
                             Text(
                               widget.todo.body,
-                              style: kAppFont,
                             ),
                             SizedBox(
                               height: SizeConfig.blockSizeVertical! * 0.5,
                             ),
-                            /*
-                            Text(
-                              'created on : ${DateFormat('d MMMM, h:mm a').format(widget.todo.createdTime.toLocal()).toString()}',
-                              style: kAppFont.copyWith(
-                                  color: kWhite75, fontSize: 12),
-                            ),
-                            SizedBox(
-                              height: SizeConfig.blockSizeVertical! * 0.5,
-                            ),
-                            Text(
-                              'last edited : ${DateFormat('d MMMM, h:mm a').format(widget.todo.editedTime.toLocal()).toString()}',
-                              style: kAppFont.copyWith(
-                                  color: kWhite75, fontSize: 12),
-                            ),
-                            Text(
-                              'is synced : ${widget.todo.isSynced}',
-                              style: kAppFont.copyWith(
-                                  color: kWhite75, fontSize: 12),
-                            ),
-                            Text(
-                              'completion on : ${DateFormat('d MMMM, h:mm a').format(widget.todo.expireTime.toLocal()).toString()}',
-                              style: kAppFont.copyWith(
-                                  color: kWhite75, fontSize: 12),
-                            ),
-                            Text(
-                              'is completed : ${widget.todo.isCompleted}',
-                              style: kAppFont.copyWith(
-                                  color: kWhite75, fontSize: 12),
-                            ),
-                            Text(
-                              'is uploaded : ${widget.todo.isUploaded}',
-                              style: kAppFont.copyWith(
-                                  color: kWhite75, fontSize: 12),
-                            ),
-                             */
                           ],
                         ),
                       ),
@@ -256,7 +204,6 @@ class _TodoTileState extends State<TodoTile> {
                           icon: const Icon(
                             Ionicons.ellipsis_vertical,
                             size: 15,
-                            color: kWhite,
                           )),
                     if (state is TodosEditingState)
                       Transform.scale(
@@ -264,11 +211,8 @@ class _TodoTileState extends State<TodoTile> {
                         child: Checkbox(
                             value:
                                 _areAllSelected ? _areAllSelected : _isSelected,
-                            checkColor: kPink,
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10)),
-                            fillColor:
-                                MaterialStateProperty.resolveWith(getColor),
                             onChanged: (bool? value) {
                               if (_areAllSelected) {
                                 widget.todosBloc
