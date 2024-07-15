@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:notex/core/repositories/auth_repository.dart';
+import 'package:notex/presentation/styles/app_colors.dart';
 
 import '../styles/app_styles.dart';
 import '../styles/size_config.dart';
@@ -24,12 +25,10 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
     SizeConfig().init(context);
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: kPageBgStart,
       body: SafeArea(
         child: Container(
           width: SizeConfig.screenWidth,
           height: SizeConfig.screenHeight,
-          decoration: const BoxDecoration(gradient: kPageBgGradient),
           child: Stack(
             children: [
               Positioned(
@@ -38,24 +37,24 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
                 child: SvgPicture.asset('assets/svg/login_page_bg_decor.svg'),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 0),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 25, vertical: 0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: SizeConfig.blockSizeVertical! * 20,),
+                    SizedBox(
+                      height: SizeConfig.blockSizeVertical! * 20,
+                    ),
                     Text(
                       "Reset your",
-                      style: kAppFont.copyWith(fontSize: 35),
                     ),
                     Row(
                       children: [
                         Text(
                           "Account ",
-                          style: kAppFont.copyWith(fontSize: 35),
                         ),
                         Text(
                           "password",
-                          style: kAppFont.copyWith(fontSize: 35, color: kPink),
                         ),
                       ],
                     ),
@@ -64,18 +63,13 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
                     ),
                     Text(
                       "We know managing passwords is a hassle!\nPlease provide your account email so that we can send a password reset link.",
-                      style: kAppFont.copyWith(fontSize: 16),
                     ),
                     SizedBox(
                       height: SizeConfig.blockSizeVertical! * 5,
                     ),
                     TextField(
-                      style: kAppFont.copyWith(fontSize: 18),
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
-                      cursorColor: kWhite,
-                      decoration:
-                      kTextFieldDecorationT1.copyWith(labelText: "Email"),
                     ),
                     SizedBox(
                       height: SizeConfig.blockSizeVertical! * 3,
@@ -92,19 +86,15 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
                           child: RichText(
                             textAlign: TextAlign.center,
                             text: TextSpan(
-                              text: 'Password reset link ',
-                              style: kAppFont.copyWith(fontSize: 17,fontWeight: FontWeight.w700),
-                              children: [
-                                TextSpan(
-                                  text: 'sent',
-                                  style: kAppFont.copyWith(fontSize: 17,fontWeight: FontWeight.w700,color: kPink),
-                                ),
-                                TextSpan(
-                                  text: '\nCheck spam if not found',
-                                  style: kAppFont.copyWith(fontSize: 15),
-                                )
-                              ]
-                            ),
+                                text: 'Password reset link ',
+                                children: [
+                                  TextSpan(
+                                    text: 'sent',
+                                  ),
+                                  TextSpan(
+                                    text: '\nCheck spam if not found',
+                                  )
+                                ]),
                           ),
                         ),
                       ),
@@ -113,27 +103,34 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
                         child: SizedBox(
                           width: double.maxFinite,
                           child: ElevatedButton(
-                            onPressed:!_isLoading ? ()async{
-                              setState(() {
-                                _isLoading = true;
-                              });
-                              if(_emailController.text.isNotEmpty){
-                                final response = await AuthRepository.sendPasswordResetLink(email: _emailController.text);
-                                if(response.success){
-                                  _isSent = true;
-                                }else{
-                                  kSnackBar(context,response.message);
-                                }
-                              }
-                              setState(() {
-                                _isLoading = false;
-                              });
-                            } : null,
-                            style: kBtnStyleT1,
-                            child: !_isLoading ? Text(
-                              "Send Link",
-                              style: kAppFont.copyWith(fontSize: 20),
-                            ) :const SpinKitCircle(color: kWhite,size: 22,),
+                            onPressed: !_isLoading
+                                ? () async {
+                                    setState(() {
+                                      _isLoading = true;
+                                    });
+                                    if (_emailController.text.isNotEmpty) {
+                                      final response = await AuthRepository
+                                          .sendPasswordResetLink(
+                                              email: _emailController.text);
+                                      if (response.success) {
+                                        _isSent = true;
+                                      } else {
+                                        kSnackBar(context, response.message);
+                                      }
+                                    }
+                                    setState(() {
+                                      _isLoading = false;
+                                    });
+                                  }
+                                : null,
+                            child: !_isLoading
+                                ? Text(
+                                    "Send Link",
+                                  )
+                                : SpinKitCircle(
+                                    color: AppColors.primary,
+                                    size: 22,
+                                  ),
                           ),
                         ),
                       ),
