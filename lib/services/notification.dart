@@ -3,11 +3,11 @@ import 'package:timezone/timezone.dart' as tz;
 
 class NotificationService {
   final FlutterLocalNotificationsPlugin notificationsPlugin =
-  FlutterLocalNotificationsPlugin();
+      FlutterLocalNotificationsPlugin();
 
   Future<void> init() async {
     AndroidInitializationSettings initializationSettingsAndroid =
-    const AndroidInitializationSettings('logo');
+        const AndroidInitializationSettings('logo');
 
     var initializationSettingsIOS = DarwinInitializationSettings(
         requestAlertPermission: true,
@@ -21,8 +21,10 @@ class NotificationService {
     await notificationsPlugin.initialize(initializationSettings,
         onDidReceiveNotificationResponse:
             (NotificationResponse notificationResponse) async {});
-    notificationsPlugin.resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>()?.requestPermission();
+    notificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.requestNotificationsPermission();
   }
 
   notificationDetails() {
@@ -40,10 +42,10 @@ class NotificationService {
 
   Future scheduleNotification(
       {int id = 0,
-        String? title,
-        String? body,
-        String? payLoad,
-        required DateTime scheduledNotificationDateTime}) async {
+      String? title,
+      String? body,
+      String? payLoad,
+      required DateTime scheduledNotificationDateTime}) async {
     return notificationsPlugin.zonedSchedule(
         id,
         title,
@@ -56,6 +58,6 @@ class NotificationService {
         // ignore: deprecated_member_use
         androidAllowWhileIdle: true,
         uiLocalNotificationDateInterpretation:
-        UILocalNotificationDateInterpretation.absoluteTime);
+            UILocalNotificationDateInterpretation.absoluteTime);
   }
 }
