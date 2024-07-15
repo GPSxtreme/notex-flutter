@@ -5,10 +5,11 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:notex/data/models/note_model.dart';
 import 'package:notex/presentation/blocs/notes/notes_bloc.dart';
+import 'package:notex/presentation/styles/app_colors.dart';
+import 'package:notex/presentation/styles/app_text.dart';
+import 'package:notex/presentation/styles/size_config.dart';
 import 'package:notex/presentation/widgets/common_widgets.dart';
-import '../../router/app_route_constants.dart';
-import '../styles/app_styles.dart';
-import '../styles/size_config.dart';
+import 'package:notex/router/app_route_constants.dart';
 
 class NoteTile extends StatefulWidget {
   const NoteTile({super.key, required this.note, required this.notesBloc});
@@ -26,18 +27,6 @@ class _NoteTileState extends State<NoteTile> {
   bool _isSyncing = false;
   bool _inHiddenMode = false;
   bool _inDeletedMode = false;
-
-  Color getColor(Set<MaterialState> states) {
-    const Set<MaterialState> interactiveStates = <MaterialState>{
-      MaterialState.pressed,
-      MaterialState.hovered,
-      MaterialState.focused,
-    };
-    if (states.any(interactiveStates.contains)) {
-      return kPinkD1;
-    }
-    return kPinkD1;
-  }
 
   _inEditOnTap() {
     if (_areAllSelected) {
@@ -99,15 +88,14 @@ class _NoteTileState extends State<NoteTile> {
         }
         return Container(
           decoration: BoxDecoration(
-              color: kPinkD2,
-              borderRadius: BorderRadius.circular(20.0),
-              border: Border.all(width: 1.0, color: kPinkD1)),
+            borderRadius: AppBorderRadius.xxl,
+            color: AppColors.secondary,
+          ),
           child: Material(
             color: Colors.transparent,
-            borderRadius: BorderRadius.circular(20.0),
+            borderRadius: AppBorderRadius.xxl,
             child: InkWell(
-              splashColor: kPink,
-              borderRadius: BorderRadius.circular(20.0),
+              borderRadius: AppBorderRadius.xxl,
               onLongPress: !_inDeletedMode
                   ? () {
                       widget.notesBloc.add(NotesEnteredEditingEvent(
@@ -142,15 +130,17 @@ class _NoteTileState extends State<NoteTile> {
                                 const Padding(
                                   padding: EdgeInsets.all(8.0),
                                   child: SpinKitRing(
-                                      color: kPink, lineWidth: 4.0, size: 20),
+                                      color: AppColors.foreground,
+                                      lineWidth: 3.0,
+                                      size: 20),
                                 )
                               else ...[
                                 if (!widget.note.isUploaded &&
                                     !widget.note.isDeleted)
                                   IconButton(
-                                    icon: const Icon(
-                                      Icons.cloud_upload_outlined,
-                                      color: kWhite,
+                                    icon: Icon(
+                                      Icons.cloud_upload_rounded,
+                                      size: AppSpacing.iconSizeXl,
                                     ),
                                     onPressed: () {
                                       //add note to cloud
@@ -159,20 +149,22 @@ class _NoteTileState extends State<NoteTile> {
                                               widget.note));
                                     },
                                     tooltip: "upload to cloud",
-                                    splashRadius: 15,
                                   ),
                                 if (widget.note.isUploaded &&
                                     !widget.note.isDeleted)
                                   IconButton(
                                     icon: widget.note.isFavorite
-                                        ? const Icon(
-                                            Icons.star,
-                                            color: kPink,
+                                        ? Icon(
+                                            Icons.star_rounded,
+                                            color: AppColors.primary,
+                                            size: AppSpacing.iconSizeXl,
                                           )
-                                        : const Icon(Icons.star_border,
-                                            color: kWhite),
+                                        : Icon(
+                                            Icons.star_border_rounded,
+                                            size: AppSpacing.iconSizeXl,
+                                          ),
                                     onPressed: () {
-                                      //add to favourites
+                                      //add to favorites
                                       widget.notesBloc.add(
                                           NotesSetNoteFavoriteEvent(
                                               !widget.note.isFavorite,
@@ -180,13 +172,11 @@ class _NoteTileState extends State<NoteTile> {
                                               widget.note));
                                     },
                                     tooltip: 'Favorite note',
-                                    splashRadius: 15,
                                   ),
                                 if (widget.note.isDeleted)
                                   IconButton(
                                     icon: const Icon(
                                       Icons.restore_from_trash,
-                                      color: kPink,
                                     ),
                                     onPressed: () async {
                                       //restore note
@@ -216,25 +206,22 @@ class _NoteTileState extends State<NoteTile> {
                                 value: _areAllSelected
                                     ? _areAllSelected
                                     : _isSelected,
-                                checkColor: kPink,
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10)),
-                                fillColor:
-                                    MaterialStateProperty.resolveWith(getColor),
                                 onChanged: (_) => _inEditOnTap()),
                           ),
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(
-                      vertical: SizeConfig.blockSizeVertical! * 2,
-                      horizontal: SizeConfig.blockSizeHorizontal! * 5,
+                      vertical: AppSpacing.md,
+                      horizontal: AppSpacing.md,
                     ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(
-                          height: SizeConfig.blockSizeVertical! * 3,
+                          height: AppSpacing.xl,
                         ),
                         Row(
                           mainAxisSize: MainAxisSize.min,
@@ -243,103 +230,58 @@ class _NoteTileState extends State<NoteTile> {
                               // Add Flexible widget here
                               child: Text(
                                 widget.note.title,
+                                style: AppText.textLgSemiBold,
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
-                                style: kAppFont.copyWith(
-                                    color: kWhite, fontSize: 18),
                               ),
                             ),
                           ],
                         ),
-                        SizedBox(height: SizeConfig.blockSizeVertical! * 0.5),
+                        SizedBox(
+                          height: AppSpacing.sm,
+                        ),
                         Text(
                           widget.note.body,
+                          style: AppText.textSm,
                           maxLines: 7,
                           overflow: TextOverflow.ellipsis,
-                          style:
-                              kAppFont.copyWith(color: kWhite24, fontSize: 12),
-                        ),
-                        /* Detailed stats for debugging
-                        SizedBox(
-                          height: SizeConfig.blockSizeVertical! * 2,
-                        ),
-                        Text(
-                          'created on : ${DateFormat('d MMMM, h:mm a').format(widget.note.createdTime.toLocal()).toString()}',
-                          style: kAppFont.copyWith(color: kWhite75, fontSize: 10),
                         ),
                         SizedBox(
-                          height: SizeConfig.blockSizeVertical! * 0.5,
+                          height: AppSpacing.md,
                         ),
-                        Text(
-                          'last edited : ${DateFormat('d MMMM, h:mm a').format(widget.note.editedTime.toLocal()).toString()}',
-                          style: kAppFont.copyWith(color: kWhite75, fontSize: 10),
-                        ),
-                        Text(
-                          'is uploaded : ${widget.note.isUploaded}',
-                          style: kAppFont.copyWith(color: kWhite75, fontSize: 10),
-                        ),
-                        Text(
-                          'is hidden : ${widget.note.isHidden}',
-                          style: kAppFont.copyWith(color: kWhite75, fontSize: 10),
-                        ),
-                        Text(
-                          'is deleted : ${widget.note.isDeleted}',
-                          style: kAppFont.copyWith(color: kWhite75, fontSize: 10),
-                        ),
-                        Text(
-                          'deleted time : ${widget.note.deletedTime != null ? DateFormat('d MMMM, h:mm a').format(widget.note.deletedTime.toLocal()).toString() : null}',
-                          style: kAppFont.copyWith(color: kWhite75, fontSize: 10),
-                        ),
-                        Text(
-                          'is favorite : ${widget.note.isFavorite}',
-                          style: kAppFont.copyWith(color: kWhite75, fontSize: 10),
-                        ),
-                        Text(
-                          'version : ${widget.note.v}',
-                          style: kAppFont.copyWith(color: kWhite75, fontSize: 10),
-                        ),
-                        */
                         if (!_isSyncing) ...[
-                          const SizedBox(
-                            height: 10,
-                          ),
                           Row(
                             children: [
                               Icon(
-                                widget.note.isSynced
-                                    ? Icons.sync
-                                    : Icons.sync_disabled,
-                                color: kWhite,
-                                size: 20,
-                              ),
-                              const SizedBox(
-                                width: 3,
+                                  widget.note.isSynced
+                                      ? Icons.sync
+                                      : Icons.sync_disabled,
+                                  color: AppColors.mutedForeground,
+                                  size: AppSpacing.iconSizeBase),
+                              SizedBox(
+                                width: AppSpacing.sm,
                               ),
                               Expanded(
                                 child: Text(
-                                  DateFormat('h:mm a, dd/MM/yyyy')
+                                  DateFormat('h:mm a, dd MMM yyyy')
                                       .format(widget.note.editedTime.toLocal())
                                       .toString(),
-                                  style: kAppFont.copyWith(
-                                      color: kWhite75, fontSize: 10),
+                                  style: AppText.textXs.copyWith(
+                                      color: AppColors.mutedForeground),
                                 ),
                               )
                             ],
                           )
                         ] else ...[
                           Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                'syncing',
-                                style: kAppFont.copyWith(
-                                    color: kWhite75, fontSize: 10),
-                              ),
-                              SizedBox(
-                                width: SizeConfig.blockSizeHorizontal! * 2,
-                              ),
-                              const SpinKitChasingDots(
-                                color: kWhite,
-                                size: 15,
+                              Text('Syncing...',
+                                  style: AppText.textSm.copyWith(
+                                      color: AppColors.mutedForeground)),
+                              SpinKitChasingDots(
+                                color: AppColors.mutedForeground,
+                                size: AppSpacing.iconSizeSm,
                               )
                             ],
                           )
