@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-
-import '../styles/app_styles.dart';
+import 'package:notex/presentation/styles/app_colors.dart';
 
 // Custom Image Builder
 Widget customImageBuilder(
@@ -23,7 +22,7 @@ Widget customImageBuilder(
       fit: BoxFit
           .scaleDown, // Maintains aspect ratio and scales down if necessary
       placeholder: (context, url) => const SpinKitRing(
-        color: kPinkD1,
+        color: AppColors.primary,
       ), // Placeholder widget
       errorWidget: (context, url, error) => const Padding(
         padding: EdgeInsets.symmetric(vertical: 15),
@@ -31,14 +30,12 @@ Widget customImageBuilder(
           children: [
             Icon(
               Icons.error,
-              color: kWhite,
             ),
             SizedBox(
               height: 10,
             ),
             Text(
               "Failed loading image",
-              style: TextStyle(color: kWhite),
             ),
           ],
         ),
