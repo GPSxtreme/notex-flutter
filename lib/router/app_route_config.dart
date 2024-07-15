@@ -19,88 +19,94 @@ class MyAppRouter {
     // private navigators
     final rootNavigatorKey = GlobalKey<NavigatorState>();
     return GoRouter(
-        initialLocation: '/',
-        navigatorKey: rootNavigatorKey,
-        routes: [
-          GoRoute(
-              name: AppRouteConstants.splashRouteName,
-              path: '/',
-              pageBuilder: (BuildContext context, GoRouterState state) {
-                return const MaterialPage(child: SplashPage());
-              }),
-          GoRoute(
-              name: AppRouteConstants.loginRouteName,
-              path: '/login',
-              pageBuilder: (BuildContext context, GoRouterState state) {
-                return const MaterialPage(child: LoginPage());
-              }),
-          GoRoute(
-              name: AppRouteConstants.passwordResetRouteName,
-              path: '/passwordReset',
-              pageBuilder: (BuildContext context, GoRouterState state) {
-                return const MaterialPage(child: PasswordResetPage());
-              }),
-          GoRoute(
-              name: AppRouteConstants.registerRouteName,
-              path: '/register',
-              pageBuilder: (BuildContext context, GoRouterState state) {
-                return const MaterialPage(child: RegisterPage());
-              }),
-          GoRoute(
-              name: AppRouteConstants.createUserProfileName,
-              path: '/createUserProfile',
-              pageBuilder: (BuildContext context, GoRouterState state) {
-                return const MaterialPage(child: CreateUserProfile());
-              }),
-          GoRoute(
-              name: AppRouteConstants.homeRouteName,
-              path: '/home',
-              pageBuilder: (BuildContext context, GoRouterState state) {
-                return const MaterialPage(child: HomePage());
-              },
+      initialLocation: '/',
+      navigatorKey: rootNavigatorKey,
+      routes: [
+        GoRoute(
+            name: AppRouteConstants.splashRouteName,
+            path: '/',
+            pageBuilder: (BuildContext context, GoRouterState state) {
+              return const MaterialPage(child: SplashPage());
+            }),
+        GoRoute(
+            name: AppRouteConstants.loginRouteName,
+            path: '/login',
+            pageBuilder: (BuildContext context, GoRouterState state) {
+              return const MaterialPage(child: LoginPage());
+            }),
+        GoRoute(
+            name: AppRouteConstants.passwordResetRouteName,
+            path: '/passwordReset',
+            pageBuilder: (BuildContext context, GoRouterState state) {
+              return const MaterialPage(child: PasswordResetPage());
+            }),
+        GoRoute(
+            name: AppRouteConstants.registerRouteName,
+            path: '/register',
+            pageBuilder: (BuildContext context, GoRouterState state) {
+              return const MaterialPage(child: RegisterPage());
+            }),
+        GoRoute(
+            name: AppRouteConstants.createUserProfileName,
+            path: '/createUserProfile',
+            pageBuilder: (BuildContext context, GoRouterState state) {
+              return const MaterialPage(child: CreateUserProfile());
+            }),
+        GoRoute(
+            name: AppRouteConstants.homeRouteName,
+            path: '/home',
+            pageBuilder: (BuildContext context, GoRouterState state) {
+              return const MaterialPage(child: HomePage());
+            },
             routes: [
               GoRoute(
-                name: AppRouteConstants.notesRouteName,
-                path: 'notes',
-                pageBuilder:(BuildContext context, GoRouterState state) {
-                  return const MaterialPage(child: NotesPage());
-                },
-                routes: [
-                  GoRoute(
-                    name: AppRouteConstants.noteViewRouteName,
-                    path: 'view_note/:noteId/:isInHiddenMode',
-                    pageBuilder: (BuildContext context, GoRouterState state) {
-                       String? inHiddenMode = state.pathParameters['isInHiddenMode'];
-                       String? noteId = state.pathParameters['noteId'] == 'new' ? null : state.pathParameters['noteId']; // Obtain the noteId from the GoRouterState if passed
-                      final notesBloc = state.extra! as NotesBloc;
-                      return MaterialPage(
-                        child: ViewNotePage(noteId: noteId,notesBloc: notesBloc,isInHiddenMode: inHiddenMode == 'true',), // Pass the noteId as a parameter to the ViewNotePage
-                      );
-                    },
-                  ),
-                ]
-              ),
+                  name: AppRouteConstants.notesRouteName,
+                  path: 'notes',
+                  pageBuilder: (BuildContext context, GoRouterState state) {
+                    return const MaterialPage(child: NotesPage());
+                  },
+                  routes: [
+                    GoRoute(
+                      name: AppRouteConstants.noteViewRouteName,
+                      path: 'view_note/:noteId/:isInHiddenMode',
+                      pageBuilder: (BuildContext context, GoRouterState state) {
+                        String? inHiddenMode =
+                            state.pathParameters['isInHiddenMode'];
+                        String? noteId = state.pathParameters['noteId'] == 'new'
+                            ? null
+                            : state.pathParameters[
+                                'noteId']; // Obtain the noteId from the GoRouterState if passed
+                        final notesBloc = state.extra! as NotesBloc;
+                        return MaterialPage(
+                          child: ViewNotePage(
+                            noteId: noteId,
+                            notesBloc: notesBloc,
+                            isInHiddenMode: inHiddenMode == 'true',
+                          ), // Pass the noteId as a parameter to the ViewNotePage
+                        );
+                      },
+                    ),
+                  ]),
               GoRoute(
-                name: AppRouteConstants.todosRouteName,
-                path: 'todos',
-                pageBuilder:(BuildContext context, GoRouterState state) {
-                  return const MaterialPage(child: TodosPage());
-                }
-              ),
-            ]
-              ),
-          GoRoute(
-              name: AppRouteConstants.settingsRouteName,
-              path: '/settings',
-              pageBuilder: (BuildContext context, GoRouterState state) {
-                return const MaterialPage(child: SettingsPage());
-              }),
-          GoRoute(
-              name: AppRouteConstants.profileRouteName,
-              path: '/profile',
-              pageBuilder: (BuildContext context, GoRouterState state) {
-                return const MaterialPage(child: ProfilePage());
-              }),
-        ],);
+                  name: AppRouteConstants.todosRouteName,
+                  path: 'todos',
+                  pageBuilder: (BuildContext context, GoRouterState state) {
+                    return const MaterialPage(child: TodosPage());
+                  }),
+            ]),
+        GoRoute(
+            name: AppRouteConstants.settingsRouteName,
+            path: '/settings',
+            pageBuilder: (BuildContext context, GoRouterState state) {
+              return const MaterialPage(child: SettingsPage());
+            }),
+        GoRoute(
+            name: AppRouteConstants.profileRouteName,
+            path: '/profile',
+            pageBuilder: (BuildContext context, GoRouterState state) {
+              return const MaterialPage(child: ProfilePage());
+            }),
+      ],
+    );
   }
 }
