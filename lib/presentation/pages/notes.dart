@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:notex/data/models/note_model.dart';
+import 'package:notex/presentation/styles/app_colors.dart';
+import 'package:notex/presentation/styles/app_text.dart';
 import 'package:notex/presentation/widgets/note_tile.dart';
 import '../blocs/notes/notes_bloc.dart';
 import '../styles/app_styles.dart';
@@ -59,14 +60,15 @@ class _NotesPageState extends State<NotesPage>
     return BlocConsumer(
       bloc: notesBloc,
       listenWhen: (previous, current) => current is NotesActionState,
-      buildWhen: (previous, current) => current is! NotesActionState || current is NotesEditingState,
+      buildWhen: (previous, current) =>
+          current is! NotesActionState || current is NotesEditingState,
       listener: (context, state) {
         if (state is NotesOperationFailedState) {
           kSnackBar(context, state.reason);
         }
       },
       builder: (context, state) {
-        if(state is NotesState){
+        if (state is NotesState) {
           _isHiddenMode = state.isInHiddenMode;
           _isDeletedMode = state.isInDeletedMode;
         }
@@ -84,85 +86,82 @@ class _NotesPageState extends State<NotesPage>
         }
         int numberOfColumns = SizeConfig.screenWidth! > 600 ? 3 : 2;
         return Scaffold(
-          appBar: null,
           body: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 0),
+            margin: EdgeInsets.symmetric(horizontal: AppSpacing.md),
             width: SizeConfig.screenWidth,
             height: SizeConfig.screenHeight,
-            decoration: const BoxDecoration(gradient: kPageBgGradient),
             child: Stack(
               children: [
                 if (state is NotesEmptyState) ...[
-                  Positioned(
-                    top: 0,
-                    bottom: 0,
-                    left: SizeConfig.screenWidth! * 0.1,
-                    right: SizeConfig.screenWidth! * 0.1,
-                    child:  SvgPicture.asset(
-                      !_isHiddenMode && !_isDeletedMode ? "assets/svg/magnify-glass.svg" : _isHiddenMode ? "assets/svg/incognito.svg" : "assets/svg/delete_icon_light.svg",
-                    )
-                  ),
                   // showed when no notes are found
-                  Positioned(
-                      top: 0,
-                      bottom: 0,
-                      left: SizeConfig.screenWidth! * 0.1,
-                      right: SizeConfig.screenWidth! * 0.1,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                'No',
-                                style: kAppFont.copyWith(
-                                    fontSize: 30, fontWeight: FontWeight.w500),
-                              ),
-                              SizedBox(
-                                height: SizeConfig.blockSizeHorizontal! * 2,
-                              ),
-                              Text(
-                                ' notes',
-                                style: kAppFont.copyWith(
-                                  color: kPink,
-                                  fontSize: 30,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
+                  SizedBox(
+                    width: SizeConfig.screenWidth,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Material(
+                          shape: const CircleBorder(),
+                          color: AppColors.muted,
+                          child: Padding(
+                            padding: EdgeInsets.all(AppSpacing.xl),
+                            child: Icon(
+                              _isHiddenMode
+                                  ? Icons.visibility_off_rounded
+                                  : _isDeletedMode
+                                      ? Icons.delete_rounded
+                                      : Icons.note_add_rounded,
+                              color: AppColors.mutedForeground,
+                              size: AppSpacing.iconSize2Xl,
+                            ),
                           ),
-                          Text(
-                            _isHiddenMode ? 'Hidden' : _isDeletedMode ? 'Deleted' : 'Found',
-                            style: kAppFont.copyWith(
-                                fontSize: 30, fontWeight: FontWeight.w500),
-                          ),
-                          SizedBox(
-                            height: SizeConfig.blockSizeVertical! * 3,
-                          ),
-                          Text(
-                            _isHiddenMode ?
-                            "You can hide a note by long pressing and selecting hide option from the bottom action bar":
-                            _isDeletedMode ? "All deleted notes are retained for 30 days and can be restored.":"You can add new note by pressing\nAdd button at the bottom",
-                            style:
-                                kAppFont.copyWith(fontSize: 15, color: kWhite24),
-                            textAlign: TextAlign.center,
-                          )
-                        ],
-                      )),
+                        ),
+                        SizedBox(
+                          height: AppSpacing.lg,
+                        ),
+                        Text(
+                          'No Notes',
+                          style: AppText.textXlBold,
+                        ),
+                        Text(
+                          _isHiddenMode
+                              ? 'Hidden'
+                              : _isDeletedMode
+                                  ? 'Deleted'
+                                  : 'Found',
+                          style: AppText.textBase,
+                        ),
+                        SizedBox(
+                          height: AppSpacing.md,
+                        ),
+                        Text(
+                          _isHiddenMode
+                              ? "You can hide a note by long pressing and selecting hide option from the bottom action bar"
+                              : _isDeletedMode
+                                  ? "All deleted notes are retained for 30 days and can be restored."
+                                  : "You can add new note by pressing\nAdd button at the bottom",
+                          textAlign: TextAlign.center,
+                          style: AppText.textSm
+                              .copyWith(color: AppColors.mutedForeground),
+                        )
+                      ],
+                    ),
+                  ),
                 ] else if (state is NotesFetchingState) ...[
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const SpinKitRing(
-                        color: kPinkD1,
-                        size: 35,
+                      SpinKitRing(
+                        color: AppColors.primary,
+                        size: AppSpacing.iconSize3Xl,
+                        lineWidth: 5,
                       ),
-                      const SizedBox(height: 10,),
-                      Text(
-                        'This might take a while',
-                        style: kAppFont.copyWith(color: kWhite75,fontSize: 15),textAlign: TextAlign.center,
-                      )
+                      SizedBox(
+                        height: AppSpacing.lg,
+                      ),
+                      Text('This might take a while',
+                          textAlign: TextAlign.center,
+                          style: AppText.textSm
+                              .copyWith(color: AppColors.mutedForeground))
                     ],
                   )
                 ] else if (state is NotesFetchingFailedState) ...[
@@ -170,210 +169,237 @@ class _NotesPageState extends State<NotesPage>
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          'Failed to load notes',
-                          style: kAppFont.copyWith(
-                              fontSize: 22, fontWeight: FontWeight.w600),
+                        Material(
+                          shape: const CircleBorder(),
+                          color: AppColors.muted,
+                          child: Padding(
+                            padding: EdgeInsets.all(AppSpacing.xl),
+                            child: Icon(
+                              _isHiddenMode
+                                  ? Icons.visibility_off_rounded
+                                  : _isDeletedMode
+                                      ? Icons.delete_rounded
+                                      : Icons.note_add_rounded,
+                              color: AppColors.mutedForeground,
+                              size: AppSpacing.iconSize2Xl,
+                            ),
+                          ),
                         ),
                         SizedBox(
-                          height: SizeConfig.blockSizeVertical! * 2,
+                          height: AppSpacing.lg,
+                        ),
+                        Text(
+                          'Failed to load notes',
+                          style: AppText.textXlBold,
+                        ),
+                        SizedBox(
+                          height: AppSpacing.md,
                         ),
                         Text(
                           state.reason,
-                          style: kAppFont.copyWith(fontSize: 14),
+                          textAlign: TextAlign.center,
+                          style: AppText.textSm
+                              .copyWith(color: AppColors.mutedForeground),
                         ),
                       ],
                     ),
                   )
                 ] else if (state is NotesFetchedState ||
                     state is NotesEditingState) ...[
-                  Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 25, vertical: 0),
-                    child:
-                        NotificationListener<OverscrollIndicatorNotification>(
-                      onNotification: (overScroll) {
-                        overScroll.disallowIndicator();
-                        return true;
-                      },
-                      child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            if (_isSyncing) ...[
-                              SizedBox(
-                                height: SizeConfig.blockSizeVertical! * 3,
-                              ),
-                              AnimationConfiguration.synchronized(
-                                duration: const Duration(milliseconds: 375),
-                                child: FlipAnimation(
-                                  child: FadeInAnimation(
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 15, vertical: 15),
-                                      decoration: BoxDecoration(
-                                          color: kPinkD2,
-                                          borderRadius:
-                                              BorderRadius.circular(15),
-                                          border: Border.all(
-                                              color: kPinkD1, width: 1.0)),
-                                      child: Row(
-                                        children: [
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  '$_noOfNotesSyncing ${_noOfNotesSyncing == 1 ? 'note is' : "notes are"} syncing',
-                                                  style: kAppFont.copyWith(
-                                                      fontSize: 15),
-                                                ),
-                                                const SizedBox(
-                                                  height: 5,
-                                                ),
-                                                Text(
-                                                  'Please do not quit',
-                                                  style: kAppFont.copyWith(
-                                                      fontSize: 15),
-                                                )
-                                              ],
-                                            ),
+                  NotificationListener<OverscrollIndicatorNotification>(
+                    onNotification: (overScroll) {
+                      overScroll.disallowIndicator();
+                      return true;
+                    },
+                    child: SingleChildScrollView(
+                      padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (_isSyncing) ...[
+                            AnimationConfiguration.synchronized(
+                              duration: const Duration(milliseconds: 375),
+                              child: FlipAnimation(
+                                child: FadeInAnimation(
+                                  child: Container(
+                                    margin: EdgeInsets.symmetric(
+                                        vertical: AppSpacing.md),
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: AppSpacing.md,
+                                        vertical: AppSpacing.md),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.secondary,
+                                      borderRadius: AppBorderRadius.xxl,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                '$_noOfNotesSyncing ${_noOfNotesSyncing == 1 ? 'note is' : "notes are"} syncing',
+                                                style: AppText.textBase,
+                                              ),
+                                              SizedBox(
+                                                height: AppSpacing.sm,
+                                              ),
+                                              Text(
+                                                'PLEASE DO NOT QUIT',
+                                                style: AppText.textSmBold
+                                                    .copyWith(
+                                                        color: AppColors
+                                                            .mutedForeground),
+                                              )
+                                            ],
                                           ),
-                                          const SpinKitRing(
-                                            color: kWhite,
-                                            lineWidth: 3.0,
-                                            size: 20,
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              )
-                            ],
-                            if (!notesBloc.isSelectedNotesStreamClosed)
-                              StreamBuilder<List<NoteModel>>(
-                                stream: notesBloc.selectedNotesStream,
-                                builder: (context, snapshot) {
-                                  if (snapshot.hasData) {
-                                    if (snapshot.data != null) {
-                                      final selectedNotes = snapshot.data!;
-                                      final selectedNotesCount =
-                                          selectedNotes.length;
-                                      return Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 20),
-                                        child: Text(
-                                          'Selected (${selectedNotesCount.toString()})',
-                                          style: kAppFont.copyWith(
-                                              fontSize: 35,
-                                              fontWeight: FontWeight.w500),
                                         ),
-                                      );
-                                    } else {
-                                      return const SizedBox.shrink();
-                                    }
-                                  } else {
-                                    // Handle the case when the snapshot doesn't have data yet
-                                    return const SizedBox.shrink();
-                                  }
-                                },
-                              ),
-                            SizedBox(
-                              height: !_isSyncing ||
-                                      !notesBloc.isSelectedNotesStreamClosed
-                                  ? SizeConfig.blockSizeVertical! * 3
-                                  : SizeConfig.blockSizeVertical! * 2,
-                            ),
-                            if(_isHiddenMode && state is! NotesEditingState && !_isSyncing) ...[
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Hidden',
-                                    style: kAppFont.copyWith(fontSize: 30,fontWeight: FontWeight.w500),
-                                  ),
-                                  Text(
-                                    ' Notes (${_notes.length})',
-                                    style: kAppFont.copyWith(fontSize: 30,fontWeight: FontWeight.w500,color: kPink),
-                                  ),
-                                ],
-                              ),
-                              const Divider(
-                                color: kPinkD1,
-                                endIndent: 25,indent: 25,
-                              ),
-                              SizedBox(
-                                height: !_isSyncing ||
-                                    !notesBloc.isSelectedNotesStreamClosed
-                                    ? SizeConfig.blockSizeVertical! * 3
-                                    : SizeConfig.blockSizeVertical! * 2,
-                              ),
-                            ] else if(_isDeletedMode && state is! NotesEditingState && !_isSyncing) ...[
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Deleted',
-                                    style: kAppFont.copyWith(fontSize: 30,fontWeight: FontWeight.w500),
-                                  ),
-                                  Text(
-                                    ' Notes (${_notes.length})',
-                                    style: kAppFont.copyWith(fontSize: 30,fontWeight: FontWeight.w500,color: kPink),
-                                  ),
-                                ],
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 5),
-                                child: Center(
-                                  child: Text(
-                                    '(Deleted notes are retained for 30 days)',
-                                    style: kAppFont.copyWith(fontSize: 12,color: kWhite75),
+                                        SpinKitRing(
+                                          color: AppColors.primary,
+                                          lineWidth: 3.0,
+                                          size: AppSpacing.iconSizeXl,
+                                        )
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
-                              const Divider(
-                                color: kPinkD1,
-                                endIndent: 25,indent: 25,
-                              ),
-                              SizedBox(
-                                height: !_isSyncing ||
-                                    !notesBloc.isSelectedNotesStreamClosed
-                                    ? SizeConfig.blockSizeVertical! * 3
-                                    : SizeConfig.blockSizeVertical! * 2,
-                              ),
-                            ],
-                            MasonryGridView.count(
-                              crossAxisCount: numberOfColumns,
-                              mainAxisSpacing: 10,
-                              crossAxisSpacing: 10,
-                              physics: const NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              itemCount: _notes.length,
-                              itemBuilder:
-                                  (BuildContext context, int notesIndex) {
-                                final notes = _notes;
-                                final note = notes[notesIndex];
-                                // not being used as staggeredTileBuilder is not provided for this widget
-                                bool isLongText = isTextLong(note.title, 18);
-                                return AnimationConfiguration.staggeredGrid(
-                                  position: notesIndex,
-                                  duration: const Duration(milliseconds: ANIMATION_DURATION),
-                                  columnCount: isLongText ? 1 : numberOfColumns,
-                                  child: ScaleAnimation(
-                                    child: FadeInAnimation(
-                                      child: NoteTile(
-                                        note: note,
-                                        notesBloc: notesBloc,
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              },
                             )
                           ],
-                        ),
+                          if (!notesBloc.isSelectedNotesStreamClosed)
+                            StreamBuilder<List<NoteModel>>(
+                              stream: notesBloc.selectedNotesStream,
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                  if (snapshot.data != null) {
+                                    final selectedNotes = snapshot.data!;
+                                    final selectedNotesCount =
+                                        selectedNotes.length;
+                                    return Padding(
+                                      padding: EdgeInsets.only(
+                                          bottom: AppSpacing.lg,
+                                          top: AppSpacing.md),
+                                      child: RichText(
+                                          text: TextSpan(children: [
+                                        TextSpan(
+                                            text: 'Selected ',
+                                            style: AppText.textBaseMedium
+                                                .copyWith(
+                                                    color:
+                                                        AppColors.foreground)),
+                                        TextSpan(
+                                            text: '$selectedNotesCount ',
+                                            style: AppText.textLgBold.copyWith(
+                                                color: AppColors.primary)),
+                                      ])),
+                                    );
+                                  } else {
+                                    return const SizedBox.shrink();
+                                  }
+                                } else {
+                                  // Handle the case when the snapshot doesn't have data yet
+                                  return const SizedBox.shrink();
+                                }
+                              },
+                            ),
+                          if (_isHiddenMode &&
+                              state is! NotesEditingState &&
+                              !_isSyncing) ...[
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: AppSpacing.md,
+                                  vertical: AppSpacing.sm),
+                              decoration: BoxDecoration(
+                                  color: AppColors.muted,
+                                  borderRadius: AppBorderRadius.full),
+                              child: Center(
+                                child: RichText(
+                                    text: TextSpan(children: [
+                                  TextSpan(
+                                      text: 'Hidden ',
+                                      style: AppText.textBaseMedium.copyWith(
+                                          color: AppColors.foreground)),
+                                  TextSpan(
+                                      text: '${_notes.length}',
+                                      style: AppText.textLgBold
+                                          .copyWith(color: AppColors.primary)),
+                                ])),
+                              ),
+                            ),
+                            SizedBox(
+                              height: AppSpacing.md,
+                            ),
+                          ] else if (_isDeletedMode &&
+                              state is! NotesEditingState &&
+                              !_isSyncing) ...[
+                            Container(
+                              width: double.maxFinite,
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: AppSpacing.md,
+                                  vertical: AppSpacing.sm),
+                              decoration: BoxDecoration(
+                                  color: AppColors.muted,
+                                  borderRadius: AppBorderRadius.full),
+                              child: Column(
+                                children: [
+                                  RichText(
+                                      text: TextSpan(children: [
+                                    TextSpan(
+                                        text: 'Deleted ',
+                                        style: AppText.textBaseMedium.copyWith(
+                                            color: AppColors.foreground)),
+                                    TextSpan(
+                                        text: '${_notes.length}',
+                                        style: AppText.textLgBold.copyWith(
+                                            color: AppColors.primary)),
+                                  ])),
+                                  SizedBox(
+                                    height: AppSpacing.sm,
+                                  ),
+                                  Text(
+                                    '(Deleted notes are retained for 30 days)',
+                                    style: AppText.textSm.copyWith(
+                                        color: AppColors.mutedForeground),
+                                  )
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              height: AppSpacing.md,
+                            ),
+                          ],
+                          MasonryGridView.count(
+                            crossAxisCount: numberOfColumns,
+                            mainAxisSpacing: AppSpacing.md,
+                            crossAxisSpacing: AppSpacing.md,
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: _notes.length,
+                            itemBuilder:
+                                (BuildContext context, int notesIndex) {
+                              final notes = _notes;
+                              final note = notes[notesIndex];
+                              // not being used as staggeredTileBuilder is not provided for this widget
+                              bool isLongText = isTextLong(
+                                  note.title, 16 * SizeConfig.textScaleFactor!);
+                              return AnimationConfiguration.staggeredGrid(
+                                position: notesIndex,
+                                duration: const Duration(
+                                    milliseconds: ANIMATION_DURATION),
+                                columnCount: isLongText ? 1 : numberOfColumns,
+                                child: ScaleAnimation(
+                                  child: FadeInAnimation(
+                                    child: NoteTile(
+                                      note: note,
+                                      notesBloc: notesBloc,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          )
+                        ],
                       ),
                     ),
                   ),
