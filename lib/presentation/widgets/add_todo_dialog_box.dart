@@ -40,19 +40,21 @@ Future<DateTime?> showDateTimePicker({
 
   final TimeOfDay? selectedTime = await showTimePicker(
     context: context,
-    initialTime: TimeOfDay.fromDateTime(DateTime.now().add(const Duration(seconds: 70))),
+    initialTime:
+        TimeOfDay.fromDateTime(DateTime.now().add(const Duration(seconds: 70))),
   );
 
   return selectedTime == null
       ? selectedDate
       : DateTime(
-    selectedDate.year,
-    selectedDate.month,
-    selectedDate.day,
-    selectedTime.hour,
-    selectedTime.minute,
-  );
+          selectedDate.year,
+          selectedDate.month,
+          selectedDate.day,
+          selectedTime.hour,
+          selectedTime.minute,
+        );
 }
+
 class _AddTodoDialogBoxState extends State<AddTodoDialogBox> {
   final TextEditingController _todoController = TextEditingController();
   DateTime? _expireTime = DateTime.now().add(const Duration(hours: 6)).toUtc();
@@ -63,7 +65,6 @@ class _AddTodoDialogBoxState extends State<AddTodoDialogBox> {
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(10.0))),
       contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-      backgroundColor: kPinkD2,
       titlePadding: EdgeInsets.zero,
       actionsAlignment: MainAxisAlignment.start,
       actionsPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -78,7 +79,6 @@ class _AddTodoDialogBoxState extends State<AddTodoDialogBox> {
                 splashRadius: 15,
                 icon: const Icon(
                   Icons.close,
-                  color: kWhite,
                   size: 20,
                 ),
                 onPressed: () {
@@ -89,7 +89,6 @@ class _AddTodoDialogBoxState extends State<AddTodoDialogBox> {
             Center(
               child: Text(
                 'New To-Do',
-                style: kAppFont.copyWith(fontWeight: FontWeight.w600),
               ),
             ),
             Align(
@@ -98,16 +97,16 @@ class _AddTodoDialogBoxState extends State<AddTodoDialogBox> {
                 splashRadius: 15,
                 icon: const Icon(
                   Icons.check,
-                  color: kPink,
                   size: 20,
                 ),
-                onPressed: () async{
+                onPressed: () async {
                   if (_todoController.text.isEmpty) {
                     kSnackBar(context, "please fill in required fields");
                   } else {
                     // add task
                     final userData = USER.data;
-                    final todo = TodoModel(id: const Uuid().v4(),
+                    final todo = TodoModel(
+                        id: const Uuid().v4(),
                         userId: userData!.userId,
                         body: _todoController.text,
                         isCompleted: false,
@@ -125,13 +124,10 @@ class _AddTodoDialogBoxState extends State<AddTodoDialogBox> {
         ),
       ),
       content: TextField(
-        style: kAppFont.copyWith(fontSize: 18),
         controller: _todoController,
         maxLines: 3,
         minLines: 1,
         keyboardType: TextInputType.emailAddress,
-        cursorColor: kWhite,
-        decoration: kTextFieldDecorationT1,
       ),
       actions: [
         Row(
@@ -140,10 +136,9 @@ class _AddTodoDialogBoxState extends State<AddTodoDialogBox> {
               splashRadius: 20,
               icon: const Icon(
                 Icons.notification_add,
-                color: kWhite,
                 size: 20,
               ),
-              onPressed: () async{
+              onPressed: () async {
                 // show pick end date settings
                 _expireTime = await showDateTimePicker(context: context);
                 setState(() {
@@ -152,18 +147,16 @@ class _AddTodoDialogBoxState extends State<AddTodoDialogBox> {
               },
             ),
             // const SizedBox(width: 5,),
-            if(_expireTime != null)
-            Container(
-              decoration: BoxDecoration(
-                color: kPink.withOpacity(0.75),
-                borderRadius: BorderRadius.circular(18)
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 6),
-              child: Text(
-                DateFormat('h:mm a, d MMMM y').format(_expireTime!),
-                style: kAppFont.copyWith(fontSize: 13,color: kWhite,fontWeight: FontWeight.w600),
-              ),
-            )
+            if (_expireTime != null)
+              Container(
+                decoration:
+                    BoxDecoration(borderRadius: BorderRadius.circular(18)),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                child: Text(
+                  DateFormat('h:mm a, d MMMM y').format(_expireTime!),
+                ),
+              )
           ],
         )
       ],
