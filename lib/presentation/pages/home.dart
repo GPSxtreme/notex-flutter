@@ -9,7 +9,8 @@ import 'package:notex/presentation/blocs/notes/notes_bloc.dart';
 import 'package:notex/presentation/blocs/todos/todos_bloc.dart';
 import 'package:notex/presentation/pages/notes.dart';
 import 'package:notex/presentation/pages/todos.dart';
-import 'package:notex/presentation/styles/app_styles.dart';
+import 'package:notex/presentation/styles/app_colors.dart';
+import 'package:notex/presentation/styles/app_text.dart';
 import '../../core/config/api_routes.dart';
 import '../../core/repositories/auth_repository.dart';
 import '../../main.dart';
@@ -42,141 +43,74 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
-  Color getColor(Set<MaterialState> states) {
-    const Set<MaterialState> interactiveStates = <MaterialState>{
-      MaterialState.pressed,
-      MaterialState.hovered,
-      MaterialState.focused,
-    };
-    if (states.any(interactiveStates.contains)) {
-      return kPink;
-    }
-    return kPink;
-  }
+  Widget _buildActionLabelButton(
+          IconData icon, String label, void Function() onTap) =>
+      Padding(
+        padding: EdgeInsets.only(top: AppSpacing.sm, bottom: AppSpacing.md),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Material(
+              color: Colors.transparent,
+              shape: const CircleBorder(),
+              child: InkWell(
+                onTap: onTap,
+                borderRadius: AppBorderRadius.full,
+                child: Padding(
+                  padding: EdgeInsets.all(AppSpacing.sm),
+                  child: Icon(
+                    icon,
+                    color: AppColors.primary,
+                    size: AppSpacing.iconSize2Xl,
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: AppSpacing.xs),
+              child: Text(
+                label,
+                style: AppText.textSmMedium
+                    .copyWith(color: AppColors.mutedForeground),
+              ),
+            )
+          ],
+        ),
+      );
 
   Widget _buildBottomActionBar() {
-    return Container(
-      color: kPinkD1,
-      height: kBottomNavigationBarHeight,
+    return Material(
+      color: AppColors.secondary,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          SizedBox.fromSize(
-            size: const Size(
-                kBottomNavigationBarHeight, kBottomNavigationBarHeight),
-            // button width and height
-            child: ClipOval(
-              child: Material(
-                color: Colors.transparent, // button color
-                child: InkWell(
-                  splashColor: kPinkD2, // splash color
-                  onTap: () {
-                    if (_currentPageIndex == 1) {
-                      todosBloc.add(TodosDeleteSelectedTodosEvent());
-                    } else if (_currentPageIndex == 0) {
-                      notesBloc.add(NotesDeleteSelectedNotesEvent(
-                          isInHiddenMode: _isNotesHiddenMode));
-                    }
-                  }, // button pressed
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      SvgPicture.asset(
-                        'assets/svg/delete_icon.svg',
-                      ), // icon
-                      Padding(
-                        padding: const EdgeInsets.only(top: 5),
-                        child: Text(
-                          'Delete',
-                          style: kAppFont.copyWith(color: kWhite, fontSize: 12),
-                        ),
-                      ), // text
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-          SizedBox.fromSize(
-            size: const Size(
-                kBottomNavigationBarHeight, kBottomNavigationBarHeight),
-            // button width and height
-            child: ClipOval(
-              child: Material(
-                color: Colors.transparent, // button color
-                child: InkWell(
-                  splashColor: kPinkD2, // splash color
-                  onTap: () {
-                    if (_currentPageIndex == 1) {
-                      // sync to-do
-                      todosBloc.add(TodosSyncSelectedTodosEvent());
-                    } else if (_currentPageIndex == 0) {
-                      // sync note
-                      notesBloc.add(NotesSyncSelectedNotesEvent(
-                          isInHiddenMode: _isNotesHiddenMode));
-                    }
-                  }, // button pressed
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      const Icon(
-                        Icons.sync,
-                        color: kWhite,
-                        size: 30,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 5),
-                        child: Text(
-                          'sync',
-                          style: kAppFont.copyWith(color: kWhite, fontSize: 12),
-                        ),
-                      ), // text
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
+          _buildActionLabelButton(Icons.delete_rounded, "Delete", () {
+            if (_currentPageIndex == 1) {
+              todosBloc.add(TodosDeleteSelectedTodosEvent());
+            } else if (_currentPageIndex == 0) {
+              notesBloc.add(NotesDeleteSelectedNotesEvent(
+                  isInHiddenMode: _isNotesHiddenMode));
+            }
+          }),
+          _buildActionLabelButton(Icons.sync_rounded, "Sync", () {
+            if (_currentPageIndex == 1) {
+              // sync to-do
+              todosBloc.add(TodosSyncSelectedTodosEvent());
+            } else if (_currentPageIndex == 0) {
+              // sync note
+              notesBloc.add(NotesSyncSelectedNotesEvent(
+                  isInHiddenMode: _isNotesHiddenMode));
+            }
+          }),
           if (_currentPageIndex == 0)
-            SizedBox.fromSize(
-              size: const Size(56, 56), // button width and height
-              child: ClipOval(
-                child: Material(
-                  color: Colors.transparent, // button color
-                  child: InkWell(
-                    splashColor: kPinkD2, // splash color
-                    onTap: () {
-                      !_isNotesHiddenMode
-                          ? notesBloc.add(NotesHideSelectedNotesEvent())
-                          : notesBloc.add(NotesUnHideSelectedNotesEvent(
-                              isInHiddenMode: _isNotesHiddenMode));
-                    }, // button pressed
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        !_isNotesHiddenMode
-                            ? SvgPicture.asset(
-                                'assets/svg/hide_icon.svg',
-                              )
-                            : const Icon(
-                                Icons.visibility,
-                                color: kWhite,
-                                size: 30,
-                              ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 5),
-                          child: Text(
-                            !_isNotesHiddenMode ? 'Hide' : 'Unhide',
-                            style:
-                                kAppFont.copyWith(color: kWhite, fontSize: 12),
-                          ),
-                        ), // text
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
+            _buildActionLabelButton(
+                _isNotesHiddenMode ? Icons.visibility_off : Icons.visibility,
+                !_isNotesHiddenMode ? 'Hide' : 'Unhide', () {
+              !_isNotesHiddenMode
+                  ? notesBloc.add(NotesHideSelectedNotesEvent())
+                  : notesBloc.add(NotesUnHideSelectedNotesEvent(
+                      isInHiddenMode: _isNotesHiddenMode));
+            })
         ],
       ),
     );
@@ -188,8 +122,11 @@ class _HomePageState extends State<HomePage> {
         _pageController.animateToPage(index,
             duration: const Duration(milliseconds: 500), curve: Curves.ease);
       },
+      selectedLabelStyle:
+          AppText.textBaseMedium.copyWith(color: AppColors.primary),
+      unselectedLabelStyle: AppText.textBaseMedium,
       currentIndex: _currentPageIndex,
-      backgroundColor: kPinkD1,
+      useLegacyColorScheme: false,
       items: [
         BottomNavigationBarItem(
             icon: SvgPicture.asset(
@@ -197,16 +134,14 @@ class _HomePageState extends State<HomePage> {
             ),
             activeIcon: SvgPicture.asset(
               'assets/svg/notes_icon.svg',
-              color: kPink,
             ),
-            label: "notes"),
+            label: "Notes"),
         BottomNavigationBarItem(
             icon: SvgPicture.asset('assets/svg/todo_icon.svg'),
             activeIcon: SvgPicture.asset(
               'assets/svg/todo_icon.svg',
-              color: kPink,
             ),
-            label: "todo")
+            label: "Todo")
       ],
     );
   }
@@ -264,11 +199,6 @@ class _HomePageState extends State<HomePage> {
                 : false;
 
             return AdvancedDrawer(
-              backdrop: Container(
-                width: double.infinity,
-                height: double.infinity,
-                decoration: const BoxDecoration(color: kPinkD3),
-              ),
               controller: _advancedDrawerController,
               animationCurve: Curves.easeInOut,
               animationDuration: const Duration(milliseconds: 300),
@@ -292,8 +222,6 @@ class _HomePageState extends State<HomePage> {
                 color: Colors.transparent,
                 child: SafeArea(
                   child: ListTileTheme(
-                    textColor: kWhite,
-                    iconColor: kPinkD1,
                     contentPadding: EdgeInsets.zero,
                     child: Column(
                       mainAxisSize: MainAxisSize.max,
@@ -312,7 +240,6 @@ class _HomePageState extends State<HomePage> {
                                 bottom: !USER.data!.isEmailVerified ? 20 : 30),
                             clipBehavior: Clip.antiAlias,
                             decoration: const BoxDecoration(
-                              color: kPink,
                               shape: BoxShape.circle,
                             ),
                             child: ClipOval(
@@ -328,13 +255,11 @@ class _HomePageState extends State<HomePage> {
                                     (context, url, downloadProgress) =>
                                         CircularProgressIndicator(
                                   value: downloadProgress.progress,
-                                  color: kPink,
                                 ),
                                 errorWidget: (context, url, error) =>
                                     const Icon(
                                   Icons.person,
                                   size: 70,
-                                  color: kWhite,
                                 ),
                                 width: 128.0,
                                 height: 128.0,
@@ -344,54 +269,78 @@ class _HomePageState extends State<HomePage> {
                         ),
                         if (!USER.data!.isEmailVerified)
                           Container(
-                            margin: const EdgeInsets.only(bottom: 15),
-                            child: ListTile(
-                              splashColor: kPinkD1,
-                              contentPadding:
-                                  const EdgeInsets.symmetric(horizontal: 30),
-                              leading: const Icon(
-                                Ionicons.alert_circle_outline,
-                                color: Colors.yellow,
-                                size: 35,
+                              margin: EdgeInsets.only(bottom: AppSpacing.sm),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: AppSpacing.md,
+                                  vertical: AppSpacing.md),
+                              decoration: const BoxDecoration(
+                                color: AppColors.background,
+                                borderRadius: BorderRadius.only(
+                                    topRight: Radius.circular(16),
+                                    bottomRight: Radius.circular(16)),
                               ),
-                              title: Text(
-                                'Account not verified',
-                                style: kAppFont.copyWith(fontSize: 16),
-                              ),
-                              subtitle: Text(
-                                'Go to settings to start verification',
-                                style: kAppFont.copyWith(fontSize: 12),
-                              ),
-                            ),
-                          ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Ionicons.alert_circle_outline,
+                                    color: Colors.yellow,
+                                    size: AppSpacing.iconSize3Xl,
+                                  ),
+                                  SizedBox(
+                                    width: AppSpacing.md,
+                                  ),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "Account not verified",
+                                          style: AppText.textLgSemiBold,
+                                        ),
+                                        SizedBox(
+                                          height: AppSpacing.sm,
+                                        ),
+                                        Text(
+                                            "Go to settings to start verification",
+                                            style: AppText.textSm.copyWith(
+                                                color:
+                                                    AppColors.mutedForeground)),
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              )),
                         ListTile(
-                          splashColor: kPinkD1,
                           onTap: () {
                             _advancedDrawerController.hideDrawer();
                             GoRouter.of(context)
                                 .pushNamed(AppRouteConstants.profileRouteName);
                           },
                           contentPadding:
-                              const EdgeInsets.symmetric(horizontal: 30),
-                          leading: const Icon(Icons.account_circle_rounded),
-                          title: Text(
-                            'profile',
-                            style: kAppFont,
+                              EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+                          leading: const Icon(
+                            Icons.account_circle_rounded,
+                            color: AppColors.mutedForeground,
+                          ),
+                          title: const Text(
+                            'Profile',
                           ),
                         ),
                         ListTile(
-                          splashColor: kPinkD1,
                           onTap: () {
                             _advancedDrawerController.hideDrawer();
                             GoRouter.of(context)
                                 .pushNamed(AppRouteConstants.settingsRouteName);
                           },
                           contentPadding:
-                              const EdgeInsets.symmetric(horizontal: 30),
-                          leading: const Icon(Icons.settings),
-                          title: Text(
-                            'settings',
-                            style: kAppFont,
+                              EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+                          leading: const Icon(
+                            Icons.settings,
+                            color: AppColors.mutedForeground,
+                          ),
+                          title: const Text(
+                            'Settings',
                           ),
                         ),
                       ],
@@ -401,9 +350,7 @@ class _HomePageState extends State<HomePage> {
               ),
               child: Scaffold(
                 key: _scaffoldKey,
-                backgroundColor: kPageBgEnd,
                 appBar: AppBar(
-                  backgroundColor: kPageBgStart,
                   centerTitle: true,
                   elevation: 0,
                   leadingWidth: 100,
@@ -438,7 +385,7 @@ class _HomePageState extends State<HomePage> {
                   title: !isInEditing
                       ? SvgPicture.asset(
                           'assets/svg/app_logo_v2.svg',
-                          height: SizeConfig.blockSizeVertical! * 4,
+                          height: SizeConfig.blockSizeVertical! * 3.5,
                         )
                       : SizedBox(
                           width: SizeConfig.screenWidth! * 0.95,
@@ -452,7 +399,6 @@ class _HomePageState extends State<HomePage> {
                                   splashRadius: 20,
                                   icon: const Icon(
                                     Icons.close,
-                                    color: kWhite,
                                     size: 30,
                                   ),
                                   onPressed: () {
@@ -474,13 +420,9 @@ class _HomePageState extends State<HomePage> {
                                       value: _currentPageIndex == 0
                                           ? _selectAllNotes
                                           : _selectAllTodos,
-                                      checkColor: kPinkD1,
                                       shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(10)),
-                                      fillColor:
-                                          MaterialStateProperty.resolveWith(
-                                              getColor),
                                       onChanged: (bool? value) {
                                         if (value != null) {
                                           // select / unselect all tiles.
@@ -508,16 +450,14 @@ class _HomePageState extends State<HomePage> {
                   actions: !isFetching && !isInEditing
                       ? [
                           Padding(
-                            padding: EdgeInsets.zero,
+                            padding: EdgeInsets.only(right: AppSpacing.md),
                             child: PopupMenuButton<String>(
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                              color: kPinkD2,
                               icon: const Icon(
                                 Ionicons.ellipsis_vertical,
                                 size: 25,
-                                color: kWhite,
                               ),
                               splashRadius: 20,
                               onSelected: (value) {
@@ -557,38 +497,32 @@ class _HomePageState extends State<HomePage> {
                               },
                               itemBuilder: (BuildContext context) {
                                 return [
-                                  PopupMenuItem<String>(
+                                  const PopupMenuItem<String>(
                                     value: 'refetch',
                                     child: ListTile(
                                       contentPadding:
-                                          const EdgeInsets.symmetric(
-                                              vertical: 0),
+                                          EdgeInsets.symmetric(vertical: 0),
                                       horizontalTitleGap: 15,
-                                      leading: const Icon(
+                                      leading: Icon(
                                         Icons.refresh,
-                                        color: kPinkD1,
                                       ),
                                       title: Text(
                                         'Reload',
-                                        style: kAppFont.copyWith(fontSize: 13),
                                       ),
                                       tileColor: Colors.transparent,
                                     ),
                                   ),
-                                  PopupMenuItem<String>(
+                                  const PopupMenuItem<String>(
                                     value: 'sync',
                                     child: ListTile(
                                       contentPadding:
-                                          const EdgeInsets.symmetric(
-                                              vertical: 0),
+                                          EdgeInsets.symmetric(vertical: 0),
                                       horizontalTitleGap: 15,
-                                      leading: const Icon(
+                                      leading: Icon(
                                         Icons.sync,
-                                        color: kPinkD1,
                                       ),
                                       title: Text(
                                         'Sync All',
-                                        style: kAppFont.copyWith(fontSize: 13),
                                       ),
                                       tileColor: Colors.transparent,
                                     ),
@@ -605,14 +539,11 @@ class _HomePageState extends State<HomePage> {
                                           !_isNotesHiddenMode
                                               ? Icons.visibility
                                               : Icons.visibility_off,
-                                          color: kPinkD1,
                                         ),
                                         title: Text(
                                           !_isNotesHiddenMode
                                               ? 'Show Hidden'
                                               : 'Hide Hidden',
-                                          style:
-                                              kAppFont.copyWith(fontSize: 13),
                                         ),
                                         tileColor: Colors.transparent,
                                       ),
@@ -629,14 +560,11 @@ class _HomePageState extends State<HomePage> {
                                           !_isNotesDeletedMode
                                               ? Icons.delete
                                               : Icons.hide_source,
-                                          color: kPinkD1,
                                         ),
                                         title: Text(
                                           !_isNotesDeletedMode
                                               ? 'Show Deleted'
                                               : 'Hide Deleted',
-                                          style:
-                                              kAppFont.copyWith(fontSize: 13),
                                         ),
                                         tileColor: Colors.transparent,
                                       ),
@@ -653,7 +581,6 @@ class _HomePageState extends State<HomePage> {
                         !(_currentPageIndex == 0 &&
                             (_isNotesHiddenMode || _isNotesDeletedMode))
                     ? FloatingActionButton(
-                        backgroundColor: kPink,
                         onPressed: () {
                           switch (_currentPageIndex) {
                             case 0: // notes page
@@ -671,9 +598,8 @@ class _HomePageState extends State<HomePage> {
                           }
                         },
                         child: Icon(
-                          Icons.add,
-                          color: kWhite,
-                          size: SizeConfig.blockSizeVertical! * 5,
+                          Icons.add_rounded,
+                          size: AppSpacing.iconSize2Xl,
                         ),
                       )
                     : null,
