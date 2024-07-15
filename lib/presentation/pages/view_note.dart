@@ -7,6 +7,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:markdown_widget/markdown_widget.dart';
 import 'package:notex/data/models/note_model.dart';
 import 'package:notex/presentation/blocs/notes/notes_bloc.dart';
+import 'package:notex/presentation/styles/app_colors.dart';
 import 'package:notex/presentation/styles/app_styles.dart';
 import 'package:notex/presentation/widgets/common_widgets.dart';
 import 'package:notex/presentation/widgets/custom_image_builder.dart';
@@ -167,20 +168,15 @@ class _ViewNotePageState extends State<ViewNotePage> {
           children: [
             Text(
               key,
-              style:
-                  kAppFont.copyWith(fontSize: 15, fontWeight: FontWeight.w400),
             ),
             Text(
               value,
-              style:
-                  kAppFont.copyWith(fontSize: 15, fontWeight: FontWeight.w400),
             )
           ],
         ),
       );
 
   divider() => Divider(
-        color: kPinkD1.withOpacity(0.3),
         thickness: 1.0,
         indent: 20,
         endIndent: 20,
@@ -188,7 +184,6 @@ class _ViewNotePageState extends State<ViewNotePage> {
 
   void _showNoteDetails() => showModalBottomSheet(
         showDragHandle: true,
-        backgroundColor: kPinkD2,
         context: context,
         builder: (BuildContext context) {
           return Column(
@@ -249,7 +244,7 @@ class _ViewNotePageState extends State<ViewNotePage> {
     </head>
     <body>
       <h1 style="text-align: center; margin-top:30px">${_headingController.text.trim()}</h1>
-      <div style="display:flex; flex-direction:row; justify-content:space-between;"> 
+      <div style="display:flex; flex-direction:row; justify-content:space-between;">
         <div>
           <h4>Created <span style="color:#d09ef9;">${DateFormat('d MMMM, h:mm a').format(note.editedTime.toLocal())} </span></h4>
            <h4>By <span style="color:#d09ef9;">${USER.data!.name}</span></h4>
@@ -277,7 +272,6 @@ class _ViewNotePageState extends State<ViewNotePage> {
   }
 
   void _showShareOptions() => showModalBottomSheet(
-        backgroundColor: kPinkD2,
         showDragHandle: true,
         context: context,
         builder: (BuildContext context) {
@@ -287,14 +281,12 @@ class _ViewNotePageState extends State<ViewNotePage> {
               ListTile(
                 leading: const Icon(
                   Icons.text_fields,
-                  color: kWhite,
                 ),
                 title: Text(
                   'Share as text',
-                  style: kAppFont,
                 ),
                 onTap: () async {
-                  await Share.shareWithResult(
+                  await Share.share(
                       '${_headingController.text}\n${_bodyController.text}',
                       subject: 'Sharing note from notex.');
                 },
@@ -302,11 +294,9 @@ class _ViewNotePageState extends State<ViewNotePage> {
               ListTile(
                 leading: const Icon(
                   Icons.picture_as_pdf,
-                  color: kWhite,
                 ),
                 title: Text(
                   'Share as pdf',
-                  style: kAppFont,
                 ),
                 onTap: () async {
                   await shareNoteAsPdfWithHtmlToPdf();
@@ -340,12 +330,9 @@ class _ViewNotePageState extends State<ViewNotePage> {
     if (_isLoading) {
       return Scaffold(
         body: Container(
-          decoration: const BoxDecoration(
-            gradient: kPageBgGradient,
-          ),
           child: const Center(
             child: SpinKitRing(
-              color: kWhite,
+              color: AppColors.primary,
               size: 35,
             ),
           ),
@@ -366,9 +353,7 @@ class _ViewNotePageState extends State<ViewNotePage> {
         }
       },
       child: Scaffold(
-        backgroundColor: kPageBgStart,
         appBar: AppBar(
-          backgroundColor: kPageBgStart,
           elevation: 0,
           leadingWidth: SizeConfig.blockSizeHorizontal! * 25,
           leading: Builder(
@@ -421,7 +406,6 @@ class _ViewNotePageState extends State<ViewNotePage> {
                         },
                         icon: const Icon(
                           Icons.undo,
-                          color: kWhite,
                         )),
                     IconButton(
                         splashRadius: 20,
@@ -436,7 +420,6 @@ class _ViewNotePageState extends State<ViewNotePage> {
                         },
                         icon: const Icon(
                           Icons.redo,
-                          color: kWhite,
                         )),
                   ],
                 ),
@@ -453,9 +436,8 @@ class _ViewNotePageState extends State<ViewNotePage> {
                 icon: !_isInEditing
                     ? const Icon(
                         Icons.edit,
-                        color: kWhite,
                       )
-                    : const Icon(Icons.check, color: kWhite)),
+                    : const Icon(Icons.check)),
             Padding(
               padding:
                   EdgeInsets.only(right: SizeConfig.blockSizeHorizontal! * 5),
@@ -463,10 +445,8 @@ class _ViewNotePageState extends State<ViewNotePage> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
-                color: kPinkD2,
                 icon: const Icon(
                   Ionicons.ellipsis_vertical,
-                  color: kWhite,
                 ),
                 splashRadius: 20,
                 onSelected: (value) async {
@@ -492,11 +472,9 @@ class _ViewNotePageState extends State<ViewNotePage> {
                           horizontalTitleGap: 15,
                           leading: const Icon(
                             Icons.share,
-                            color: kPinkD1,
                           ),
                           title: Text(
                             'share',
-                            style: kAppFont.copyWith(fontSize: 13),
                           ),
                           tileColor: Colors.transparent,
                         ),
@@ -509,11 +487,9 @@ class _ViewNotePageState extends State<ViewNotePage> {
                           horizontalTitleGap: 15,
                           leading: const Icon(
                             Icons.details_outlined,
-                            color: kPinkD1,
                           ),
                           title: Text(
                             'details',
-                            style: kAppFont.copyWith(fontSize: 13),
                           ),
                           tileColor: Colors.transparent,
                         ),
@@ -526,11 +502,9 @@ class _ViewNotePageState extends State<ViewNotePage> {
                         horizontalTitleGap: 15,
                         leading: const Icon(
                           Icons.save,
-                          color: kPinkD1,
                         ),
                         title: Text(
                           'save',
-                          style: kAppFont.copyWith(fontSize: 13),
                         ),
                         tileColor: Colors.transparent,
                       ),
@@ -542,7 +516,6 @@ class _ViewNotePageState extends State<ViewNotePage> {
           ],
         ),
         body: Container(
-          decoration: const BoxDecoration(gradient: kPageBgGradient),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -553,12 +526,10 @@ class _ViewNotePageState extends State<ViewNotePage> {
                     note.isSynced == true
                         ? const Icon(
                             Icons.sync,
-                            color: kWhite,
                             size: 12,
                           )
                         : const Icon(
                             Icons.sync_disabled,
-                            color: kWhite,
                             size: 12,
                           ),
                     const SizedBox(
@@ -568,7 +539,6 @@ class _ViewNotePageState extends State<ViewNotePage> {
                       DateFormat('d MMMM, h:mm a')
                           .format(note.editedTime.toLocal())
                           .toString(),
-                      style: kAppFont.copyWith(color: kWhite75, fontSize: 10),
                     ),
                   ],
                 ),
@@ -578,21 +548,15 @@ class _ViewNotePageState extends State<ViewNotePage> {
               ),
               TextFormField(
                 controller: _headingController,
-                cursorColor: kWhite,
                 onChanged: (_) => _onHeadingTextChanged(),
                 focusNode: _headingFocusNode,
                 readOnly: !_isInEditing,
                 minLines: 1,
                 maxLines: 3,
-                style: kAppFont.copyWith(fontSize: 30),
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.symmetric(horizontal: 25),
                   hintText: 'Heading',
-                  hintStyle: kAppFont.copyWith(
-                      color: kWhite.withOpacity(0.2),
-                      fontSize: 30,
-                      fontWeight: FontWeight.w300),
                 ),
               ),
               SizedBox(
@@ -613,14 +577,8 @@ class _ViewNotePageState extends State<ViewNotePage> {
                             contentPadding:
                                 const EdgeInsets.symmetric(horizontal: 25),
                             hintText: 'Content',
-                            hintStyle: kAppFont.copyWith(
-                                color: kWhite.withOpacity(0.2),
-                                fontSize: 16,
-                                fontWeight: FontWeight.w300),
                           ),
                           onChanged: (_) => _onBodyTextChanged(),
-                          style: kAppFont.copyWith(fontSize: 16),
-                          cursorColor: kWhite,
                         ),
                       ),
                       MarkdownToolbar(
@@ -643,34 +601,18 @@ class _ViewNotePageState extends State<ViewNotePage> {
               if (!_isInEditing)
                 Flexible(
                   child: MarkdownWidget(
-                    loadingWidget: const SpinKitCircle(
-                      color: kWhite,
-                    ),
                     shrinkWrap: true,
                     padding: const EdgeInsets.only(
                         top: 0, bottom: 30, left: 25, right: 25),
                     data: _bodyController.text,
-                    styleConfig: StyleConfig(
-                        markdownTheme: MarkdownTheme.darkTheme,
-                        imgBuilder: (url, attributes) {
-                          return customImageBuilder(url, attributes, context);
-                        },
-                        pConfig: PConfig(
-                          selectable: true,
-                          onLinkTap: (url) =>
-                              url != null ? _onTapLink(url) : null,
-                        ),
-                        blockQuoteConfig: BlockQuoteConfig(),
-                        checkBoxConfig: CheckBoxConfig(),
-                        tableConfig: TableConfig(),
-                        codeConfig: CodeConfig(),
-                        hrConfig: HrConfig(),
-                        imgConfig: ImgConfig(),
-                        olConfig: OlConfig(selectable: true),
-                        preConfig: PreConfig(),
-                        ulConfig: UlConfig(selectable: true),
-                        titleConfig: TitleConfig(),
-                        videoConfig: VideoConfig()),
+                    config: MarkdownConfig(configs: [
+                      LinkConfig(
+                        onTap: (url) => _onTapLink(url),
+                      ),
+                      ImgConfig(builder: (url, attributes) {
+                        return customImageBuilder(url, attributes, context);
+                      })
+                    ]),
                   ),
                 )
             ],
