@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:notex/presentation/styles/app_styles.dart';
 
-
-class CommonWidgets{
+class CommonWidgets {
   static Future<bool?> commonAlertDialog(
-      BuildContext context, {
-        required String title,
-        required String body,
-        required String agreeLabel,
-        required String denyLabel,
-        bool isSingleBtn = false,
-        bool isBarrierDismissible = true,
-        Color? agreeButtonColor,
-        Color? denyButtonColor,
-        Color? titleColor,
-        Color? bodyColor,
-      }) async {
+    BuildContext context, {
+    required String title,
+    required String body,
+    required String agreeLabel,
+    required String denyLabel,
+    bool isSingleBtn = false,
+    bool isBarrierDismissible = true,
+    Color? agreeButtonColor,
+    Color? denyButtonColor,
+    Color? titleColor,
+    Color? bodyColor,
+  }) async {
     return await showDialog<bool>(
       context: context,
       barrierDismissible: isBarrierDismissible,
@@ -23,22 +21,13 @@ class CommonWidgets{
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(18.0))),
         contentPadding:
-        const EdgeInsets.symmetric(horizontal: 25, vertical: 25),
-        actionsPadding:EdgeInsets.zero,
-        backgroundColor: kPinkD2,
+            const EdgeInsets.symmetric(horizontal: 25, vertical: 25),
+        actionsPadding: EdgeInsets.zero,
         title: Text(
           title,
-          style: kAppFont.copyWith(
-              color: titleColor ?? kWhite,
-              fontSize: 18,
-              fontWeight: FontWeight.w400),
         ),
         content: Text(
           body,
-          style: kAppFont.copyWith(
-              color: titleColor ?? kWhite,
-              fontSize: 14,
-              fontWeight: FontWeight.w400),
         ),
         actions: [
           Column(
@@ -47,7 +36,6 @@ class CommonWidgets{
               Material(
                 color: Colors.transparent,
                 child: InkWell(
-                  splashColor: kPinkD2,
                   onTap: () {
                     Navigator.of(context).pop(true);
                   },
@@ -57,25 +45,19 @@ class CommonWidgets{
                     child: Center(
                       child: Text(
                         agreeLabel,
-                        style: kAppFont.copyWith(
-                            color: titleColor ?? kPink,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600),
                       ),
                     ),
                   ),
                 ),
               ),
-              if(!isSingleBtn) ...[
+              if (!isSingleBtn) ...[
                 Divider(
-                  color: kWhite.withOpacity(0.3),
                   indent: 40,
                   endIndent: 40,
                 ),
                 Material(
                   color: Colors.transparent,
                   child: InkWell(
-                    splashColor: kPinkD2,
                     onTap: () {
                       Navigator.of(context).pop(false);
                     },
@@ -85,10 +67,6 @@ class CommonWidgets{
                       child: Center(
                         child: Text(
                           denyLabel,
-                          style: kAppFont.copyWith(
-                              color: titleColor ?? kPink,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600),
                         ),
                       ),
                     ),
@@ -104,5 +82,4 @@ class CommonWidgets{
       ),
     );
   }
-
 }
