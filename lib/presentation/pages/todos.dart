@@ -4,6 +4,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:notex/presentation/blocs/todos/todos_bloc.dart';
+import 'package:notex/presentation/styles/app_colors.dart';
 import 'package:notex/presentation/styles/app_styles.dart';
 import 'package:notex/presentation/styles/size_config.dart';
 import 'package:notex/presentation/widgets/add_todo_dialog_box.dart';
@@ -94,14 +95,14 @@ class _TodosPageState extends State<TodosPage>
           } else {
             _isSyncing = false;
           }
-          if (doneTodos.any(
-              (t) => !t.isUploaded) || notDoneTodos.any((t) => !t.isUploaded)) {
+          if (doneTodos.any((t) => !t.isUploaded) ||
+              notDoneTodos.any((t) => !t.isUploaded)) {
             _areTodosNotUploaded = true;
             _noOfTodosNotUploaded = [
               ...doneTodos.where((e) => !e.isUploaded).toList(),
               ...notDoneTodos.where((e) => !e.isUploaded).toList()
             ].length;
-          }else{
+          } else {
             _areTodosNotUploaded = false;
           }
         } else if (state is TodosEditingState) {
@@ -115,7 +116,6 @@ class _TodosPageState extends State<TodosPage>
             padding: const EdgeInsets.symmetric(horizontal: 0),
             width: SizeConfig.screenWidth,
             height: SizeConfig.screenHeight,
-            decoration: const BoxDecoration(gradient: kPageBgGradient),
             child: Stack(
               children: [
                 if (state is TodosEmptyState) ...[
@@ -142,34 +142,23 @@ class _TodosPageState extends State<TodosPage>
                             children: [
                               Text(
                                 'No',
-                                style: kAppFont.copyWith(
-                                    fontSize: 30, fontWeight: FontWeight.w500),
                               ),
                               SizedBox(
                                 height: SizeConfig.blockSizeHorizontal! * 2,
                               ),
                               Text(
                                 ' todos',
-                                style: kAppFont.copyWith(
-                                  color: kPink,
-                                  fontSize: 30,
-                                  fontWeight: FontWeight.w500,
-                                ),
                               ),
                             ],
                           ),
                           Text(
                             'Found',
-                            style: kAppFont.copyWith(
-                                fontSize: 30, fontWeight: FontWeight.w500),
                           ),
                           SizedBox(
                             height: SizeConfig.blockSizeVertical! * 3,
                           ),
                           Text(
                             "You can add new todo by pressing\nAdd button at the bottom",
-                            style:
-                                kAppFont.copyWith(fontSize: 15, color: kWhite24),
                             textAlign: TextAlign.center,
                           )
                         ],
@@ -179,7 +168,7 @@ class _TodosPageState extends State<TodosPage>
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const SpinKitRing(
-                        color: kPinkD1,
+                        color: AppColors.primary,
                         size: 35,
                       ),
                       const SizedBox(
@@ -187,7 +176,6 @@ class _TodosPageState extends State<TodosPage>
                       ),
                       Text(
                         'This might take a while',
-                        style: kAppFont.copyWith(color: kWhite75, fontSize: 15),
                       )
                     ],
                   )
@@ -198,15 +186,12 @@ class _TodosPageState extends State<TodosPage>
                       children: [
                         Text(
                           'Failed to load notes',
-                          style: kAppFont.copyWith(
-                              fontSize: 22, fontWeight: FontWeight.w600),
                         ),
                         SizedBox(
                           height: SizeConfig.blockSizeVertical! * 2,
                         ),
                         Text(
                           state.reason,
-                          style: kAppFont.copyWith(fontSize: 14),
                         ),
                       ],
                     ),
@@ -226,7 +211,9 @@ class _TodosPageState extends State<TodosPage>
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            if (!_isSyncing && _areTodosNotUploaded && state is! TodosEditingState) ...[
+                            if (!_isSyncing &&
+                                _areTodosNotUploaded &&
+                                state is! TodosEditingState) ...[
                               SizedBox(
                                 height: SizeConfig.blockSizeVertical! * 3,
                               ),
@@ -238,11 +225,9 @@ class _TodosPageState extends State<TodosPage>
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 15, vertical: 15),
                                       decoration: BoxDecoration(
-                                          color: kPinkD2,
                                           borderRadius:
                                               BorderRadius.circular(15),
-                                          border: Border.all(
-                                              color: kPinkD1, width: 1.0)),
+                                          border: Border.all(width: 1.0)),
                                       child: Material(
                                         color: Colors.transparent,
                                         child: Row(
@@ -254,34 +239,34 @@ class _TodosPageState extends State<TodosPage>
                                                 children: [
                                                   Text(
                                                     '$_noOfTodosNotUploaded ${_noOfTodosNotUploaded == 1 ? 'todo is' : "todos are"} not uploaded',
-                                                    style: kAppFont.copyWith(
-                                                        fontSize: 15),
                                                   ),
                                                   const SizedBox(
                                                     height: 5,
                                                   ),
                                                   Text(
                                                     'Click on the icon to upload',
-                                                    style: kAppFont.copyWith(
-                                                        fontSize: 13,color: kWhite24),
                                                   )
                                                 ],
                                               ),
                                             ),
                                             IconButton(
-                                                onPressed: () {
-                                                  todosBloc.add(TodosUploadTodosToCloudEvent(
-                                                      [
-                                                        ...doneTodos.where((e) => !e.isUploaded).toList(),
-                                                        ...notDoneTodos.where((e) => !e.isUploaded).toList()
-                                                      ]
-                                                  ));
-                                                },
-                                                icon: const Icon(
-                                                  Icons.cloud_upload_outlined,
-                                                  color: kWhite,
-                                                  size: 30,
-                                                ),
+                                              onPressed: () {
+                                                todosBloc.add(
+                                                    TodosUploadTodosToCloudEvent([
+                                                  ...doneTodos
+                                                      .where(
+                                                          (e) => !e.isUploaded)
+                                                      .toList(),
+                                                  ...notDoneTodos
+                                                      .where(
+                                                          (e) => !e.isUploaded)
+                                                      .toList()
+                                                ]));
+                                              },
+                                              icon: const Icon(
+                                                Icons.cloud_upload_outlined,
+                                                size: 30,
+                                              ),
                                               splashRadius: 20,
                                             )
                                           ],
@@ -304,11 +289,9 @@ class _TodosPageState extends State<TodosPage>
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 15, vertical: 15),
                                       decoration: BoxDecoration(
-                                          color: kPinkD2,
                                           borderRadius:
                                               BorderRadius.circular(15),
-                                          border: Border.all(
-                                              color: kPinkD1, width: 1.0)),
+                                          border: Border.all(width: 1.0)),
                                       child: Row(
                                         children: [
                                           Expanded(
@@ -318,22 +301,18 @@ class _TodosPageState extends State<TodosPage>
                                               children: [
                                                 Text(
                                                   '$_noOfTodosSyncing ${_noOfTodosSyncing == 1 ? 'todo is' : "todos are"} syncing',
-                                                  style: kAppFont.copyWith(
-                                                      fontSize: 15),
                                                 ),
                                                 const SizedBox(
                                                   height: 5,
                                                 ),
                                                 Text(
                                                   'Please do not quit',
-                                                  style: kAppFont.copyWith(
-                                                      fontSize: 15),
                                                 )
                                               ],
                                             ),
                                           ),
                                           const SpinKitRing(
-                                            color: kWhite,
+                                            color: AppColors.primary,
                                             lineWidth: 3.0,
                                             size: 20,
                                           )
@@ -358,9 +337,6 @@ class _TodosPageState extends State<TodosPage>
                                             vertical: 20),
                                         child: Text(
                                           'Selected (${selectedTodosCount.toString()})',
-                                          style: kAppFont.copyWith(
-                                              fontSize: 35,
-                                              fontWeight: FontWeight.w500),
                                         ),
                                       );
                                     } else {
@@ -378,7 +354,6 @@ class _TodosPageState extends State<TodosPage>
                                     vertical: SizeConfig.blockSizeVertical!),
                                 child: Text(
                                   "Todo (${notDoneTodos.length})",
-                                  style: kAppFont.copyWith(color: kWhite75),
                                 ),
                               ),
                               ListView.builder(
@@ -402,7 +377,6 @@ class _TodosPageState extends State<TodosPage>
                                     vertical: SizeConfig.blockSizeVertical!),
                                 child: Text(
                                   "Done (${doneTodos.length})",
-                                  style: kAppFont.copyWith(color: kWhite75),
                                 ),
                               ),
                               ListView.builder(
