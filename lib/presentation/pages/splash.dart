@@ -5,7 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:notex/presentation/animations/fade_in_animation.dart';
 import 'package:notex/presentation/blocs/splash/splash_bloc.dart';
-import 'package:notex/presentation/styles/app_styles.dart';
+import 'package:notex/presentation/styles/app_colors.dart';
 import 'package:notex/router/app_route_constants.dart';
 
 import '../styles/size_config.dart';
@@ -47,7 +47,6 @@ class _SplashPageState extends State<SplashPage> {
           body: Container(
             width: SizeConfig.screenWidth,
             height: SizeConfig.screenHeight,
-            decoration: const BoxDecoration(gradient: kPageBgGradient),
             child: Stack(
               children: [
                 Column(
@@ -69,7 +68,7 @@ class _SplashPageState extends State<SplashPage> {
                     children: [
                       if (state is SplashLoadingState) ...[
                         const SpinKitRing(
-                          color: kPinkD1,
+                          color: AppColors.primary,
                           size: 30,
                         ),
                         SizedBox(
@@ -79,7 +78,6 @@ class _SplashPageState extends State<SplashPage> {
                           is SplashUserLocalAuthenticationFailedState) ...[
                         const Icon(
                           Icons.error_outline,
-                          color: kRed,
                           size: 35,
                         ),
                         SizedBox(
@@ -93,9 +91,9 @@ class _SplashPageState extends State<SplashPage> {
                           height: SizeConfig.blockSizeVertical,
                         ),
                       ],
-                      Center(
-                        child: kDevLogo,
-                      ),
+                      // Center(
+                      //   child: kDevLogo,
+                      // ),
                     ],
                   ),
                 )
