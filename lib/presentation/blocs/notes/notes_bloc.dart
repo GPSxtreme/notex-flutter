@@ -285,7 +285,9 @@ class NotesBloc extends Bloc<NotesEvent, NotesState> {
       NotesAreAllNotesSelectedEvent event, Emitter<NotesState> emit) async {
     if (event.areAllSelected) {
       // add notes which are not included in _selected notes before hand
-      _temp = _notes.where((note) => !_selectedNotes.contains(note) && !note.isDeleted).toList();
+      _temp = _notes
+          .where((note) => !_selectedNotes.contains(note) && !note.isDeleted)
+          .toList();
       _selectedNotes.addAll(_temp);
     } else {
       // similarly remove notes which are added due to event and not added before hand
