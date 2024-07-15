@@ -10,17 +10,14 @@ PODS:
   - fluttertoast (0.0.2):
     - Flutter
     - Toast
-  - FMDB (2.7.5):
-    - FMDB/standard (= 2.7.5)
-  - FMDB/standard (2.7.5)
   - image_picker_ios (0.0.1):
     - Flutter
-  - local_auth_ios (0.0.1):
+  - local_auth_darwin (0.0.1):
     - Flutter
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
-  - permission_handler_apple (9.1.1):
+  - permission_handler_apple (9.3.0):
     - Flutter
   - Reachability (3.2)
   - share_plus (0.0.1):
@@ -30,13 +27,10 @@ PODS:
     - FlutterMacOS
   - sqflite (0.0.3):
     - Flutter
-    - FMDB (>= 2.7.5)
+    - FlutterMacOS
   - Toast (4.0.0)
   - url_launcher_ios (0.0.1):
     - Flutter
-  - video_player_avfoundation (0.0.1):
-    - Flutter
-    - FlutterMacOS
 
 DEPENDENCIES:
   - connectivity (from `.symlinks/plugins/connectivity/ios`)
@@ -45,18 +39,16 @@ DEPENDENCIES:
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
-  - local_auth_ios (from `.symlinks/plugins/local_auth_ios/ios`)
+  - local_auth_darwin (from `.symlinks/plugins/local_auth_darwin/darwin`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
-  - sqflite (from `.symlinks/plugins/sqflite/ios`)
+  - sqflite (from `.symlinks/plugins/sqflite/darwin`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
-  - video_player_avfoundation (from `.symlinks/plugins/video_player_avfoundation/darwin`)
 
 SPEC REPOS:
   trunk:
-    - FMDB
     - Reachability
     - Toast
 
@@ -73,8 +65,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/fluttertoast/ios"
   image_picker_ios:
     :path: ".symlinks/plugins/image_picker_ios/ios"
-  local_auth_ios:
-    :path: ".symlinks/plugins/local_auth_ios/ios"
+  local_auth_darwin:
+    :path: ".symlinks/plugins/local_auth_darwin/darwin"
   path_provider_foundation:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
   permission_handler_apple:
@@ -84,31 +76,27 @@ EXTERNAL SOURCES:
   shared_preferences_foundation:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
   sqflite:
-    :path: ".symlinks/plugins/sqflite/ios"
+    :path: ".symlinks/plugins/sqflite/darwin"
   url_launcher_ios:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
-  video_player_avfoundation:
-    :path: ".symlinks/plugins/video_player_avfoundation/darwin"
 
 SPEC CHECKSUMS:
   connectivity: c4130b2985d4ef6fd26f9702e886bd5260681467
-  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_html_to_pdf: 0fd9f8d04f335d68b06a7c4ab5fc85d22e1ef91b
-  flutter_local_notifications: 0c0b1ae97e741e1521e4c1629a459d04b9aec743
-  fluttertoast: fafc4fa4d01a6a9e4f772ecd190ffa525e9e2d9c
-  FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
-  image_picker_ios: 4a8aadfbb6dc30ad5141a2ce3832af9214a705b5
-  local_auth_ios: c6cf091ded637a88f24f86a8875d8b0f526e2605
-  path_provider_foundation: 29f094ae23ebbca9d3d0cec13889cd9060c0e943
-  permission_handler_apple: e76247795d700c14ea09e3a2d8855d41ee80a2e6
+  flutter_local_notifications: 4cde75091f6327eb8517fa068a0a5950212d2086
+  fluttertoast: e9a18c7be5413da53898f660530c56f35edfba9c
+  image_picker_ios: c560581cceedb403a6ff17f2f816d7fea1421fc1
+  local_auth_darwin: 4d56c90c2683319835a61274b57620df9c4520ab
+  path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
+  permission_handler_apple: 9878588469a2b0d0fc1e048d9f43605f92e6cec2
   Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
-  share_plus: 599aa54e4ea31d4b4c0e9c911bcc26c55e791028
-  shared_preferences_foundation: 5b919d13b803cadd15ed2dc053125c68730e5126
-  sqflite: 31f7eba61e3074736dff8807a9b41581e4f7f15a
+  share_plus: 8875f4f2500512ea181eef553c3e27dba5135aad
+  shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
+  sqflite: 673a0e54cc04b7d6dba8d24fb8095b31c3a99eec
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
-  url_launcher_ios: bf5ce03e0e2088bad9cc378ea97fa0ed5b49673b
-  video_player_avfoundation: e9e6f9cae7d7a6d9b43519b0aab382bca60fcfd1
+  url_launcher_ios: 5334b05cef931de560670eeae103fd3e431ac3fe
 
-PODFILE CHECKSUM: 70d9d25280d0dd177a5f637cdb0f0b0b12c6a189
+PODFILE CHECKSUM: 819463e6a0290f5a72f145ba7cde16e8b6ef0796
 
-COCOAPODS: 1.12.0
+COCOAPODS: 1.15.2
