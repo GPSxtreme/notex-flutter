@@ -74,7 +74,7 @@ class _TodoTileState extends State<TodoTile> {
         context: context,
         builder: (BuildContext context) {
           return Padding(
-            padding: EdgeInsets.only(bottom: AppSpacing.xl, top: AppSpacing.sm),
+            padding: EdgeInsets.only(bottom: AppSpacing.xl),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -141,25 +141,31 @@ class _TodoTileState extends State<TodoTile> {
         return Container(
           width: double.maxFinite,
           decoration: BoxDecoration(
-              borderRadius: AppBorderRadius.xxl, color: AppColors.secondary),
+              borderRadius: AppBorderRadius.lg, color: AppColors.secondary),
           child: Material(
             color: Colors.transparent,
-            borderRadius: AppBorderRadius.xxl,
+            borderRadius: AppBorderRadius.lg,
             child: InkWell(
-              borderRadius: AppBorderRadius.xxl,
+              borderRadius: AppBorderRadius.lg,
               onLongPress: () {
                 widget.todosBloc.add(TodosEnteredEditingEvent());
                 _isEditOnTap();
               },
               onTap: () {
-                if (state is! TodosEditingState) {
-                  // open edit to-do dialog
+                if (state is! TodosEditingState && !_isSyncing) {
+                  if (!widget.todo.isCompleted) {
+                    widget.todosBloc.add(TodosMarkTodoDoneEvent(widget.todo));
+                  } else {
+                    widget.todosBloc
+                        .add(TodosMarkTodoNotDoneEvent(widget.todo));
+                  }
                 } else {
                   _isEditOnTap();
                 }
               },
               child: Padding(
-                padding: EdgeInsets.symmetric(vertical: AppSpacing.sm),
+                padding: EdgeInsets.symmetric(
+                    vertical: 0, horizontal: AppSpacing.sm),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -193,12 +199,15 @@ class _TodoTileState extends State<TodoTile> {
                       )
                     ],
                     SizedBox(
-                      width: AppSpacing.md,
+                      width: AppSpacing.sm,
                     ),
                     Expanded(
-                      child: Text(
-                        widget.todo.body,
-                        style: AppText.textBaseMedium,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
+                        child: Text(
+                          widget.todo.body,
+                          style: AppText.textBaseMedium,
+                        ),
                       ),
                     ),
                     if (state is! TodosEditingState)
@@ -211,7 +220,7 @@ class _TodoTileState extends State<TodoTile> {
                           },
                           icon: Icon(
                             Ionicons.information,
-                            size: AppSpacing.iconSizeBase,
+                            size: AppSpacing.iconSizeLg,
                           )),
                     if (state is TodosEditingState)
                       Transform.scale(
