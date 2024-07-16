@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+import 'package:notex/presentation/styles/app_colors.dart';
+import 'package:notex/presentation/styles/app_text.dart';
 
 kSnackBar(BuildContext context, String text) {
   ScaffoldMessenger.of(context).hideCurrentSnackBar();
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
     content: Text(
       text,
+      style: AppText.textBaseSemiBold,
     ),
+    backgroundColor: AppColors.muted,
     padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
   ));
 }
