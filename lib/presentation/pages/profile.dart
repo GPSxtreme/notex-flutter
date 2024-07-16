@@ -433,9 +433,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                 backgroundColor: AppColors.background,
                                 initialSelection: state.user.country,
                                 boxDecoration: BoxDecoration(
-                                  color: AppColors.background,
-                                  borderRadius: AppBorderRadius.md,
-                                ),
+                                    color: AppColors.card,
+                                    borderRadius: AppBorderRadius.md,
+                                    border: Border.all(
+                                        color: AppColors.border, width: 1.0)),
                                 searchDecoration: InputDecoration(
                                   filled: true,
                                   fillColor: Colors
