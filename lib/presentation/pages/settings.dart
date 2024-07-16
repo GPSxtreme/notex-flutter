@@ -9,6 +9,7 @@ import 'package:notex/core/repositories/util_repository.dart';
 import 'package:notex/presentation/blocs/settings/settings_bloc.dart';
 import 'package:notex/presentation/styles/app_colors.dart';
 import 'package:notex/presentation/styles/app_styles.dart';
+import 'package:notex/presentation/styles/app_text.dart';
 import 'package:notex/presentation/styles/size_config.dart';
 import 'package:notex/presentation/widgets/common_widgets.dart';
 import 'package:notex/router/app_route_constants.dart';
@@ -27,9 +28,62 @@ class _SettingsPageState extends State<SettingsPage> {
   bool _isSendingEmailVerificationLink = false;
 
   Widget label(String label) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        padding: EdgeInsets.only(
+            top: AppSpacing.lg,
+            bottom: AppSpacing.md,
+            left: AppSpacing.md,
+            right: AppSpacing.md),
         child: Text(
           label,
+          style: AppText.textBase.copyWith(color: AppColors.mutedForeground),
+        ),
+      );
+
+  Widget _switchListTile(
+          {required String title,
+          required String subtitle,
+          required bool value,
+          required void Function(bool) onChanged}) =>
+      SwitchListTile(
+        title: Text(
+          title,
+          style: AppText.textLgSemiBold,
+        ),
+        subtitle: Padding(
+          padding: EdgeInsets.only(top: AppSpacing.sm),
+          child: Text(
+            subtitle,
+            style: AppText.textBase.copyWith(color: AppColors.mutedForeground),
+          ),
+        ),
+        value: value,
+        onChanged: onChanged,
+      );
+
+  Widget _iconListTile(
+          {required String title,
+          required String subtitle,
+          required void Function() onTap,
+          Widget? leading,
+          required IconData icon}) =>
+      ListTile(
+        leading: leading ??
+            Icon(
+              icon,
+              size: AppSpacing.iconSize2Xl,
+              color: AppColors.mutedForeground,
+            ),
+        onTap: onTap,
+        title: Text(
+          title,
+          style: AppText.textLgSemiBold,
+        ),
+        subtitle: Padding(
+          padding: EdgeInsets.only(top: AppSpacing.sm),
+          child: Text(
+            subtitle,
+            style: AppText.textBase.copyWith(color: AppColors.mutedForeground),
+          ),
         ),
       );
 
@@ -120,414 +174,260 @@ class _SettingsPageState extends State<SettingsPage> {
             elevation: 0,
             leading: Builder(
               builder: (BuildContext context) {
-                return IconButton(
-                  splashRadius: 20,
-                  icon: const Icon(Icons.arrow_back),
-                  onPressed: () {
-                    GoRouter.of(context).pop();
-                  },
-                  tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+                return Padding(
+                  padding: EdgeInsets.only(left: AppSpacing.md),
+                  child: IconButton(
+                    style: const ButtonStyle(
+                      backgroundColor:
+                          WidgetStatePropertyAll(Colors.transparent),
+                    ),
+                    icon: const Icon(Icons.arrow_back),
+                    onPressed: () {
+                      GoRouter.of(context).pop();
+                    },
+                    tooltip:
+                        MaterialLocalizations.of(context).backButtonTooltip,
+                  ),
                 );
               },
             ),
-            title: Text(
+            title: const Text(
               "Settings",
             ),
           ),
-          body: Container(
-            child: Material(
-              color: Colors.transparent,
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: state is! SettingsFetchedState
-                      ? MainAxisAlignment.center
-                      : MainAxisAlignment.start,
-                  children: [
-                    if (state is SettingsFetchingState) ...[
-                      const Center(
-                        child: SpinKitRing(
-                          lineWidth: 3.0,
-                          color: AppColors.primary,
-                        ),
-                      )
-                    ] else if (state is SettingsFetchingFailedState) ...[
-                      Center(
-                        child: Text(
-                          'Something went wrong \n ${state.reason}',
-                          textAlign: TextAlign.center,
-                        ),
-                      )
-                    ] else if (state is SettingsFetchedState) ...[
-                      ListTileTheme(
-                        horizontalTitleGap: 10,
-                        contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 15, vertical: 5),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            label('Sync Settings'),
-                            ListTile(
-                              leading: const Icon(
-                                Icons.sync,
-                                size: 35,
-                              ),
-                              title: Text(
-                                'Auto sync',
-                              ),
-                              subtitle: Text(
-                                'This enables auto-sync for both notes and todos. Auto sync must be enabled for removal of note or todo in cloud',
-                              ),
-                              trailing: Switch(
-                                value: state.isAutoSyncEnabled,
-                                onChanged: (value) async {
-                                  settingsBloc
-                                      .add(SettingsSetAutoSyncEvent(value));
-                                },
-                              ),
-                            ),
-                            ListTile(
-                              leading: const Icon(
-                                Icons.cloud_download_outlined,
-                                size: 35,
-                              ),
-                              title: Text(
-                                'Prefetch cloud notes',
-                              ),
-                              subtitle: Text(
-                                'This enables prefetch of cloud notes on startup',
-                              ),
-                              trailing: Switch(
-                                value: state.isNotesOnlinePrefetchEnabled,
-                                onChanged: (value) {
-                                  settingsBloc.add(
-                                      SettingsSetPrefetchCloudNotesEvent(
-                                          value));
-                                },
-                              ),
-                            ),
-                            ListTile(
-                              leading: const Icon(
-                                Icons.cloud_download_outlined,
-                                size: 35,
-                              ),
-                              title: Text(
-                                'Prefetch cloud todos',
-                              ),
-                              subtitle: Text(
-                                'This enables prefetch of cloud todos on startup',
-                              ),
-                              trailing: Switch(
-                                value: state.isTodosOnlinePrefetchEnabled,
-                                onChanged: (value) {
-                                  settingsBloc.add(
-                                      SettingsSetPrefetchCloudTodosEvent(
-                                          value));
-                                },
-                              ),
-                            ),
-                            label('Data Management'),
-                            ListTile(
-                              leading: const Icon(
-                                Icons.delete_outline,
-                                size: 35,
-                              ),
+          body: Material(
+            color: Colors.transparent,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: state is! SettingsFetchedState
+                    ? MainAxisAlignment.center
+                    : MainAxisAlignment.start,
+                children: [
+                  if (state is SettingsFetchingState) ...[
+                    const Center(
+                      child: SpinKitRing(
+                        lineWidth: 3.0,
+                        color: AppColors.primary,
+                      ),
+                    )
+                  ] else if (state is SettingsFetchingFailedState) ...[
+                    Center(
+                      child: Text(
+                        'Something went wrong \n ${state.reason}',
+                        textAlign: TextAlign.center,
+                      ),
+                    )
+                  ] else if (state is SettingsFetchedState) ...[
+                    ListTileTheme(
+                      horizontalTitleGap: 10,
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 15, vertical: 5),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          label('Sync Settings'),
+                          _switchListTile(
+                              title: 'Auto sync',
+                              subtitle:
+                                  'This enables auto-sync for both notes and todos. Auto sync must be enabled for removal of note or todo in cloud',
+                              value: state.isAutoSyncEnabled,
+                              onChanged: (value) async {
+                                settingsBloc
+                                    .add(SettingsSetAutoSyncEvent(value));
+                              }),
+                          _switchListTile(
+                              title: 'Prefetch cloud notes',
+                              subtitle:
+                                  'This enables prefetch of cloud notes on startup',
+                              value: state.isNotesOnlinePrefetchEnabled,
+                              onChanged: (value) {
+                                settingsBloc.add(
+                                    SettingsSetPrefetchCloudNotesEvent(value));
+                              }),
+                          _switchListTile(
+                              title: 'Prefetch cloud todos',
+                              subtitle:
+                                  'This enables prefetch of cloud todos on startup',
+                              value: state.isTodosOnlinePrefetchEnabled,
+                              onChanged: (value) {
+                                settingsBloc.add(
+                                    SettingsSetPrefetchCloudTodosEvent(value));
+                              }),
+                          label('Data Management'),
+                          _iconListTile(
+                              title: 'Delete all notes',
+                              subtitle:
+                                  'This will remove all the notes locally saved. Notes synced to cloud will not be affected',
                               onTap: () {
                                 settingsBloc.add(SettingsDeleteAllNotesEvent());
                               },
-                              title: Text(
-                                'Delete all notes',
-                              ),
-                              subtitle: Text(
-                                'This will remove all the notes locally saved. Notes synced to cloud will not be affected',
-                              ),
-                            ),
-                            ListTile(
-                              leading: const Icon(
-                                Icons.delete_outline,
-                                size: 35,
-                              ),
+                              icon: Icons.delete_rounded),
+                          _iconListTile(
+                              title: 'Delete all todos',
+                              subtitle:
+                                  'This will remove all the todos locally saved. Todos synced to cloud will not be affected',
                               onTap: () {
                                 settingsBloc.add(SettingsDeleteAllTodosEvent());
                               },
-                              title: Text(
-                                'Delete all todos',
-                              ),
-                              subtitle: Text(
-                                'This will remove all the todos locally saved. Todos synced to cloud will not be affected',
-                              ),
-                            ),
-                            label('Security Settings'),
-                            ListTile(
-                              leading: const Icon(
-                                Icons.phonelink_lock_outlined,
-                                size: 35,
-                              ),
-                              title: Text(
-                                'App lock',
-                              ),
-                              subtitle: Text(
-                                'Sets up app lock to enter app',
-                              ),
-                              trailing: Switch(
-                                value: state.isAppLockEnabled,
-                                onChanged: (value) {
-                                  settingsBloc
-                                      .add(SettingsSetAppLockEvent(value));
-                                },
-                              ),
-                            ),
-                            ListTile(
-                              leading: const Icon(
-                                Icons.lock,
-                                size: 35,
-                              ),
-                              title: Text(
-                                'Lock hidden notes',
-                              ),
-                              subtitle: Text(
-                                'Sets up app lock to access hidden notes',
-                              ),
-                              trailing: Switch(
-                                value: state.isHiddenNotesLockEnabled,
-                                onChanged: (value) {
-                                  settingsBloc.add(
-                                      SettingsSetHiddenNotesLockEvent(value));
-                                },
-                              ),
-                            ),
-                            ListTile(
-                              leading: const Icon(
-                                Icons.lock,
-                                size: 35,
-                              ),
-                              title: Text(
-                                'Lock deleted notes',
-                              ),
-                              subtitle: Text(
-                                'Sets up app lock to access deleted notes',
-                              ),
-                              trailing: Switch(
-                                value: state.isDeletedNotesLockEnabled,
-                                onChanged: (value) {
-                                  settingsBloc.add(
-                                      SettingsSetDeletedNotesLockEvent(value));
-                                },
-                              ),
-                            ),
-                            ListTile(
-                              leading: const Icon(
-                                Icons.fingerprint_rounded,
-                                size: 35,
-                              ),
-                              title: Text(
-                                'Biometric only',
-                              ),
-                              subtitle: Text(
-                                'Prevent authentications from using non-biometric local authentication such as pin, passcode, or pattern',
-                              ),
-                              trailing: Switch(
-                                value: state.isBiometricOnly,
-                                onChanged: (value) async {
-                                  settingsBloc.add(
-                                      SettingsSetBiometricOnlyEvent(value));
-                                },
-                              ),
-                            ),
-                            label('About app'),
-                            ListTile(
-                              leading: const Icon(
-                                Icons.engineering,
-                                size: 35,
-                              ),
-                              title: Text(
-                                'Checkout developer',
-                              ),
-                              subtitle: Text(
-                                'Made with ❤️ by prudhvi suraaj',
-                              ),
+                              icon: Icons.delete_rounded),
+                          label('Security Settings'),
+                          _switchListTile(
+                              title: 'App lock',
+                              subtitle: 'Sets up app lock to enter app',
+                              value: state.isAppLockEnabled,
+                              onChanged: (value) {
+                                settingsBloc
+                                    .add(SettingsSetAppLockEvent(value));
+                              }),
+                          _switchListTile(
+                              title: 'Lock hidden notes',
+                              subtitle:
+                                  'Sets up app lock to access hidden notes',
+                              value: state.isHiddenNotesLockEnabled,
+                              onChanged: (value) {
+                                settingsBloc.add(
+                                    SettingsSetHiddenNotesLockEvent(value));
+                              }),
+                          _switchListTile(
+                              title: 'Lock deleted notes',
+                              subtitle:
+                                  'Sets up app lock to access deleted notes',
+                              value: state.isDeletedNotesLockEnabled,
+                              onChanged: (value) {
+                                settingsBloc.add(
+                                    SettingsSetDeletedNotesLockEvent(value));
+                              }),
+                          _switchListTile(
+                              title: 'Biometric only',
+                              subtitle:
+                                  'Prevent authentications from using non-biometric local authentication such as pin, passcode, or pattern',
+                              value: state.isBiometricOnly,
+                              onChanged: (value) async {
+                                settingsBloc
+                                    .add(SettingsSetBiometricOnlyEvent(value));
+                              }),
+                          label('About app'),
+                          _iconListTile(
+                              title: 'Checkout developer',
+                              subtitle: 'Made with ❤️ by prudhvi suraaj',
                               onTap: () {
                                 settingsBloc
                                     .add(SettingsRedirectToDevSiteEvent());
                               },
-                            ),
-                            ListTile(
-                              leading: const Icon(
-                                Ionicons.logo_github,
-                                size: 35,
-                              ),
-                              title: Text(
-                                'Open source',
-                              ),
-                              subtitle: Text(
-                                'Check out code & make contributions',
-                              ),
-                              onTap: () {
-                                settingsBloc
-                                    .add(SettingsRedirectToGithubEvent());
-                              },
-                            ),
-                            ListTile(
-                              leading: const Icon(
-                                Icons.bug_report_outlined,
-                                size: 35,
-                              ),
-                              title: Text(
-                                'Report a bug',
-                              ),
-                              subtitle: Text(
+                              icon: Icons.engineering_rounded),
+                          _iconListTile(
+                            title: 'Open source',
+                            subtitle: 'Check out code & make contributions',
+                            onTap: () => settingsBloc
+                                .add(SettingsRedirectToGithubEvent()),
+                            icon: Ionicons.logo_github,
+                          ),
+                          _iconListTile(
+                            title: 'Report a bug',
+                            subtitle:
                                 'Help us fix issues by reporting in app bugs',
-                              ),
-                              onTap: () {
-                                settingsBloc.add(
-                                    SettingsRedirectToGithubBugReportEvent());
-                              },
-                            ),
-                            ListTile(
-                              leading: const Icon(
-                                Icons.device_hub_outlined,
-                                size: 35,
-                              ),
-                              title: Text(
-                                'Request feature',
-                              ),
-                              subtitle: Text(
-                                'Request for a desired feature on github',
-                              ),
-                              onTap: () {
-                                settingsBloc.add(
-                                    SettingsRedirectToGithubRequestFeatureEvent());
-                              },
-                            ),
-                            ListTile(
-                              leading: const Icon(
-                                Icons.mail_outline,
-                                size: 35,
-                              ),
-                              title: Text(
-                                'Contact',
-                              ),
-                              subtitle: Text(
-                                'Contact us for any problems related',
-                              ),
-                              onTap: () {
-                                settingsBloc
-                                    .add(SettingsRedirectToDevMailEvent());
-                              },
-                            ),
-                            ListTile(
-                              leading: const Icon(
-                                Icons.update,
-                                size: 35,
-                              ),
-                              title: Text(
-                                'Updates',
-                              ),
-                              subtitle: Text(
-                                'Check for app updates',
-                              ),
-                              onTap: () {
-                                settingsBloc
-                                    .add(SettingsCheckForAppUpdatesEvent());
-                              },
-                            ),
-                            label('Account Management'),
-                            if (!USER.data!.isEmailVerified)
-                              ListTile(
-                                leading: !_isSendingEmailVerificationLink
-                                    ? const Icon(
-                                        Ionicons.alert_circle_outline,
-                                        color: Colors.yellow,
-                                        size: 35,
-                                      )
-                                    : const SizedBox(
-                                        width: 35,
-                                        height: 35,
-                                        child: SpinKitRing(
-                                            color: AppColors.primary,
-                                            lineWidth: 4.0)),
-                                onTap: !_isSendingEmailVerificationLink
-                                    ? () {
-                                        setState(() {
-                                          _isSendingEmailVerificationLink =
-                                              true;
-                                        });
-                                        settingsBloc.add(
-                                            SettingsUserAccountVerifyEvent());
-                                      }
-                                    : null,
-                                title: Text(
-                                  'Verify account',
-                                ),
-                                subtitle: Text(
+                            onTap: () => settingsBloc
+                                .add(SettingsRedirectToGithubBugReportEvent()),
+                            icon: Icons.bug_report_outlined,
+                          ),
+                          _iconListTile(
+                            title: 'Request feature',
+                            subtitle: 'Request for a desired feature on github',
+                            onTap: () => settingsBloc.add(
+                                SettingsRedirectToGithubRequestFeatureEvent()),
+                            icon: Icons.device_hub_outlined,
+                          ),
+                          _iconListTile(
+                            title: 'Contact',
+                            subtitle: 'Contact us for any problems related',
+                            onTap: () => settingsBloc
+                                .add(SettingsRedirectToDevMailEvent()),
+                            icon: Icons.mail_outline,
+                          ),
+                          _iconListTile(
+                            title: 'Updates',
+                            subtitle: 'Check for app updates',
+                            onTap: () => settingsBloc
+                                .add(SettingsCheckForAppUpdatesEvent()),
+                            icon: Icons.update,
+                          ),
+                          label('Account Management'),
+                          if (!USER.data!.isEmailVerified)
+                            _iconListTile(
+                              leading: !_isSendingEmailVerificationLink
+                                  ? Icon(
+                                      Ionicons.alert_circle_outline,
+                                      color: AppColors.mutedForeground,
+                                      size: AppSpacing.iconSize2Xl,
+                                    )
+                                  : SizedBox(
+                                      width: AppSpacing.iconSize2Xl,
+                                      height: AppSpacing.iconSize2Xl,
+                                      child: const SpinKitRing(
+                                          color: AppColors.primary,
+                                          lineWidth: 4.0)),
+                              icon: Icons.verified_user,
+                              onTap: !_isSendingEmailVerificationLink
+                                  ? () {
+                                      setState(() {
+                                        _isSendingEmailVerificationLink = true;
+                                      });
+                                      settingsBloc.add(
+                                          SettingsUserAccountVerifyEvent());
+                                    }
+                                  : () {},
+                              title: 'Verify account',
+                              subtitle:
                                   'Secure your account by verifying your email.\nPassword can only be reset if the account is verified',
-                                ),
-                              ),
-                            if (USER.data!.isEmailVerified)
-                              ListTile(
-                                leading: !_isSendingPasswordResetLink
-                                    ? const Icon(
-                                        Icons.lock_reset,
-                                        size: 35,
-                                      )
-                                    : const SizedBox(
-                                        width: 35,
-                                        height: 35,
-                                        child: SpinKitRing(
-                                            color: AppColors.primary,
-                                            lineWidth: 4.0)),
-                                onTap: !_isSendingPasswordResetLink
-                                    ? () {
-                                        setState(() {
-                                          _isSendingPasswordResetLink = true;
-                                        });
-                                        settingsBloc.add(
-                                            SettingsUserPasswordResetEvent());
-                                      }
-                                    : null,
-                                title: Text(
-                                  'Reset password',
-                                ),
-                                subtitle: Text(
+                            ),
+                          if (USER.data!.isEmailVerified)
+                            _iconListTile(
+                              leading: !_isSendingPasswordResetLink
+                                  ? Icon(
+                                      Icons.lock_reset,
+                                      color: AppColors.mutedForeground,
+                                      size: AppSpacing.iconSize2Xl,
+                                    )
+                                  : SizedBox(
+                                      width: AppSpacing.iconSize2Xl,
+                                      height: AppSpacing.iconSize2Xl,
+                                      child: const SpinKitRing(
+                                          color: AppColors.primary,
+                                          lineWidth: 4.0)),
+                              icon: Icons.lock_reset,
+                              onTap: !_isSendingPasswordResetLink
+                                  ? () {
+                                      setState(() {
+                                        _isSendingPasswordResetLink = true;
+                                      });
+                                      settingsBloc.add(
+                                          SettingsUserPasswordResetEvent());
+                                    }
+                                  : () {},
+                              title: 'Reset password',
+                              subtitle:
                                   'You will be sent a password reset link to your registered email',
-                                ),
-                              ),
-                            ListTile(
-                              leading: const Icon(
-                                Icons.account_box,
-                                size: 35,
-                              ),
-                              onTap: () {
-                                settingsBloc
-                                    .add(SettingsUserAccountDeletionEvent());
-                              },
-                              title: Text(
-                                'Account deletion',
-                              ),
-                              subtitle: Text(
+                            ),
+                          _iconListTile(
+                            title: 'Account deletion',
+                            subtitle:
                                 'You will be redirected to account deletion page',
-                              ),
-                            ),
-                            ListTile(
-                              leading: const Icon(
-                                Icons.logout_rounded,
-                                size: 35,
-                              ),
-                              onTap: () {
-                                settingsBloc.add(SettingsUserLogoutEvent());
-                              },
-                              title: Text(
-                                'Logout',
-                              ),
-                              subtitle: Text(
-                                'You will be redirected to login screen',
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    ]
-                  ],
-                ),
+                            onTap: () => settingsBloc
+                                .add(SettingsUserAccountDeletionEvent()),
+                            icon: Icons.account_box,
+                          ),
+                          _iconListTile(
+                            title: 'Logout',
+                            subtitle: 'You will be redirected to login screen',
+                            onTap: () =>
+                                settingsBloc.add(SettingsUserLogoutEvent()),
+                            icon: Icons.logout_rounded,
+                          ),
+                        ],
+                      ),
+                    )
+                  ]
+                ],
               ),
             ),
           ),
