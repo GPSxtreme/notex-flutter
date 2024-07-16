@@ -152,13 +152,13 @@ class _SettingsPageState extends State<SettingsPage> {
           await UtilRepository.launchLink(
               'https://github.com/GPSxtreme/notex-flutter/issues/new/choose');
         } else if (state is SettingsRedirectToDevSiteAction) {
-          await UtilRepository.launchLink('https://prudhvisuraaj.me/');
+          await UtilRepository.launchLink('https://gpsxtre.me/');
         } else if (state is SettingsUserAccountDeletionAction) {
           await UtilRepository.launchLink(
               "$apiEndPoint/user/requestAccountDeletion");
         } else if (state is SettingsRedirectToDevMailAction) {
           await UtilRepository.launchEmail(
-              emailAddresses: ['contact@prudhvisuraaj.me'],
+              emailAddresses: ['notexgps@gmail.com'],
               subject: 'Notex:query',
               body: '---query here---');
         } else if (state is SettingsCheckForAppUpdateAction) {
@@ -191,8 +191,9 @@ class _SettingsPageState extends State<SettingsPage> {
                 );
               },
             ),
-            title: const Text(
+            title: Text(
               "Settings",
+              style: AppText.textXlBold,
             ),
           ),
           body: Material(
