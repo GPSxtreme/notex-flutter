@@ -1,5 +1,6 @@
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:in_app_update/in_app_update.dart';
+import 'package:notex/presentation/styles/app_colors.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -7,6 +8,8 @@ class UtilRepository {
   static void toast(String msg) {
     Fluttertoast.cancel();
     Fluttertoast.showToast(
+        backgroundColor: AppColors.secondary,
+        textColor: AppColors.foreground,
         msg: msg,
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
