@@ -88,14 +88,14 @@ class _NoteTileState extends State<NoteTile> {
         }
         return Container(
           decoration: BoxDecoration(
-            borderRadius: AppBorderRadius.xxl,
+            borderRadius: AppBorderRadius.lg,
             color: AppColors.secondary,
           ),
           child: Material(
             color: Colors.transparent,
-            borderRadius: AppBorderRadius.xxl,
+            borderRadius: AppBorderRadius.lg,
             child: InkWell(
-              borderRadius: AppBorderRadius.xxl,
+              borderRadius: AppBorderRadius.lg,
               onLongPress: !_inDeletedMode
                   ? () {
                       widget.notesBloc.add(NotesEnteredEditingEvent(
@@ -230,7 +230,7 @@ class _NoteTileState extends State<NoteTile> {
                               // Add Flexible widget here
                               child: Text(
                                 widget.note.title,
-                                style: AppText.textLgSemiBold,
+                                style: AppText.textLgBlack,
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -242,7 +242,8 @@ class _NoteTileState extends State<NoteTile> {
                         ),
                         Text(
                           widget.note.body,
-                          style: AppText.textSm,
+                          style: AppText.textSm
+                              .copyWith(color: AppColors.mutedForeground),
                           maxLines: 7,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -263,7 +264,7 @@ class _NoteTileState extends State<NoteTile> {
                               ),
                               Expanded(
                                 child: Text(
-                                  DateFormat('h:mm a, dd MMM yyyy')
+                                  DateFormat('h:mm a, dd MMM yy')
                                       .format(widget.note.editedTime.toLocal())
                                       .toString(),
                                   style: AppText.textXs.copyWith(
