@@ -150,11 +150,14 @@ class _TodosPageState extends State<TodosPage>
                         SizedBox(
                           height: AppSpacing.md,
                         ),
-                        Text(
-                          "You can add new todo by pressing\nAdd button at the bottom",
-                          textAlign: TextAlign.center,
-                          style: AppText.textSm
-                              .copyWith(color: AppColors.mutedForeground),
+                        SizedBox(
+                          width: SizeConfig.screenWidth! * 0.6,
+                          child: Text(
+                            "You can add new todo by pressing\nAdd button at the bottom",
+                            textAlign: TextAlign.center,
+                            style: AppText.textSm
+                                .copyWith(color: AppColors.mutedForeground),
+                          ),
                         )
                       ],
                     ),
@@ -243,7 +246,7 @@ class _TodosPageState extends State<TodosPage>
                                           vertical: AppSpacing.md),
                                       decoration: BoxDecoration(
                                         color: AppColors.secondary,
-                                        borderRadius: AppBorderRadius.xxl,
+                                        borderRadius: AppBorderRadius.lg,
                                       ),
                                       child: Material(
                                         color: Colors.transparent,
@@ -307,7 +310,7 @@ class _TodosPageState extends State<TodosPage>
                                           vertical: AppSpacing.md),
                                       decoration: BoxDecoration(
                                         color: AppColors.secondary,
-                                        borderRadius: AppBorderRadius.xxl,
+                                        borderRadius: AppBorderRadius.lg,
                                       ),
                                       child: Row(
                                         children: [
@@ -387,10 +390,22 @@ class _TodosPageState extends State<TodosPage>
                               Padding(
                                 padding: EdgeInsets.only(
                                     top: AppSpacing.md, bottom: AppSpacing.sm),
-                                child: Text(
-                                  "Todo (${notDoneTodos.length})",
-                                  style: AppText.textSm.copyWith(
-                                      color: AppColors.mutedForeground),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.list,
+                                      color: AppColors.mutedForeground,
+                                      size: AppSpacing.iconSizeLg,
+                                    ),
+                                    SizedBox(
+                                      width: AppSpacing.xs,
+                                    ),
+                                    Text(
+                                      "Todo (${notDoneTodos.length})",
+                                      style: AppText.textSmBold.copyWith(
+                                          color: AppColors.mutedForeground),
+                                    ),
+                                  ],
                                 ),
                               ),
                               ListView.builder(
@@ -412,10 +427,22 @@ class _TodosPageState extends State<TodosPage>
                               Padding(
                                 padding: EdgeInsets.only(
                                     top: AppSpacing.md, bottom: AppSpacing.sm),
-                                child: Text(
-                                  "Done (${doneTodos.length})",
-                                  style: AppText.textSm.copyWith(
-                                      color: AppColors.mutedForeground),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.check,
+                                      color: AppColors.mutedForeground,
+                                      size: AppSpacing.iconSizeLg,
+                                    ),
+                                    SizedBox(
+                                      width: AppSpacing.xs,
+                                    ),
+                                    Text(
+                                      "Done (${doneTodos.length})",
+                                      style: AppText.textSmBold.copyWith(
+                                          color: AppColors.mutedForeground),
+                                    ),
+                                  ],
                                 ),
                               ),
                               ListView.builder(
