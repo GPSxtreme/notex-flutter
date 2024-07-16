@@ -49,11 +49,11 @@ final defaultThemeData = ThemeData(
         trackOutlineWidth: const WidgetStatePropertyAll(0.0)),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        textStyle: AppText.textLgSemiBold.copyWith(color: AppColors.primary),
+        textStyle: AppText.textLgSemiBold.copyWith(color: AppColors.foreground),
         shape: ContinuousRectangleBorder(
           borderRadius: AppBorderRadius.lg,
         ),
-        backgroundColor: AppColors.accent,
+        backgroundColor: AppColors.primary,
       ).copyWith(
         overlayColor: WidgetStateProperty.resolveWith<Color?>(
           (Set<WidgetState> states) {
@@ -68,7 +68,7 @@ final defaultThemeData = ThemeData(
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: Colors.transparent, // Background color for the text field
+      fillColor: AppColors.input,
       hintStyle: AppText.textBase.copyWith(color: AppColors.mutedForeground),
       border: OutlineInputBorder(
         // Normal state border
@@ -110,7 +110,7 @@ final defaultThemeData = ThemeData(
     dropdownMenuTheme: DropdownMenuThemeData(
       menuStyle: MenuStyle(
         shape: WidgetStateProperty.all(RoundedRectangleBorder(
-            borderRadius: AppBorderRadius.md,
+            borderRadius: AppBorderRadius.lg,
             side: const BorderSide(color: AppColors.border, width: 1.0))),
         side: WidgetStateProperty.all(
             const BorderSide(color: AppColors.border, width: 1.0)),
@@ -125,15 +125,15 @@ final defaultThemeData = ThemeData(
         isCollapsed: true,
         border: OutlineInputBorder(
           // Adding a border
-          borderRadius: AppBorderRadius.md,
+          borderRadius: AppBorderRadius.lg,
           borderSide: const BorderSide(color: AppColors.border, width: 1.0),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: AppBorderRadius.md,
+          borderRadius: AppBorderRadius.lg,
           borderSide: const BorderSide(color: AppColors.border, width: 1.0),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: AppBorderRadius.md,
+          borderRadius: AppBorderRadius.lg,
           borderSide: const BorderSide(color: AppColors.primary, width: 1.0),
         ),
       ),
