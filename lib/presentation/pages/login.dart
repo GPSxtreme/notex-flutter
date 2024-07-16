@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:notex/presentation/blocs/login/login_bloc.dart';
 import 'package:notex/presentation/styles/app_colors.dart';
+import 'package:notex/presentation/styles/app_text.dart';
 import 'package:notex/router/app_route_constants.dart';
 
 import '../styles/app_styles.dart';
@@ -20,6 +21,8 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   final LoginBloc loginBloc = LoginBloc();
   bool _hide = true;
   bool _rememberDevice = false;
@@ -27,6 +30,30 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
+  }
+
+  String? _mailValidator(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your email';
+    } else if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,}$').hasMatch(value)) {
+      return 'Please enter a valid email address';
+    }
+    return null;
+  }
+
+  String? _passwordValidator(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your password';
+    }
+    return null;
+  }
+
+  // login method
+  void _login() async {
+    if (_formKey.currentState?.validate() ?? false) {
+      loginBloc.add(LoginPageLoginButtonClickedEvent(
+          _emailController.text, _passwordController.text, _rememberDevice));
+    }
   }
 
   @override
@@ -56,7 +83,7 @@ class _LoginPageState extends State<LoginPage> {
         return Scaffold(
           resizeToAvoidBottomInset: true,
           body: SafeArea(
-            child: Container(
+            child: SizedBox(
               width: SizeConfig.screenWidth,
               height: SizeConfig.screenHeight,
               child: Stack(
@@ -68,150 +95,166 @@ class _LoginPageState extends State<LoginPage> {
                         SvgPicture.asset('assets/svg/login_page_bg_decor.svg'),
                   ),
                   Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 25, vertical: 0),
-                    child:
-                        NotificationListener<OverscrollIndicatorNotification>(
-                      onNotification: (overScroll) {
-                        overScroll.disallowIndicator();
-                        return true;
-                      },
-                      child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                    padding: EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          "Sign in to",
+                          style: AppText.text3XlBold,
+                        ),
+                        SizedBox(
+                          height: AppSpacing.sm,
+                        ),
+                        Row(
                           children: [
-                            SizedBox(
-                              height: SizeConfig.blockSizeVertical! * 20,
+                            Text(
+                              "Your ",
+                              style: AppText.text3XlBold,
                             ),
                             Text(
-                              "Sign in to",
-                            ),
-                            Row(
-                              children: [
-                                Text(
-                                  "your ",
-                                ),
-                                Text(
-                                  "account",
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: SizeConfig.blockSizeVertical! * 4,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Don't have an account? ",
-                                ),
-                                GestureDetector(
-                                    onTap: () {
-                                      // go to register page
-                                      loginBloc.add(
-                                          LoginPageRegisterButtonClickedEvent());
-                                    },
-                                    child: Text(
-                                      "Register ",
-                                    )),
-                              ],
-                            ),
-                            SizedBox(
-                              height: SizeConfig.blockSizeVertical! * 7,
-                            ),
-                            TextField(
-                              controller: _emailController,
-                              keyboardType: TextInputType.emailAddress,
-                            ),
-                            SizedBox(
-                              height: SizeConfig.blockSizeVertical! * 3,
-                            ),
-                            TextField(
-                              keyboardType: TextInputType.text,
-                              controller: _passwordController,
-                              obscureText: _hide,
-                            ),
-                            SizedBox(
-                              height: SizeConfig.blockSizeVertical,
-                            ),
-                            Row(
-                              children: [
-                                Transform.scale(
-                                  scale: 1.3,
-                                  child: Checkbox(
-                                      value: _rememberDevice,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(5)),
-                                      onChanged: (bool? value) {
-                                        setState(() {
-                                          _rememberDevice = value!;
-                                        });
-                                      }),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      _rememberDevice = !_rememberDevice;
-                                    });
-                                  },
-                                  child: Text(
-                                    "Remember device",
-                                  ),
-                                )
-                              ],
-                            ),
-                            SizedBox(
-                              height: SizeConfig.blockSizeVertical! * 5,
-                            ),
-                            SizedBox(
-                              width: double.maxFinite,
-                              child: ElevatedButton(
-                                onPressed: state is! LoginLoadingSate
-                                    ? () {
-                                        // login user
-                                        if (_emailController.text.isEmpty ||
-                                            _passwordController.text.isEmpty) {
-                                          kSnackBar(context,
-                                              'Please fill in all fields');
-                                        } else {
-                                          loginBloc.add(
-                                              LoginPageLoginButtonClickedEvent(
-                                                  _emailController.text,
-                                                  _passwordController.text,
-                                                  _rememberDevice));
-                                        }
-                                      }
-                                    : null,
-                                child: state is! LoginLoadingSate
-                                    ? Text(
-                                        "Login",
-                                      )
-                                    : SpinKitCircle(
-                                        color: AppColors.primary,
-                                        size: 22,
-                                      ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: SizeConfig.blockSizeVertical! * 2,
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                loginBloc.add(
-                                    LoginPageForgotPasswordButtonClickedEvent());
-                              },
-                              child: RichText(
-                                text: TextSpan(text: 'Forgot', children: [
-                                  TextSpan(
-                                    text: ' password?',
-                                  )
-                                ]),
-                              ),
+                              "Account",
+                              style: AppText.text3XlBold
+                                  .copyWith(color: AppColors.primary),
                             ),
                           ],
                         ),
-                      ),
+                        SizedBox(
+                          height: AppSpacing.xxxl,
+                        ),
+                        Form(
+                          key: _formKey,
+                          child: Column(
+                            children: [
+                              TextFormField(
+                                controller: _emailController,
+                                keyboardType: TextInputType.emailAddress,
+                                validator: _mailValidator,
+                                decoration: InputDecoration(
+                                    hintText: 'Email',
+                                    prefixIcon: Icon(Icons.email,
+                                        color: AppColors.mutedForeground,
+                                        size: AppSpacing.iconSizeLg)),
+                              ),
+                              SizedBox(
+                                height: AppSpacing.md,
+                              ),
+                              TextFormField(
+                                keyboardType: TextInputType.text,
+                                validator: _passwordValidator,
+                                decoration: InputDecoration(
+                                    hintText: 'Password',
+                                    prefixIcon: Icon(Icons.password,
+                                        color: AppColors.mutedForeground,
+                                        size: AppSpacing.iconSizeLg),
+                                    suffixIcon: Material(
+                                        shape: const CircleBorder(),
+                                        color: Colors.transparent,
+                                        child: InkWell(
+                                          borderRadius: AppBorderRadius.full,
+                                          onTap: () {
+                                            setState(() {
+                                              _hide = !_hide;
+                                            });
+                                          },
+                                          child: Icon(
+                                            _hide
+                                                ? Icons.visibility
+                                                : Icons.visibility_off,
+                                            color: AppColors.foreground,
+                                            size: AppSpacing.iconSizeLg,
+                                          ),
+                                        ))),
+                                controller: _passwordController,
+                                obscureText: _hide,
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: AppSpacing.lg,
+                        ),
+                        Row(
+                          children: [
+                            Transform.scale(
+                              scale: 1.3,
+                              child: Checkbox(
+                                  value: _rememberDevice,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(5)),
+                                  onChanged: (bool? value) {
+                                    setState(() {
+                                      _rememberDevice = value!;
+                                    });
+                                  }),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _rememberDevice = !_rememberDevice;
+                                });
+                              },
+                              child: Text("Remember device",
+                                  style: AppText.textBase),
+                            )
+                          ],
+                        ),
+                        SizedBox(
+                          height: AppSpacing.xxxl,
+                        ),
+                        SizedBox(
+                          width: double.maxFinite,
+                          child: ElevatedButton(
+                            onPressed:
+                                state is! LoginLoadingSate ? _login : null,
+                            child: state is! LoginLoadingSate
+                                ? Text(
+                                    "Login",
+                                    style: AppText.textLgBold,
+                                  )
+                                : SpinKitCircle(
+                                    color: AppColors.primary,
+                                    size: AppSpacing.iconSize2Xl,
+                                  ),
+                          ),
+                        ),
+                        Center(
+                          child: TextButton(
+                            onPressed: () {
+                              loginBloc.add(
+                                  LoginPageForgotPasswordButtonClickedEvent());
+                            },
+                            child: const Text("Forgot password?"),
+                          ),
+                        ),
+                        SizedBox(
+                          height: AppSpacing.xxxl,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Don't have an account? ",
+                              style: AppText.textBase,
+                            ),
+                            GestureDetector(
+                                onTap: () {
+                                  // go to register page
+                                  loginBloc.add(
+                                      LoginPageRegisterButtonClickedEvent());
+                                },
+                                child: Text(
+                                  "Register ",
+                                  style: AppText.textBaseSemiBold
+                                      .copyWith(color: AppColors.primary),
+                                )),
+                          ],
+                        ),
+                        SizedBox(
+                          height: AppSpacing.xl,
+                        ),
+                      ],
                     ),
                   )
                 ],
