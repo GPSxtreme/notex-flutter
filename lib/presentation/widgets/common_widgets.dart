@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:notex/presentation/styles/app_colors.dart';
+import 'package:notex/presentation/styles/app_text.dart';
+import 'package:notex/presentation/styles/size_config.dart';
 
 class CommonWidgets {
   static Future<bool?> commonAlertDialog(
@@ -18,16 +21,16 @@ class CommonWidgets {
       context: context,
       barrierDismissible: isBarrierDismissible,
       builder: (context) => AlertDialog(
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(18.0))),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 25, vertical: 25),
+        shape: RoundedRectangleBorder(borderRadius: AppBorderRadius.lg),
+        contentPadding: EdgeInsets.all(AppSpacing.lg),
         actionsPadding: EdgeInsets.zero,
-        title: Text(
-          title,
-        ),
+        title: Text(title,
+            style: AppText.textXlSemiBold
+                .copyWith(color: titleColor ?? AppColors.foreground)),
         content: Text(
           body,
+          style: AppText.textBase
+              .copyWith(color: bodyColor ?? AppColors.foreground),
         ),
         actions: [
           Column(
@@ -43,17 +46,17 @@ class CommonWidgets {
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     width: double.maxFinite,
                     child: Center(
-                      child: Text(
-                        agreeLabel,
-                      ),
+                      child: Text(agreeLabel,
+                          style: AppText.textBaseMedium.copyWith(
+                              color: agreeButtonColor ?? AppColors.primary)),
                     ),
                   ),
                 ),
               ),
               if (!isSingleBtn) ...[
-                Divider(
-                  indent: 40,
-                  endIndent: 40,
+                const Divider(
+                  color: AppColors.border,
+                  height: 10,
                 ),
                 Material(
                   color: Colors.transparent,
@@ -65,16 +68,17 @@ class CommonWidgets {
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       width: double.maxFinite,
                       child: Center(
-                        child: Text(
-                          denyLabel,
-                        ),
+                        child: Text(denyLabel,
+                            style: AppText.textBaseMedium.copyWith(
+                                color:
+                                    denyButtonColor ?? AppColors.foreground)),
                       ),
                     ),
                   ),
                 ),
               ],
-              const SizedBox(
-                height: 10,
+              SizedBox(
+                height: AppSpacing.sm,
               )
             ],
           ),
