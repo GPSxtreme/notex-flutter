@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:notex/presentation/blocs/todos/todos_bloc.dart';
 import 'package:notex/presentation/styles/app_colors.dart';
 import 'package:notex/presentation/styles/app_styles.dart';
+import 'package:notex/presentation/styles/app_text.dart';
 import 'package:notex/presentation/styles/size_config.dart';
 import 'package:notex/presentation/widgets/add_todo_dialog_box.dart';
 import 'package:notex/presentation/widgets/todo_tile.dart';
@@ -99,8 +99,8 @@ class _TodosPageState extends State<TodosPage>
               notDoneTodos.any((t) => !t.isUploaded)) {
             _areTodosNotUploaded = true;
             _noOfTodosNotUploaded = [
-              ...doneTodos.where((e) => !e.isUploaded).toList(),
-              ...notDoneTodos.where((e) => !e.isUploaded).toList()
+              ...doneTodos.where((e) => !e.isUploaded),
+              ...notDoneTodos.where((e) => !e.isUploaded)
             ].length;
           } else {
             _areTodosNotUploaded = false;
@@ -119,64 +119,62 @@ class _TodosPageState extends State<TodosPage>
             child: Stack(
               children: [
                 if (state is TodosEmptyState) ...[
-                  Positioned(
-                    top: 0,
-                    bottom: 0,
-                    left: SizeConfig.screenWidth! * 0.1,
-                    right: SizeConfig.screenWidth! * 0.1,
-                    child: SvgPicture.asset(
-                      "assets/svg/magnify-glass.svg",
+                  SizedBox(
+                    width: SizeConfig.screenWidth,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Material(
+                          shape: const CircleBorder(),
+                          color: AppColors.muted,
+                          child: Padding(
+                            padding: EdgeInsets.all(AppSpacing.xl),
+                            child: Icon(
+                              Icons.visibility_off_rounded,
+                              color: AppColors.mutedForeground,
+                              size: AppSpacing.iconSize2Xl,
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: AppSpacing.lg,
+                        ),
+                        Text(
+                          'No Todos',
+                          style: AppText.textXlBold,
+                        ),
+                        Text(
+                          "Found",
+                          style: AppText.textBase,
+                        ),
+                        SizedBox(
+                          height: AppSpacing.md,
+                        ),
+                        Text(
+                          "You can add new todo by pressing\nAdd button at the bottom",
+                          textAlign: TextAlign.center,
+                          style: AppText.textSm
+                              .copyWith(color: AppColors.mutedForeground),
+                        )
+                      ],
                     ),
                   ),
-                  // showed when no notes are found
-                  Positioned(
-                      top: 0,
-                      bottom: 0,
-                      left: SizeConfig.screenWidth! * 0.1,
-                      right: SizeConfig.screenWidth! * 0.1,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                'No',
-                              ),
-                              SizedBox(
-                                height: SizeConfig.blockSizeHorizontal! * 2,
-                              ),
-                              Text(
-                                ' todos',
-                              ),
-                            ],
-                          ),
-                          Text(
-                            'Found',
-                          ),
-                          SizedBox(
-                            height: SizeConfig.blockSizeVertical! * 3,
-                          ),
-                          Text(
-                            "You can add new todo by pressing\nAdd button at the bottom",
-                            textAlign: TextAlign.center,
-                          )
-                        ],
-                      )),
                 ] else if (state is TodosFetchingState) ...[
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const SpinKitRing(
+                      SpinKitRing(
                         color: AppColors.primary,
-                        size: 35,
+                        size: AppSpacing.iconSize3Xl,
+                        lineWidth: 5,
                       ),
-                      const SizedBox(
-                        height: 10,
+                      SizedBox(
+                        height: AppSpacing.lg,
                       ),
-                      Text(
-                        'This might take a while',
-                      )
+                      Text('This might take a while',
+                          textAlign: TextAlign.center,
+                          style: AppText.textSm
+                              .copyWith(color: AppColors.mutedForeground))
                     ],
                   )
                 ] else if (state is TodosFetchingFailedState) ...[
@@ -184,14 +182,33 @@ class _TodosPageState extends State<TodosPage>
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          'Failed to load notes',
+                        Material(
+                          shape: const CircleBorder(),
+                          color: AppColors.muted,
+                          child: Padding(
+                            padding: EdgeInsets.all(AppSpacing.xl),
+                            child: Icon(
+                              Icons.visibility_off_rounded,
+                              color: AppColors.mutedForeground,
+                              size: AppSpacing.iconSize2Xl,
+                            ),
+                          ),
                         ),
                         SizedBox(
-                          height: SizeConfig.blockSizeVertical! * 2,
+                          height: AppSpacing.lg,
+                        ),
+                        Text(
+                          'Failed to load notes',
+                          style: AppText.textXlBold,
+                        ),
+                        SizedBox(
+                          height: AppSpacing.md,
                         ),
                         Text(
                           state.reason,
+                          textAlign: TextAlign.center,
+                          style: AppText.textSm
+                              .copyWith(color: AppColors.mutedForeground),
                         ),
                       ],
                     ),
@@ -214,20 +231,20 @@ class _TodosPageState extends State<TodosPage>
                             if (!_isSyncing &&
                                 _areTodosNotUploaded &&
                                 state is! TodosEditingState) ...[
-                              SizedBox(
-                                height: SizeConfig.blockSizeVertical! * 3,
-                              ),
                               AnimationConfiguration.synchronized(
                                 duration: const Duration(milliseconds: 375),
                                 child: FlipAnimation(
                                   child: FadeInAnimation(
                                     child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 15, vertical: 15),
+                                      margin: EdgeInsets.symmetric(
+                                          vertical: AppSpacing.md),
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: AppSpacing.md,
+                                          vertical: AppSpacing.md),
                                       decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(15),
-                                          border: Border.all(width: 1.0)),
+                                        color: AppColors.secondary,
+                                        borderRadius: AppBorderRadius.xxl,
+                                      ),
                                       child: Material(
                                         color: Colors.transparent,
                                         child: Row(
@@ -239,12 +256,17 @@ class _TodosPageState extends State<TodosPage>
                                                 children: [
                                                   Text(
                                                     '$_noOfTodosNotUploaded ${_noOfTodosNotUploaded == 1 ? 'todo is' : "todos are"} not uploaded',
+                                                    style: AppText.textBase,
                                                   ),
-                                                  const SizedBox(
-                                                    height: 5,
+                                                  SizedBox(
+                                                    height: AppSpacing.sm,
                                                   ),
                                                   Text(
                                                     'Click on the icon to upload',
+                                                    style: AppText.textSmMedium
+                                                        .copyWith(
+                                                            color: AppColors
+                                                                .mutedForeground),
                                                   )
                                                 ],
                                               ),
@@ -253,20 +275,15 @@ class _TodosPageState extends State<TodosPage>
                                               onPressed: () {
                                                 todosBloc.add(
                                                     TodosUploadTodosToCloudEvent([
-                                                  ...doneTodos
-                                                      .where(
-                                                          (e) => !e.isUploaded)
-                                                      .toList(),
-                                                  ...notDoneTodos
-                                                      .where(
-                                                          (e) => !e.isUploaded)
-                                                      .toList()
+                                                  ...doneTodos.where(
+                                                      (e) => !e.isUploaded),
+                                                  ...notDoneTodos.where(
+                                                      (e) => !e.isUploaded)
                                                 ]));
                                               },
-                                              icon: const Icon(
-                                                Icons.cloud_upload_outlined,
-                                                size: 30,
-                                              ),
+                                              icon: Icon(
+                                                  Icons.cloud_upload_outlined,
+                                                  size: AppSpacing.iconSize2Xl),
                                               splashRadius: 20,
                                             )
                                           ],
@@ -278,20 +295,20 @@ class _TodosPageState extends State<TodosPage>
                               )
                             ],
                             if (_isSyncing) ...[
-                              SizedBox(
-                                height: SizeConfig.blockSizeVertical! * 3,
-                              ),
                               AnimationConfiguration.synchronized(
                                 duration: const Duration(milliseconds: 375),
                                 child: FlipAnimation(
                                   child: FadeInAnimation(
                                     child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 15, vertical: 15),
+                                      margin: EdgeInsets.symmetric(
+                                          vertical: AppSpacing.md),
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: AppSpacing.md,
+                                          vertical: AppSpacing.md),
                                       decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(15),
-                                          border: Border.all(width: 1.0)),
+                                        color: AppColors.secondary,
+                                        borderRadius: AppBorderRadius.xxl,
+                                      ),
                                       child: Row(
                                         children: [
                                           Expanded(
@@ -301,20 +318,25 @@ class _TodosPageState extends State<TodosPage>
                                               children: [
                                                 Text(
                                                   '$_noOfTodosSyncing ${_noOfTodosSyncing == 1 ? 'todo is' : "todos are"} syncing',
+                                                  style: AppText.textBase,
                                                 ),
-                                                const SizedBox(
-                                                  height: 5,
+                                                SizedBox(
+                                                  height: AppSpacing.sm,
                                                 ),
                                                 Text(
-                                                  'Please do not quit',
+                                                  'PLEASE DO NOT QUIT',
+                                                  style: AppText.textSmBold
+                                                      .copyWith(
+                                                          color: AppColors
+                                                              .mutedForeground),
                                                 )
                                               ],
                                             ),
                                           ),
-                                          const SpinKitRing(
+                                          SpinKitRing(
                                             color: AppColors.primary,
                                             lineWidth: 3.0,
-                                            size: 20,
+                                            size: AppSpacing.iconSizeXl,
                                           )
                                         ],
                                       ),
@@ -333,11 +355,24 @@ class _TodosPageState extends State<TodosPage>
                                       final selectedTodosCount =
                                           selectedTodos.length;
                                       return Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 20),
-                                        child: Text(
-                                          'Selected (${selectedTodosCount.toString()})',
-                                        ),
+                                        padding: EdgeInsets.only(
+                                            bottom: AppSpacing.lg,
+                                            top: AppSpacing.md),
+                                        child: RichText(
+                                            text: TextSpan(children: [
+                                          TextSpan(
+                                              text: 'Selected ',
+                                              style: AppText.textBaseMedium
+                                                  .copyWith(
+                                                      color: AppColors
+                                                          .foreground)),
+                                          TextSpan(
+                                              text: '$selectedTodosCount ',
+                                              style: AppText.textLgBold
+                                                  .copyWith(
+                                                      color:
+                                                          AppColors.primary)),
+                                        ])),
                                       );
                                     } else {
                                       return const SizedBox.shrink();
@@ -350,10 +385,12 @@ class _TodosPageState extends State<TodosPage>
                               ),
                             if (notDoneTodos.isNotEmpty) ...[
                               Padding(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: SizeConfig.blockSizeVertical!),
+                                padding: EdgeInsets.only(
+                                    top: AppSpacing.md, bottom: AppSpacing.sm),
                                 child: Text(
                                   "Todo (${notDoneTodos.length})",
+                                  style: AppText.textSm.copyWith(
+                                      color: AppColors.mutedForeground),
                                 ),
                               ),
                               ListView.builder(
@@ -373,10 +410,12 @@ class _TodosPageState extends State<TodosPage>
                                 height: SizeConfig.blockSizeVertical!,
                               ),
                               Padding(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: SizeConfig.blockSizeVertical!),
+                                padding: EdgeInsets.only(
+                                    top: AppSpacing.md, bottom: AppSpacing.sm),
                                 child: Text(
                                   "Done (${doneTodos.length})",
+                                  style: AppText.textSm.copyWith(
+                                      color: AppColors.mutedForeground),
                                 ),
                               ),
                               ListView.builder(
