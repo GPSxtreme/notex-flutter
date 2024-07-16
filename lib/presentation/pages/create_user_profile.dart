@@ -1,11 +1,13 @@
 // ignore_for_file: constant_identifier_names
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:notex/presentation/blocs/create_user_profile/create_user_profile_bloc.dart';
+import 'package:notex/presentation/styles/app_colors.dart';
+import 'package:notex/presentation/styles/app_text.dart';
 import 'package:notex/presentation/styles/size_config.dart';
 import 'package:notex/router/app_route_constants.dart';
 import '../../data/models/updatable_user_data_model.dart';
@@ -70,35 +72,43 @@ class _CreateUserProfileState extends State<CreateUserProfile> {
   void _showPickOptions() => showModalBottomSheet(
         showDragHandle: true,
         context: context,
+        backgroundColor: AppColors.secondary,
         builder: (BuildContext context) {
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: const Icon(
-                  Icons.camera_alt,
+          return Padding(
+            padding: EdgeInsets.only(bottom: AppSpacing.lg),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: const Icon(
+                    Icons.camera_alt_rounded,
+                    color: AppColors.mutedForeground,
+                  ),
+                  title: Text(
+                    'Take a photo',
+                    style: AppText.textBaseSemiBold,
+                  ),
+                  onTap: () {
+                    _pickImage(ImageSource.camera);
+                    Navigator.of(context).pop();
+                  },
                 ),
-                title: Text(
-                  'Take a photo',
+                ListTile(
+                  leading: const Icon(
+                    Icons.image_rounded,
+                    color: AppColors.mutedForeground,
+                  ),
+                  title: Text(
+                    'Choose from gallery',
+                    style: AppText.textBaseSemiBold,
+                  ),
+                  onTap: () {
+                    _pickImage(ImageSource.gallery);
+                    Navigator.of(context).pop();
+                  },
                 ),
-                onTap: () {
-                  _pickImage(ImageSource.camera);
-                  Navigator.of(context).pop();
-                },
-              ),
-              ListTile(
-                leading: const Icon(
-                  Icons.image,
-                ),
-                title: Text(
-                  'Choose from gallery',
-                ),
-                onTap: () {
-                  _pickImage(ImageSource.gallery);
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
+              ],
+            ),
           );
         },
       );
@@ -124,265 +134,306 @@ class _CreateUserProfileState extends State<CreateUserProfile> {
       },
       builder: (context, state) {
         return Scaffold(
-          appBar: AppBar(
-            elevation: 0,
-          ),
+          resizeToAvoidBottomInset: false,
           body: SafeArea(
             child: Container(
-              height: SizeConfig.screenHeight,
-              width: SizeConfig.screenWidth,
-              child: Stack(
+              margin: EdgeInsets.symmetric(horizontal: AppSpacing.md),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Positioned(
-                    left: 0,
-                    top: 0,
-                    child: SvgPicture.asset(
-                      "assets/svg/register_background_decoration.svg",
+                  SizedBox(
+                    height: SizeConfig.blockSizeVertical!,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Setup ",
+                        style: AppText.text2XlBold,
+                      ),
+                      Text(
+                        "profile",
+                        style: AppText.text2XlBold
+                            .copyWith(color: AppColors.primary),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: SizeConfig.blockSizeVertical! * 8,
+                  ),
+                  Center(
+                    child: Stack(
+                      children: [
+                        CircleAvatar(
+                          radius: SizeConfig.blockSizeHorizontal! * 18,
+                          backgroundColor: AppColors.secondary,
+                          backgroundImage: (_imageFile != null)
+                              ? FileImage(_imageFile!)
+                              : null,
+                          child: Material(
+                            color: Colors.transparent,
+                            elevation: 0,
+                            borderRadius: AppBorderRadius.full,
+                            child: InkWell(
+                              borderRadius: AppBorderRadius.full,
+                              onTap: () {
+                                _showPickOptions();
+                              },
+                              child: Container(
+                                decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
+                                ),
+                                child: SizedBox(
+                                  height: double.maxFinite,
+                                  width: double.maxFinite,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      if (_imageFile == null) ...[
+                                        Icon(
+                                          Icons.person,
+                                          color: AppColors.primary,
+                                          size:
+                                              SizeConfig.blockSizeHorizontal! *
+                                                  17,
+                                        ),
+                                        Text(
+                                          "Add picture",
+                                          style: AppText.textSmBold.copyWith(
+                                              color: AppColors.primary),
+                                        )
+                                      ]
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          top: 0,
+                          right: 0,
+                          child: Material(
+                            elevation: 5.0,
+                            borderRadius: AppBorderRadius.full,
+                            child: InkWell(
+                              borderRadius: AppBorderRadius.full,
+                              onTap: _showPickOptions,
+                              child: Container(
+                                decoration: const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: AppColors.primary),
+                                child: Padding(
+                                  padding: EdgeInsets.all(AppSpacing.sm),
+                                  child: Icon(
+                                    Icons.edit,
+                                    color: AppColors.secondary,
+                                    size: AppSpacing.iconSizeLg,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 25, vertical: 0),
-                    child:
-                        NotificationListener<OverscrollIndicatorNotification>(
-                      onNotification: (overScroll) {
-                        overScroll.disallowIndicator();
-                        return true;
-                      },
-                      child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              height: SizeConfig.blockSizeVertical!,
+                  SizedBox(
+                    height: SizeConfig.blockSizeVertical! * 10,
+                  ),
+                  TextField(
+                      controller: _nameController,
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: const InputDecoration(
+                          hintText: "Name",
+                          prefixIcon: Icon(
+                            Icons.person,
+                            color: AppColors.mutedForeground,
+                          ))),
+                  SizedBox(
+                    height: SizeConfig.blockSizeVertical! * 2,
+                  ),
+                  Row(
+                    children: [
+                      Flexible(
+                        child: TextField(
+                          controller: _dobController,
+                          readOnly: true,
+                          onTap: () {
+                            createUserProfileBloc
+                                .add(CreateUserProfileOpenDatePickerEvent());
+                          },
+                          decoration: const InputDecoration(
+                              hintText: "MM/dd/yyyy",
+                              prefixIcon: Icon(
+                                Icons.calendar_month,
+                                color: AppColors.mutedForeground,
+                              )),
+                          keyboardType: TextInputType.datetime,
+                        ),
+                      ),
+                      SizedBox(
+                        width: AppSpacing.sm,
+                      ),
+                      IntrinsicHeight(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.secondary,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: AppBorderRadius.lg,
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  "Setup ",
-                                ),
-                                Text(
-                                  "profile",
-                                ),
-                              ],
+                          ),
+                          onPressed: () {
+                            createUserProfileBloc
+                                .add(CreateUserProfileOpenDatePickerEvent());
+                          },
+                          child: const Icon(
+                            Icons.calendar_month,
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                  SizedBox(
+                    height: AppSpacing.lg,
+                  ),
+                  Text(" Country",
+                      style: AppText.textSm.copyWith(
+                        color: AppColors.mutedForeground,
+                      )),
+                  SizedBox(
+                    height: AppSpacing.md,
+                  ),
+                  Material(
+                    borderRadius: AppBorderRadius.lg,
+                    child: InkWell(
+                      borderRadius: AppBorderRadius.lg,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: AppBorderRadius.lg,
+                        ),
+                        child: CountryCodePicker(
+                          padding: EdgeInsets.zero,
+                          barrierColor: Colors.transparent,
+                          backgroundColor: AppColors.background,
+                          initialSelection: _selectedCountry,
+                          boxDecoration: BoxDecoration(
+                              color: AppColors.card,
+                              borderRadius: AppBorderRadius.lg,
+                              border: Border.all(
+                                  color: AppColors.border, width: 1.0)),
+                          searchDecoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors
+                                .transparent, // Background color for the text field
+                            hintStyle: AppText.textBase
+                                .copyWith(color: AppColors.mutedForeground),
+                            border: OutlineInputBorder(
+                              // Normal state border
+                              borderRadius: AppBorderRadius.lg,
+                              borderSide: const BorderSide(
+                                  color: AppColors.border), // Border color
                             ),
-                            SizedBox(
-                              height: SizeConfig.blockSizeVertical! * 8,
+                            enabledBorder: OutlineInputBorder(
+                              // Enabled state border
+                              borderRadius: AppBorderRadius.lg,
+
+                              borderSide:
+                                  const BorderSide(color: AppColors.border),
                             ),
-                            Center(
-                              child: Stack(
-                                children: [
-                                  CircleAvatar(
-                                    radius:
-                                        SizeConfig.blockSizeHorizontal! * 18,
-                                    backgroundImage: (_imageFile != null)
-                                        ? FileImage(_imageFile!)
-                                        : null,
-                                    child: Material(
-                                      color: Colors.transparent,
-                                      elevation: 0,
-                                      borderRadius: BorderRadius.circular(999),
-                                      child: InkWell(
-                                        borderRadius:
-                                            BorderRadius.circular(999),
-                                        onTap: () {
-                                          _showPickOptions();
-                                        },
-                                        child: Container(
-                                          decoration: const BoxDecoration(
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: Center(
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                if (_imageFile == null) ...[
-                                                  Icon(
-                                                    Icons.person,
-                                                    size: SizeConfig
-                                                            .blockSizeHorizontal! *
-                                                        17,
-                                                  ),
-                                                  Text(
-                                                    "Add picture",
-                                                  )
-                                                ]
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Positioned(
-                                    top: 0,
-                                    right: 0,
-                                    child: Material(
-                                      elevation: 5.0,
-                                      borderRadius: BorderRadius.circular(999),
-                                      child: InkWell(
-                                        borderRadius:
-                                            BorderRadius.circular(999),
-                                        onTap: _showPickOptions,
-                                        child: Container(
-                                          decoration: const BoxDecoration(
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: const Padding(
-                                            padding: EdgeInsets.all(5.0),
-                                            child: Icon(
-                                              Icons.edit,
-                                              size: 25,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                            focusedBorder: OutlineInputBorder(
+                              // Focused state border
+                              borderRadius: AppBorderRadius.lg,
+                              borderSide: const BorderSide(
+                                  color: AppColors.primary,
+                                  width: 1.0), // Thicker border when focused
                             ),
-                            SizedBox(
-                              height: SizeConfig.blockSizeVertical! * 10,
-                            ),
-                            TextField(
-                              controller: _nameController,
-                              keyboardType: TextInputType.emailAddress,
-                            ),
-                            SizedBox(
-                              height: SizeConfig.blockSizeVertical! * 2,
-                            ),
-                            Row(
-                              children: [
-                                Flexible(
-                                  child: TextField(
-                                    controller: _dobController,
-                                    keyboardType: TextInputType.datetime,
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: SizeConfig.blockSizeHorizontal! * 2,
-                                ),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    createUserProfileBloc.add(
-                                        CreateUserProfileOpenDatePickerEvent());
-                                  },
-                                  child: const Icon(
-                                    Icons.calendar_month,
-                                  ),
-                                )
-                              ],
-                            ),
-                            SizedBox(
-                              height: SizeConfig.blockSizeHorizontal! * 5,
-                            ),
-                            Text(
-                              " country",
-                            ),
-                            SizedBox(
-                              height: SizeConfig.blockSizeHorizontal! * 2,
-                            ),
-                            Material(
-                              borderRadius: BorderRadius.circular(15),
-                              child: InkWell(
-                                borderRadius: BorderRadius.circular(15),
-                                radius: 15,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(15),
-                                    border: Border.all(
-                                      width: 2.0,
-                                    ),
-                                  ),
-                                  child: CountryCodePicker(
-                                    padding: EdgeInsets.zero,
-                                    initialSelection: 'IN',
-                                    emptySearchBuilder: (context) {
-                                      return Padding(
-                                        padding: const EdgeInsets.all(10.0),
-                                        child: Text(
-                                          "Please enter your country code / telephone code if no results are shown.",
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      );
-                                    },
-                                    showOnlyCountryWhenClosed: true,
-                                    showCountryOnly: true,
-                                    dialogSize: Size(
-                                        SizeConfig.screenWidth! * 0.8,
-                                        SizeConfig.screenHeight! * 0.8),
-                                    flagWidth:
-                                        SizeConfig.blockSizeHorizontal! * 10,
-                                    alignLeft: true,
-                                    showDropDownButton: true,
-                                    closeIcon: const Icon(
-                                      Icons.close,
-                                      size: 25,
-                                    ),
-                                    onChanged: (CountryCode countryCode) {
-                                      setState(() {
-                                        _selectedCountry = countryCode.code!;
-                                      });
-                                    },
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: SizeConfig.blockSizeHorizontal! * 20,
-                            ),
-                            SizedBox(
-                              width: double.maxFinite,
-                              child: ElevatedButton(
-                                onPressed: state
-                                        is! CreateUserProfileLoadingState
-                                    ? () {
-                                        if (_imageFile == null ||
-                                            _nameController.text.isEmpty ||
-                                            _dobController.text.isEmpty ||
-                                            _selectedCountry.isEmpty) {
-                                          if (_imageFile == null) {
-                                            kSnackBar(context,
-                                                "Please add a profile picture");
-                                          } else {
-                                            kSnackBar(context,
-                                                "Please fill in all fields");
-                                          }
-                                        } else {
-                                          // create user profile
-                                          createUserProfileBloc.add(
-                                              CreateUserProfileCreateEvent(
-                                                  UpdatableUserDataModel(
-                                                      countryCode:
-                                                          _selectedCountry,
-                                                      dob: DateFormat(
-                                                              'MM/dd/yyyy')
-                                                          .parse(_dobController
-                                                              .text)
-                                                          .toUtc(),
-                                                      name:
-                                                          _nameController.text),
-                                                  _imageFile!));
-                                        }
-                                      }
-                                    : null,
-                                child: state is! CreateUserProfileLoadingState
-                                    ? Text(
-                                        "Continue",
-                                      )
-                                    : SpinKitCircle(
-                                        size: 22,
-                                      ),
-                              ),
-                            ),
-                          ],
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: AppSpacing.md,
+                                vertical:
+                                    12.0), // Padding inside the text field
+                          ),
+                          emptySearchBuilder: (context) {
+                            return Padding(
+                              padding: EdgeInsets.all(AppSpacing.md),
+                              child: Text(
+                                  "Please enter your country code / telephone code if no results are shown.",
+                                  textAlign: TextAlign.center,
+                                  style: AppText.textSm.copyWith(
+                                    color: AppColors.mutedForeground,
+                                  )),
+                            );
+                          },
+                          showOnlyCountryWhenClosed: true,
+                          showCountryOnly: true,
+                          dialogSize: Size(SizeConfig.screenWidth! * 0.8,
+                              SizeConfig.screenHeight! * 0.8),
+                          flagWidth: SizeConfig.blockSizeHorizontal! * 10,
+                          alignLeft: true,
+                          showDropDownButton: true,
+                          closeIcon: const Icon(
+                            Icons.close,
+                            size: 25,
+                          ),
+                          onChanged: (CountryCode countryCode) {
+                            setState(() {
+                              _selectedCountry = countryCode.code!;
+                            });
+                          },
                         ),
                       ),
                     ),
-                  )
+                  ),
+                  SizedBox(
+                    height: SizeConfig.blockSizeHorizontal! * 20,
+                  ),
+                  SizedBox(
+                    width: double.maxFinite,
+                    child: ElevatedButton(
+                      onPressed: state is! CreateUserProfileLoadingState
+                          ? () {
+                              if (_imageFile == null ||
+                                  _nameController.text.isEmpty ||
+                                  _dobController.text.isEmpty ||
+                                  _selectedCountry.isEmpty) {
+                                if (_imageFile == null) {
+                                  kSnackBar(
+                                      context, "Please add a profile picture");
+                                } else {
+                                  kSnackBar(
+                                      context, "Please fill in all fields");
+                                }
+                              } else {
+                                // create user profile
+                                createUserProfileBloc.add(
+                                    CreateUserProfileCreateEvent(
+                                        UpdatableUserDataModel(
+                                            countryCode: _selectedCountry,
+                                            dob: DateFormat('MM/dd/yyyy')
+                                                .parse(_dobController.text)
+                                                .toUtc(),
+                                            name: _nameController.text),
+                                        _imageFile!));
+                              }
+                            }
+                          : null,
+                      child: state is! CreateUserProfileLoadingState
+                          ? Text(
+                              "Save",
+                              style: AppText.textBaseBold,
+                            )
+                          : const SpinKitCircle(
+                              color: AppColors.primary,
+                              size: 20,
+                            ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: SizeConfig.blockSizeHorizontal! * 20,
+                  ),
                 ],
               ),
             ),
