@@ -84,7 +84,7 @@ class _RegisterPageState extends State<RegisterPage> {
         },
         builder: (context, state) {
           return Scaffold(
-            resizeToAvoidBottomInset: true,
+            resizeToAvoidBottomInset: false,
             body: Stack(
               children: [
                 Padding(
