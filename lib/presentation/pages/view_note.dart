@@ -552,17 +552,23 @@ class _ViewNotePageState extends State<ViewNotePage> {
               SizedBox(
                 height: AppSpacing.sm,
               ),
-              TextFormField(
-                controller: _headingController,
-                onChanged: (_) => _onHeadingTextChanged(),
-                focusNode: _headingFocusNode,
-                readOnly: !_isInEditing,
-                style: AppText.text2XlBlack,
-                minLines: 1,
-                maxLines: 3,
-                decoration: const InputDecoration(
-                    hintText: 'Heading', fillColor: AppColors.card),
-              ),
+              if (_isInEditing)
+                TextFormField(
+                  controller: _headingController,
+                  onChanged: (_) => _onHeadingTextChanged(),
+                  focusNode: _headingFocusNode,
+                  readOnly: !_isInEditing,
+                  style: AppText.text2XlBlack,
+                  minLines: 1,
+                  maxLines: 3,
+                  decoration: const InputDecoration(
+                      hintText: 'Heading', fillColor: AppColors.card),
+                )
+              else
+                SelectableText(
+                  _headingController.text,
+                  style: AppText.text2XlBlack,
+                ),
               SizedBox(
                 height: AppSpacing.sm,
               ),
