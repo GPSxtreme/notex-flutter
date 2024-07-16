@@ -80,6 +80,8 @@ dependencies:
   markdown: ^7.1.1
   flutter_html_to_pdf: ^0.7.0
   pdf: ^3.10.7
+  font_awesome_flutter: ^9.2.0
+  expandable: ^5.0.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
