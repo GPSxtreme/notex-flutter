@@ -29,7 +29,9 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
             emit(RegisterSuccessState());
           });
         } else {
-          emit(RegisterFailedState(response.message));
+          emit(RegisterFailedState(response.message.contains('duplicate')
+              ? "User already exists"
+              : "Something went wrong. Please try again later"));
         }
       });
       emit(RegisterLoadedState());
