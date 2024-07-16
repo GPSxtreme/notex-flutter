@@ -180,8 +180,9 @@ class _ProfilePageState extends State<ProfilePage> {
                 );
               },
             ),
-            title: const Text(
+            title: Text(
               "Profile",
+              style: AppText.textXlBold,
             ),
             actions: [
               if (state is UserSettingsFetchedState)
@@ -247,119 +248,108 @@ class _ProfilePageState extends State<ProfilePage> {
                     borderRadius: const BorderRadius.only(
                         bottomLeft: Radius.circular(100)),
                     child: Container(
-                      padding: const EdgeInsets.only(bottom: 5),
+                      padding: const EdgeInsets.only(top: 30, bottom: 15),
                       decoration: const BoxDecoration(
-                        color: AppColors.primary,
-                        borderRadius:
-                            BorderRadius.only(bottomLeft: Radius.circular(100)),
+                        color: AppColors.secondary,
                       ),
-                      child: Container(
-                        padding: const EdgeInsets.only(top: 30, bottom: 15),
-                        decoration: const BoxDecoration(
-                          color: AppColors.secondary,
-                          borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(100)),
-                        ),
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Material(
-                                elevation: 10,
-                                borderRadius: BorderRadius.circular(100),
-                                child: Stack(
-                                  children: [
-                                    CircleAvatar(
-                                      radius:
-                                          SizeConfig.blockSizeHorizontal! * 18,
-                                      backgroundImage: (_imageFile != null)
-                                          ? FileImage(_imageFile!)
-                                          : state.profilePicture
-                                              as ImageProvider,
-                                      child: Material(
-                                        color: Colors.transparent,
-                                        elevation: 0,
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Material(
+                              elevation: 10,
+                              borderRadius: BorderRadius.circular(100),
+                              child: Stack(
+                                children: [
+                                  CircleAvatar(
+                                    radius:
+                                        SizeConfig.blockSizeHorizontal! * 18,
+                                    backgroundImage: (_imageFile != null)
+                                        ? FileImage(_imageFile!)
+                                        : state.profilePicture as ImageProvider,
+                                    child: Material(
+                                      color: Colors.transparent,
+                                      elevation: 0,
+                                      borderRadius: AppBorderRadius.full,
+                                      child: InkWell(
                                         borderRadius: AppBorderRadius.full,
-                                        child: InkWell(
-                                          borderRadius: AppBorderRadius.full,
-                                          onTap: () {
-                                            _showPickOptions();
-                                          },
-                                        ),
+                                        onTap: () {
+                                          _showPickOptions();
+                                        },
                                       ),
                                     ),
-                                    Positioned(
-                                      top: 0,
-                                      right: 0,
-                                      child: Material(
-                                        elevation: 5.0,
-                                        color: AppColors.muted,
+                                  ),
+                                  Positioned(
+                                    top: 0,
+                                    right: 0,
+                                    child: Material(
+                                      elevation: 5.0,
+                                      color: AppColors.muted,
+                                      borderRadius: AppBorderRadius.full,
+                                      child: InkWell(
                                         borderRadius: AppBorderRadius.full,
-                                        child: InkWell(
-                                          borderRadius: AppBorderRadius.full,
-                                          onTap: _showPickOptions,
-                                          child: Padding(
-                                            padding:
-                                                EdgeInsets.all(AppSpacing.sm),
-                                            child: Icon(
-                                              Icons.edit,
-                                              color: AppColors.primary,
-                                              size: AppSpacing.iconSizeXl,
-                                            ),
+                                        onTap: _showPickOptions,
+                                        child: Padding(
+                                          padding:
+                                              EdgeInsets.all(AppSpacing.sm),
+                                          child: Icon(
+                                            Icons.edit,
+                                            color: AppColors.primary,
+                                            size: AppSpacing.iconSizeXl,
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(
-                                height: AppSpacing.lg,
-                              ),
-                              Text(
-                                state.user.name,
-                                style: AppText.textLgSemiBold,
-                                textAlign: TextAlign.center,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              SizedBox(
-                                height: AppSpacing.sm,
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    state.user.isEmailVerified
-                                        ? 'Verified'
-                                        : 'Not verified',
-                                    textAlign: TextAlign.center,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                  SizedBox(
-                                    width: AppSpacing.sm,
-                                  ),
-                                  Material(
-                                    color: state.user.isEmailVerified
-                                        ? AppColors.primary
-                                        : AppColors.destructive,
-                                    borderRadius: BorderRadius.circular(100),
-                                    child: Icon(
-                                      state.user.isEmailVerified
-                                          ? Icons.check
-                                          : Icons.close,
-                                      size: 12,
-                                    ),
-                                  )
                                 ],
                               ),
-                              SizedBox(
-                                height: AppSpacing.sm,
-                              ),
-                            ],
-                          ),
+                            ),
+                            SizedBox(
+                              height: AppSpacing.lg,
+                            ),
+                            Text(
+                              state.user.name,
+                              style: AppText.text3XlBlack,
+                              textAlign: TextAlign.center,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            SizedBox(
+                              height: AppSpacing.sm,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  state.user.isEmailVerified
+                                      ? 'Verified'
+                                      : 'Not verified',
+                                  textAlign: TextAlign.center,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                SizedBox(
+                                  width: AppSpacing.sm,
+                                ),
+                                Material(
+                                  color: state.user.isEmailVerified
+                                      ? AppColors.primary
+                                      : AppColors.destructive,
+                                  borderRadius: BorderRadius.circular(100),
+                                  child: Icon(
+                                    state.user.isEmailVerified
+                                        ? Icons.check
+                                        : Icons.close,
+                                    size: 12,
+                                  ),
+                                )
+                              ],
+                            ),
+                            SizedBox(
+                              height: AppSpacing.sm,
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -399,6 +389,12 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                             IntrinsicHeight(
                               child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.secondary,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: AppBorderRadius.lg,
+                                  ),
+                                ),
                                 onPressed: () async {
                                   await _selectDate();
                                 },
@@ -420,12 +416,12 @@ class _ProfilePageState extends State<ProfilePage> {
                           height: AppSpacing.md,
                         ),
                         Material(
-                          borderRadius: AppBorderRadius.md,
+                          borderRadius: AppBorderRadius.lg,
                           child: InkWell(
-                            borderRadius: AppBorderRadius.md,
+                            borderRadius: AppBorderRadius.lg,
                             child: Container(
                               decoration: BoxDecoration(
-                                borderRadius: AppBorderRadius.md,
+                                borderRadius: AppBorderRadius.lg,
                               ),
                               child: CountryCodePicker(
                                 padding: EdgeInsets.zero,
@@ -434,7 +430,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 initialSelection: state.user.country,
                                 boxDecoration: BoxDecoration(
                                     color: AppColors.card,
-                                    borderRadius: AppBorderRadius.md,
+                                    borderRadius: AppBorderRadius.lg,
                                     border: Border.all(
                                         color: AppColors.border, width: 1.0)),
                                 searchDecoration: InputDecoration(
