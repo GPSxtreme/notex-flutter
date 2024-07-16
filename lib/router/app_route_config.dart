@@ -19,7 +19,7 @@ class MyAppRouter {
     // private navigators
     final rootNavigatorKey = GlobalKey<NavigatorState>();
     return GoRouter(
-      initialLocation: '/',
+      initialLocation: '/home',
       navigatorKey: rootNavigatorKey,
       routes: [
         GoRoute(
