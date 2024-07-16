@@ -91,35 +91,43 @@ class _ProfilePageState extends State<ProfilePage> {
   void _showPickOptions() => showModalBottomSheet(
         showDragHandle: true,
         context: context,
+        backgroundColor: AppColors.secondary,
         builder: (BuildContext context) {
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: const Icon(
-                  Icons.camera_alt,
+          return Padding(
+            padding: EdgeInsets.only(bottom: AppSpacing.lg),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: const Icon(
+                    Icons.camera_alt_rounded,
+                    color: AppColors.mutedForeground,
+                  ),
+                  title: Text(
+                    'Take a photo',
+                    style: AppText.textBaseSemiBold,
+                  ),
+                  onTap: () {
+                    _pickImage(ImageSource.camera);
+                    Navigator.of(context).pop();
+                  },
                 ),
-                title: const Text(
-                  'Take a photo',
+                ListTile(
+                  leading: const Icon(
+                    Icons.image_rounded,
+                    color: AppColors.mutedForeground,
+                  ),
+                  title: Text(
+                    'Choose from gallery',
+                    style: AppText.textBaseSemiBold,
+                  ),
+                  onTap: () {
+                    _pickImage(ImageSource.gallery);
+                    Navigator.of(context).pop();
+                  },
                 ),
-                onTap: () {
-                  _pickImage(ImageSource.camera);
-                  Navigator.of(context).pop();
-                },
-              ),
-              ListTile(
-                leading: const Icon(
-                  Icons.image,
-                ),
-                title: const Text(
-                  'Choose from gallery',
-                ),
-                onTap: () {
-                  _pickImage(ImageSource.gallery);
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
+              ],
+            ),
           );
         },
       );
@@ -371,6 +379,9 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                         TextField(
                           controller: _nameController,
+                          onChanged: (_) {
+                            setState(() {});
+                          },
                           keyboardType: TextInputType.text,
                         ),
                         SizedBox(
@@ -381,6 +392,13 @@ class _ProfilePageState extends State<ProfilePage> {
                             Flexible(
                               child: TextField(
                                 controller: _dobController,
+                                readOnly: true,
+                                onTap: () async {
+                                  await _selectDate();
+                                },
+                                onChanged: (_) {
+                                  setState(() {});
+                                },
                                 keyboardType: TextInputType.datetime,
                               ),
                             ),
@@ -505,6 +523,13 @@ class _ProfilePageState extends State<ProfilePage> {
                               child: ElevatedButton(
                                 onPressed: !state.isUpdating
                                     ? () {
+                                        try {
+                                          DateTime.parse(_dobController.text);
+                                        } catch (_) {
+                                          kSnackBar(context,
+                                              "Please enter a valid date of birth");
+                                          return;
+                                        }
                                         userBloc.add(UserUpdateUserDataEvent(
                                             img: _imageFile,
                                             data: UpdatableUserDataModel(
@@ -517,8 +542,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                       }
                                     : null,
                                 child: !state.isUpdating
-                                    ? const Text(
+                                    ? Text(
                                         "Save",
+                                        style: AppText.textBaseBold,
                                       )
                                     : const SpinKitCircle(
                                         color: AppColors.primary,
