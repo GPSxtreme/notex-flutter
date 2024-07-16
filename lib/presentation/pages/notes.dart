@@ -74,6 +74,16 @@ class _NotesPageState extends State<NotesPage>
         }
         if (state is NotesFetchedState) {
           _notes = state.notes;
+          // sort notes by date updated and all favorite notes at the top
+          _notes.sort((a, b) {
+            if (a.isFavorite && !b.isFavorite) {
+              return -1;
+            } else if (!a.isFavorite && b.isFavorite) {
+              return 1;
+            } else {
+              return b.editedTime.compareTo(a.editedTime);
+            }
+          });
           if (state.syncingNotes != null) {
             _isSyncing = true;
             _noOfNotesSyncing = state.syncingNotes!.length;
@@ -84,7 +94,8 @@ class _NotesPageState extends State<NotesPage>
         if (state is NotesEditingState) {
           _notes = state.notes.where((n) => n.isDeleted == false).toList();
         }
-        int numberOfColumns = SizeConfig.screenWidth! > 600 ? 3 : 2;
+        int numberOfColumns =
+            (SizeConfig.screenWidth! / 300).ceil().clamp(1, 4);
         return Scaffold(
           body: Container(
             margin: EdgeInsets.symmetric(horizontal: AppSpacing.md),
@@ -128,20 +139,23 @@ class _NotesPageState extends State<NotesPage>
                               : _isDeletedMode
                                   ? 'Deleted'
                                   : 'Found',
-                          style: AppText.textBase,
+                          style: AppText.textBaseBold,
                         ),
                         SizedBox(
                           height: AppSpacing.md,
                         ),
-                        Text(
-                          _isHiddenMode
-                              ? "You can hide a note by long pressing and selecting hide option from the bottom action bar"
-                              : _isDeletedMode
-                                  ? "All deleted notes are retained for 30 days and can be restored."
-                                  : "You can add new note by pressing\nAdd button at the bottom",
-                          textAlign: TextAlign.center,
-                          style: AppText.textSm
-                              .copyWith(color: AppColors.mutedForeground),
+                        SizedBox(
+                          width: SizeConfig.screenWidth! * 0.6,
+                          child: Text(
+                            _isHiddenMode
+                                ? "You can hide a note by long pressing and selecting hide option from the bottom action bar"
+                                : _isDeletedMode
+                                    ? "All deleted notes are retained for 30 days and can be restored."
+                                    : "You can add new note by pressing\nAdd button at the bottom",
+                            textAlign: TextAlign.center,
+                            style: AppText.textSm
+                                .copyWith(color: AppColors.mutedForeground),
+                          ),
                         )
                       ],
                     ),
@@ -229,7 +243,7 @@ class _NotesPageState extends State<NotesPage>
                                         vertical: AppSpacing.md),
                                     decoration: BoxDecoration(
                                       color: AppColors.secondary,
-                                      borderRadius: AppBorderRadius.xxl,
+                                      borderRadius: AppBorderRadius.lg,
                                     ),
                                     child: Row(
                                       children: [
