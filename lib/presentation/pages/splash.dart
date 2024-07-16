@@ -44,61 +44,57 @@ class _SplashPageState extends State<SplashPage> {
       },
       builder: (context, state) {
         return Scaffold(
-          body: Container(
-            width: SizeConfig.screenWidth,
-            height: SizeConfig.screenHeight,
-            child: Stack(
-              children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+          body: Stack(
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Center(
+                      child: FadeInAnimation(
+                          child: SvgPicture.asset(
+                    'assets/svg/app_logo_v2.svg',
+                    width: SizeConfig.blockSizeHorizontal! * 50,
+                  )))
+                ],
+              ),
+              Positioned(
+                bottom: 30,
+                left: 0,
+                right: 0,
+                child: Column(
                   children: [
-                    Center(
-                        child: FadeInAnimation(
-                            child: SvgPicture.asset(
-                      'assets/svg/app_logo_v2.svg',
-                      width: SizeConfig.blockSizeHorizontal! * 50,
-                    )))
+                    if (state is SplashLoadingState) ...[
+                      const SpinKitRing(
+                        color: AppColors.primary,
+                        size: 30,
+                      ),
+                      SizedBox(
+                        height: SizeConfig.blockSizeVertical,
+                      ),
+                    ] else if (state
+                        is SplashUserLocalAuthenticationFailedState) ...[
+                      const Icon(
+                        Icons.error_outline,
+                        size: 35,
+                      ),
+                      SizedBox(
+                        height: SizeConfig.blockSizeVertical,
+                      ),
+                      const Text(
+                        'Failed to authenticate',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                      SizedBox(
+                        height: SizeConfig.blockSizeVertical,
+                      ),
+                    ],
+                    // Center(
+                    //   child: kDevLogo,
+                    // ),
                   ],
                 ),
-                Positioned(
-                  bottom: 30,
-                  left: 0,
-                  right: 0,
-                  child: Column(
-                    children: [
-                      if (state is SplashLoadingState) ...[
-                        const SpinKitRing(
-                          color: AppColors.primary,
-                          size: 30,
-                        ),
-                        SizedBox(
-                          height: SizeConfig.blockSizeVertical,
-                        ),
-                      ] else if (state
-                          is SplashUserLocalAuthenticationFailedState) ...[
-                        const Icon(
-                          Icons.error_outline,
-                          size: 35,
-                        ),
-                        SizedBox(
-                          height: SizeConfig.blockSizeVertical,
-                        ),
-                        const Text(
-                          'Failed to authenticate',
-                          style: TextStyle(color: Colors.red),
-                        ),
-                        SizedBox(
-                          height: SizeConfig.blockSizeVertical,
-                        ),
-                      ],
-                      // Center(
-                      //   child: kDevLogo,
-                      // ),
-                    ],
-                  ),
-                )
-              ],
-            ),
+              )
+            ],
           ),
         );
       },
