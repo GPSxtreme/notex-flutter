@@ -43,6 +43,26 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
+  PopupMenuItem<String> _buildPopupMenuItem(
+          IconData icon, String title, String value) =>
+      PopupMenuItem<String>(
+        value: value,
+        child: ListTile(
+          contentPadding:
+              EdgeInsets.symmetric(vertical: 0, horizontal: AppSpacing.sm),
+          horizontalTitleGap: AppSpacing.sm,
+          leading: Icon(
+            icon,
+            color: AppColors.mutedForeground,
+            size: AppSpacing.iconSizeLg,
+          ),
+          title: Text(
+            title,
+          ),
+          tileColor: Colors.transparent,
+        ),
+      );
+
   Widget _buildActionLabelButton(
           IconData icon, String label, void Function() onTap) =>
       Padding(
@@ -124,22 +144,37 @@ class _HomePageState extends State<HomePage> {
       },
       selectedLabelStyle:
           AppText.textBaseMedium.copyWith(color: AppColors.primary),
-      unselectedLabelStyle: AppText.textBaseMedium,
+      unselectedLabelStyle:
+          AppText.textBaseMedium.copyWith(color: AppColors.mutedForeground),
       currentIndex: _currentPageIndex,
       useLegacyColorScheme: false,
+      selectedIconTheme:
+          IconThemeData(color: AppColors.primary, size: AppSpacing.iconSize2Xl),
+      unselectedIconTheme: IconThemeData(
+          color: AppColors.mutedForeground, size: AppSpacing.iconSize2Xl),
       items: [
         BottomNavigationBarItem(
-            icon: SvgPicture.asset(
-              'assets/svg/notes_icon.svg',
+            icon: Padding(
+              padding:
+                  EdgeInsets.only(top: AppSpacing.sm, bottom: AppSpacing.sm),
+              child: const Icon(Icons.note_outlined),
             ),
-            activeIcon: SvgPicture.asset(
-              'assets/svg/notes_icon.svg',
+            activeIcon: Padding(
+              padding:
+                  EdgeInsets.only(top: AppSpacing.sm, bottom: AppSpacing.sm),
+              child: const Icon(Icons.note_rounded),
             ),
             label: "Notes"),
         BottomNavigationBarItem(
-            icon: SvgPicture.asset('assets/svg/todo_icon.svg'),
-            activeIcon: SvgPicture.asset(
-              'assets/svg/todo_icon.svg',
+            icon: Padding(
+              padding:
+                  EdgeInsets.only(top: AppSpacing.sm, bottom: AppSpacing.sm),
+              child: const Icon(Icons.list_outlined),
+            ),
+            activeIcon: Padding(
+              padding:
+                  EdgeInsets.only(top: AppSpacing.sm, bottom: AppSpacing.sm),
+              child: const Icon(Icons.list_rounded),
             ),
             label: "Todo")
       ],
@@ -497,78 +532,28 @@ class _HomePageState extends State<HomePage> {
                               },
                               itemBuilder: (BuildContext context) {
                                 return [
-                                  const PopupMenuItem<String>(
-                                    value: 'refetch',
-                                    child: ListTile(
-                                      contentPadding:
-                                          EdgeInsets.symmetric(vertical: 0),
-                                      horizontalTitleGap: 15,
-                                      leading: Icon(
-                                        Icons.refresh,
-                                      ),
-                                      title: Text(
-                                        'Reload',
-                                      ),
-                                      tileColor: Colors.transparent,
-                                    ),
-                                  ),
-                                  const PopupMenuItem<String>(
-                                    value: 'sync',
-                                    child: ListTile(
-                                      contentPadding:
-                                          EdgeInsets.symmetric(vertical: 0),
-                                      horizontalTitleGap: 15,
-                                      leading: Icon(
-                                        Icons.sync,
-                                      ),
-                                      title: Text(
-                                        'Sync All',
-                                      ),
-                                      tileColor: Colors.transparent,
-                                    ),
-                                  ),
+                                  _buildPopupMenuItem(Icons.refresh_rounded,
+                                      "Reload", 'refetch'),
+                                  _buildPopupMenuItem(
+                                      Icons.sync_rounded, "Sync", 'sync'),
                                   if (_currentPageIndex == 0)
-                                    PopupMenuItem<String>(
-                                      value: 'showHidden',
-                                      child: ListTile(
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(
-                                                vertical: 0),
-                                        horizontalTitleGap: 15,
-                                        leading: Icon(
-                                          !_isNotesHiddenMode
-                                              ? Icons.visibility
-                                              : Icons.visibility_off,
-                                        ),
-                                        title: Text(
-                                          !_isNotesHiddenMode
-                                              ? 'Show Hidden'
-                                              : 'Hide Hidden',
-                                        ),
-                                        tileColor: Colors.transparent,
-                                      ),
-                                    ),
+                                    _buildPopupMenuItem(
+                                        !_isNotesHiddenMode
+                                            ? Icons.visibility
+                                            : Icons.visibility_off,
+                                        !_isNotesHiddenMode
+                                            ? 'Show Hidden'
+                                            : 'Hide Hidden',
+                                        'showHidden'),
                                   if (_currentPageIndex == 0)
-                                    PopupMenuItem<String>(
-                                      value: 'showDeleted',
-                                      child: ListTile(
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(
-                                                vertical: 0),
-                                        horizontalTitleGap: 15,
-                                        leading: Icon(
-                                          !_isNotesDeletedMode
-                                              ? Icons.delete
-                                              : Icons.hide_source,
-                                        ),
-                                        title: Text(
-                                          !_isNotesDeletedMode
-                                              ? 'Show Deleted'
-                                              : 'Hide Deleted',
-                                        ),
-                                        tileColor: Colors.transparent,
-                                      ),
-                                    ),
+                                    _buildPopupMenuItem(
+                                        !_isNotesDeletedMode
+                                            ? Icons.delete
+                                            : Icons.hide_source,
+                                        !_isNotesDeletedMode
+                                            ? 'Show Deleted'
+                                            : 'Hide Deleted',
+                                        'showDeleted'),
                                 ];
                               },
                             ),
