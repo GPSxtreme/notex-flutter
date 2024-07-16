@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:notex/presentation/styles/app_colors.dart';
+import 'package:notex/presentation/styles/size_config.dart';
 
 // Custom Image Builder
 Widget customImageBuilder(
@@ -21,8 +22,10 @@ Widget customImageBuilder(
       imageUrl: url,
       fit: BoxFit
           .scaleDown, // Maintains aspect ratio and scales down if necessary
-      placeholder: (context, url) => const SpinKitRing(
+      placeholder: (context, url) => SpinKitRing(
         color: AppColors.primary,
+        size: AppSpacing.iconSize2Xl,
+        lineWidth: 4.0,
       ), // Placeholder widget
       errorWidget: (context, url, error) => const Padding(
         padding: EdgeInsets.symmetric(vertical: 15),
