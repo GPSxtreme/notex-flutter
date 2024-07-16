@@ -48,9 +48,10 @@ class _HomePageState extends State<HomePage> {
       PopupMenuItem<String>(
         value: value,
         child: ListTile(
-          contentPadding:
-              EdgeInsets.symmetric(vertical: 0, horizontal: AppSpacing.sm),
+          contentPadding: EdgeInsets.zero,
+          minVerticalPadding: 0,
           horizontalTitleGap: AppSpacing.sm,
+          minTileHeight: 0,
           leading: Icon(
             icon,
             color: AppColors.mutedForeground,
@@ -58,6 +59,7 @@ class _HomePageState extends State<HomePage> {
           ),
           title: Text(
             title,
+            style: AppText.textBase,
           ),
           tileColor: Colors.transparent,
         ),
@@ -240,18 +242,19 @@ class _HomePageState extends State<HomePage> {
               animateChildDecoration: true,
               rtlOpening: false,
               openScale: 0.9,
+              backdropColor: AppColors.accent,
               disabledGestures: notesState is NotesEditingState ||
                   todosState is TodosEditingState,
-              childDecoration: const BoxDecoration(
+              childDecoration: BoxDecoration(
                 // NOTICE: Uncomment if you want to add shadow behind the page.
                 // Keep in mind that it may cause animation jerks.
-                boxShadow: <BoxShadow>[
+                boxShadow: const <BoxShadow>[
                   BoxShadow(
                     color: Colors.black12,
                     blurRadius: 2.0,
                   ),
                 ],
-                borderRadius: BorderRadius.all(Radius.circular(16)),
+                borderRadius: AppBorderRadius.xxl,
               ),
               drawer: Material(
                 color: Colors.transparent,
@@ -261,50 +264,30 @@ class _HomePageState extends State<HomePage> {
                     child: Column(
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        GestureDetector(
-                          onTap: () {
-                            _advancedDrawerController.hideDrawer();
-                            GoRouter.of(context)
-                                .pushNamed(AppRouteConstants.profileRouteName);
-                          },
-                          child: Container(
-                            width: 128.0,
-                            height: 128.0,
-                            margin: EdgeInsets.only(
-                                top: 24.0,
-                                bottom: !USER.data!.isEmailVerified ? 20 : 30),
-                            clipBehavior: Clip.antiAlias,
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                            ),
-                            child: ClipOval(
-                              child: CachedNetworkImage(
-                                fit: BoxFit.cover,
-                                imageUrl: USER_PROFILE_PICTURE_GET_ROUTE,
-                                httpHeaders: {
-                                  'Content-Type': 'application/json',
-                                  'Authorization': AuthRepository.userToken
-                                },
-                                cacheKey: USER.profilePictureCacheKey,
-                                progressIndicatorBuilder:
-                                    (context, url, downloadProgress) =>
-                                        CircularProgressIndicator(
-                                  value: downloadProgress.progress,
-                                ),
-                                errorWidget: (context, url, error) =>
-                                    const Icon(
-                                  Icons.person,
-                                  size: 70,
-                                ),
-                                width: 128.0,
-                                height: 128.0,
+                        Container(
+                          margin: EdgeInsets.symmetric(
+                              horizontal: AppSpacing.lg,
+                              vertical: AppSpacing.md),
+                          child: Row(
+                            children: [
+                              SvgPicture.asset(
+                                'assets/svg/app_logo_v2.svg',
+                                height: SizeConfig.blockSizeVertical! * 2.5,
                               ),
-                            ),
+                              SizedBox(
+                                width: AppSpacing.md,
+                              ),
+                              Text(
+                                "NoteX",
+                                style: AppText.text2XlBlack,
+                              )
+                            ],
                           ),
                         ),
                         if (!USER.data!.isEmailVerified)
                           Container(
-                              margin: EdgeInsets.only(bottom: AppSpacing.sm),
+                              margin: EdgeInsets.only(
+                                  bottom: AppSpacing.sm, top: AppSpacing.md),
                               padding: EdgeInsets.symmetric(
                                   horizontal: AppSpacing.md,
                                   vertical: AppSpacing.md),
@@ -378,6 +361,92 @@ class _HomePageState extends State<HomePage> {
                             'Settings',
                           ),
                         ),
+                        const Spacer(),
+                        Container(
+                          margin:
+                              EdgeInsets.symmetric(horizontal: AppSpacing.md)
+                                  .copyWith(right: 0),
+                          child: Material(
+                            color: AppColors.secondary,
+                            borderRadius: AppBorderRadius.lg,
+                            child: InkWell(
+                              borderRadius: AppBorderRadius.lg,
+                              onTap: () {
+                                _advancedDrawerController.hideDrawer();
+                                GoRouter.of(context).pushNamed(
+                                    AppRouteConstants.profileRouteName);
+                              },
+                              child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: AppSpacing.md,
+                                      vertical: AppSpacing.sm),
+                                  decoration: BoxDecoration(
+                                      borderRadius: AppBorderRadius.lg,
+                                      border: Border.all(
+                                          color: AppColors.border, width: 1.0)),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        width: 64.0,
+                                        height: 64.0,
+                                        clipBehavior: Clip.antiAlias,
+                                        decoration: const BoxDecoration(
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: ClipOval(
+                                          child: CachedNetworkImage(
+                                            fit: BoxFit.cover,
+                                            imageUrl:
+                                                USER_PROFILE_PICTURE_GET_ROUTE,
+                                            httpHeaders: {
+                                              'Content-Type':
+                                                  'application/json',
+                                              'Authorization':
+                                                  AuthRepository.userToken
+                                            },
+                                            cacheKey:
+                                                USER.profilePictureCacheKey,
+                                            progressIndicatorBuilder: (context,
+                                                    url, downloadProgress) =>
+                                                CircularProgressIndicator(
+                                              value: downloadProgress.progress,
+                                            ),
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                    const Icon(
+                                              Icons.person,
+                                              size: 70,
+                                            ),
+                                            width: 128.0,
+                                            height: 128.0,
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(width: AppSpacing.md),
+                                      Expanded(
+                                          child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(USER.data!.name,
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: AppText.textLgBold),
+                                          SizedBox(height: AppSpacing.xs),
+                                          Text(USER.data!.email,
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: AppText.textBase.copyWith(
+                                                  color: AppColors
+                                                      .mutedForeground)),
+                                        ],
+                                      ))
+                                    ],
+                                  )),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -388,15 +457,14 @@ class _HomePageState extends State<HomePage> {
                 appBar: AppBar(
                   centerTitle: true,
                   elevation: 0,
-                  leadingWidth: 100,
+                  leadingWidth: AppSpacing.iconSize2Xl * 2.5,
                   leading: !isFetching && !isInEditing
                       ? Row(
                           children: [
-                            const SizedBox(
-                              width: 20,
+                            SizedBox(
+                              width: AppSpacing.md,
                             ),
                             IconButton(
-                              splashRadius: 20,
                               onPressed: _handleMenuButtonPressed,
                               icon: ValueListenableBuilder<AdvancedDrawerValue>(
                                 valueListenable: _advancedDrawerController,
@@ -407,7 +475,7 @@ class _HomePageState extends State<HomePage> {
                                       value.visible
                                           ? Icons.clear
                                           : Ionicons.menu_outline,
-                                      size: 35,
+                                      size: AppSpacing.iconSize2Xl,
                                       key: ValueKey<bool>(value.visible),
                                     ),
                                   );
@@ -420,64 +488,55 @@ class _HomePageState extends State<HomePage> {
                   title: !isInEditing
                       ? SvgPicture.asset(
                           'assets/svg/app_logo_v2.svg',
-                          height: SizeConfig.blockSizeVertical! * 3.5,
+                          height: SizeConfig.blockSizeVertical! * 3.0,
                         )
                       : SizedBox(
-                          width: SizeConfig.screenWidth! * 0.95,
+                          width: SizeConfig.screenWidth,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 10),
-                                child: IconButton(
-                                  splashRadius: 20,
-                                  icon: const Icon(
-                                    Icons.close,
-                                    size: 30,
-                                  ),
-                                  onPressed: () {
-                                    // emit cancel event,
-                                    _currentPageIndex == 0
-                                        ? notesBloc.add(NotesExitedEditingEvent(
-                                            isInHiddenMode: _isNotesHiddenMode))
-                                        : todosBloc
-                                            .add(TodosExitedEditingEvent());
-                                  },
+                              IconButton(
+                                icon: Icon(
+                                  Icons.close,
+                                  size: AppSpacing.iconSizeXl,
                                 ),
+                                onPressed: () {
+                                  // emit cancel event,
+                                  _currentPageIndex == 0
+                                      ? notesBloc.add(NotesExitedEditingEvent(
+                                          isInHiddenMode: _isNotesHiddenMode))
+                                      : todosBloc
+                                          .add(TodosExitedEditingEvent());
+                                },
                               ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 10),
-                                child: Transform.scale(
-                                  scale: 1.3,
-                                  child: Checkbox(
-                                      value: _currentPageIndex == 0
-                                          ? _selectAllNotes
-                                          : _selectAllTodos,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10)),
-                                      onChanged: (bool? value) {
-                                        if (value != null) {
-                                          // select / unselect all tiles.
-                                          setState(() {
-                                            _currentPageIndex == 0
-                                                ? _selectAllNotes = value
-                                                : _selectAllTodos = value;
-                                          });
+                              Transform.scale(
+                                scale: 1.3,
+                                child: Checkbox(
+                                    value: _currentPageIndex == 0
+                                        ? _selectAllNotes
+                                        : _selectAllTodos,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    onChanged: (bool? value) {
+                                      if (value != null) {
+                                        // select / unselect all tiles.
+                                        setState(() {
                                           _currentPageIndex == 0
-                                              ? notesBloc.add(
-                                                  NotesAreAllNotesSelectedEvent(
-                                                      value,
-                                                      isInHiddenMode:
-                                                          _isNotesHiddenMode))
-                                              : todosBloc.add(
-                                                  TodosAreAllTodosSelectedEvent(
-                                                      value));
-                                        }
-                                      }),
-                                ),
+                                              ? _selectAllNotes = value
+                                              : _selectAllTodos = value;
+                                        });
+                                        _currentPageIndex == 0
+                                            ? notesBloc.add(
+                                                NotesAreAllNotesSelectedEvent(
+                                                    value,
+                                                    isInHiddenMode:
+                                                        _isNotesHiddenMode))
+                                            : todosBloc.add(
+                                                TodosAreAllTodosSelectedEvent(
+                                                    value));
+                                      }
+                                    }),
                               )
                             ],
                           ),
@@ -488,13 +547,14 @@ class _HomePageState extends State<HomePage> {
                             padding: EdgeInsets.only(right: AppSpacing.md),
                             child: PopupMenuButton<String>(
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: AppBorderRadius.md,
                               ),
-                              icon: const Icon(
+                              padding: EdgeInsets.zero,
+                              icon: Icon(
                                 Ionicons.ellipsis_vertical,
-                                size: 25,
+                                size: AppSpacing.iconSizeXl,
                               ),
-                              splashRadius: 20,
+                              color: AppColors.secondary,
                               onSelected: (value) {
                                 switch (value) {
                                   case 'refetch':
