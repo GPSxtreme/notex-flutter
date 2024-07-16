@@ -9,17 +9,19 @@ import 'package:notex/data/models/note_model.dart';
 import 'package:notex/presentation/blocs/notes/notes_bloc.dart';
 import 'package:notex/presentation/styles/app_colors.dart';
 import 'package:notex/presentation/styles/app_styles.dart';
+import 'package:notex/presentation/styles/app_text.dart';
 import 'package:notex/presentation/widgets/common_widgets.dart';
 import 'package:notex/presentation/widgets/custom_image_builder.dart';
+import 'package:notex/external/simpleMarkdown/markdown_toolbar.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:simple_markdown_editor/simple_markdown_editor.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../core/repositories/notes_repository.dart';
 import '../../main.dart';
 import '../styles/size_config.dart';
 import 'package:markdown/markdown.dart' as md;
 import 'package:flutter_html_to_pdf/flutter_html_to_pdf.dart';
+import 'package:flutter_highlight/themes/atom-one-light.dart';
 
 class ViewNotePage extends StatefulWidget {
   const ViewNotePage(
@@ -162,55 +164,84 @@ class _ViewNotePageState extends State<ViewNotePage> {
   }
 
   detailTile(String key, String value) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        padding: EdgeInsets.symmetric(
+            horizontal: AppSpacing.md, vertical: AppSpacing.sm),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
               key,
+              style:
+                  AppText.textBase.copyWith(color: AppColors.mutedForeground),
             ),
             Text(
               value,
+              style: AppText.textBaseSemiBold
+                  .copyWith(color: AppColors.foreground),
             )
           ],
         ),
       );
 
-  divider() => Divider(
+  Widget divider() => const Divider(
         thickness: 1.0,
         indent: 20,
         endIndent: 20,
+        color: AppColors.border,
+      );
+
+  PopupMenuItem<String> _buildPopupMenuItem(
+          IconData icon, String title, String value) =>
+      PopupMenuItem<String>(
+        value: value,
+        child: ListTile(
+          contentPadding: EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+          minVerticalPadding: 0,
+          horizontalTitleGap: AppSpacing.md,
+          minTileHeight: 0,
+          leading: Icon(
+            icon,
+            color: AppColors.mutedForeground,
+            size: AppSpacing.iconSizeLg,
+          ),
+          title: Text(title, style: AppText.textBase),
+          tileColor: Colors.transparent,
+        ),
       );
 
   void _showNoteDetails() => showModalBottomSheet(
         showDragHandle: true,
         context: context,
+        backgroundColor: AppColors.secondary,
         builder: (BuildContext context) {
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              detailTile(
-                  'Created on',
-                  DateFormat('d MMMM, h:mm a')
-                      .format(note.createdTime.toLocal())
-                      .toString()),
-              divider(),
-              detailTile(
-                  'Last edited',
-                  DateFormat('d MMMM, h:mm a')
-                      .format(note.editedTime.toLocal())
-                      .toString()),
-              divider(),
-              detailTile('Changes made', note.v.toString()),
-              divider(),
-              detailTile('Is synced', note.isSynced ? 'yes' : 'no'),
-              divider(),
-              detailTile('Is uploaded', note.isUploaded ? 'yes' : 'no'),
-              divider(),
-              detailTile('Is favorite', note.isFavorite ? 'yes' : 'no'),
-              divider(),
-              detailTile('Is hidden', note.isHidden ? 'yes' : 'no')
-            ],
+          return Padding(
+            padding: EdgeInsets.only(bottom: AppSpacing.xl, top: AppSpacing.sm),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                detailTile(
+                    'Created on',
+                    DateFormat('d MMM yyyy, h:mm a')
+                        .format(note.createdTime.toLocal())
+                        .toString()),
+                divider(),
+                detailTile(
+                    'Last edited',
+                    DateFormat('d MMM yyyy, h:mm a')
+                        .format(note.editedTime.toLocal())
+                        .toString()),
+                divider(),
+                detailTile('Changes made', note.v.toString()),
+                divider(),
+                detailTile('Is synced', note.isSynced ? 'yes' : 'no'),
+                divider(),
+                detailTile('Is uploaded', note.isUploaded ? 'yes' : 'no'),
+                divider(),
+                detailTile('Is favorite', note.isFavorite ? 'yes' : 'no'),
+                divider(),
+                detailTile('Is hidden', note.isHidden ? 'yes' : 'no')
+              ],
+            ),
           );
         },
       );
@@ -246,12 +277,12 @@ class _ViewNotePageState extends State<ViewNotePage> {
       <h1 style="text-align: center; margin-top:30px">${_headingController.text.trim()}</h1>
       <div style="display:flex; flex-direction:row; justify-content:space-between;">
         <div>
-          <h4>Created <span style="color:#d09ef9;">${DateFormat('d MMMM, h:mm a').format(note.editedTime.toLocal())} </span></h4>
-           <h4>By <span style="color:#d09ef9;">${USER.data!.name}</span></h4>
+          <h4>Created <span style="color:#7377FF;">${DateFormat('d MMMM, h:mm a').format(note.editedTime.toLocal())} </span></h4>
+           <h4>By <span style="color:#7377FF;">${USER.data!.name}</span></h4>
         </div>
-        <h4>Generated by <span style="color:#d09ef9;">Notex</span></h4>
+        <h4>Generated by <span style="color:#7377FF;">Notex</span></h4>
       </div>
-      <hr style="margin-bottom: 20px; color:pink;">
+      <hr style="margin-bottom: 20px; color:black;">
       $htmlText
     </body>
     </html>
@@ -274,35 +305,39 @@ class _ViewNotePageState extends State<ViewNotePage> {
   void _showShareOptions() => showModalBottomSheet(
         showDragHandle: true,
         context: context,
+        backgroundColor: AppColors.secondary,
         builder: (BuildContext context) {
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: const Icon(
-                  Icons.text_fields,
+          return Padding(
+            padding: EdgeInsets.only(bottom: AppSpacing.xl),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: Icon(Icons.text_fields,
+                      color: AppColors.mutedForeground,
+                      size: AppSpacing.iconSizeXl),
+                  title: const Text(
+                    'Share as text',
+                  ),
+                  onTap: () async {
+                    await Share.share(
+                        '${_headingController.text}\n${_bodyController.text}',
+                        subject: 'Sharing note from Notex');
+                  },
                 ),
-                title: Text(
-                  'Share as text',
+                ListTile(
+                  leading: Icon(Icons.picture_as_pdf,
+                      color: AppColors.mutedForeground,
+                      size: AppSpacing.iconSizeXl),
+                  title: const Text(
+                    'Share as pdf',
+                  ),
+                  onTap: () async {
+                    await shareNoteAsPdfWithHtmlToPdf();
+                  },
                 ),
-                onTap: () async {
-                  await Share.share(
-                      '${_headingController.text}\n${_bodyController.text}',
-                      subject: 'Sharing note from notex.');
-                },
-              ),
-              ListTile(
-                leading: const Icon(
-                  Icons.picture_as_pdf,
-                ),
-                title: Text(
-                  'Share as pdf',
-                ),
-                onTap: () async {
-                  await shareNoteAsPdfWithHtmlToPdf();
-                },
-              ),
-            ],
+              ],
+            ),
           );
         },
       );
@@ -329,54 +364,70 @@ class _ViewNotePageState extends State<ViewNotePage> {
     SizeConfig().init(context);
     if (_isLoading) {
       return Scaffold(
-        body: Container(
-          child: const Center(
-            child: SpinKitRing(
-              color: AppColors.primary,
-              size: 35,
-            ),
+        body: Center(
+          child: SpinKitRing(
+            color: AppColors.primary,
+            size: AppSpacing.iconSize2Xl,
+            lineWidth: 4.0,
           ),
         ),
       );
     }
-    return WillPopScope(
-      onWillPop: () async {
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) async {
+        if (didPop) {
+          return;
+        }
         if (_headingHistory.isNotEmpty || _bodyHistory.isNotEmpty) {
           bool? response = await CommonWidgets.commonAlertDialog(context,
               title: 'Exit?',
               body: 'Unsaved changes will be lost.',
               agreeLabel: 'Yes',
               denyLabel: 'No');
-          return response ?? false;
+          if (response == true) {
+            Navigator.of(context).pop();
+          }
         } else {
-          return true;
+          Navigator.of(context).pop();
         }
       },
       child: Scaffold(
         appBar: AppBar(
           elevation: 0,
-          leadingWidth: SizeConfig.blockSizeHorizontal! * 25,
+          leadingWidth: AppSpacing.iconSize2Xl * 2.5,
           leading: Builder(
             builder: (BuildContext context) {
-              return IconButton(
-                splashRadius: 20,
-                icon: const Icon(Icons.arrow_back),
-                onPressed: () async {
-                  if (_headingHistory.isNotEmpty || _bodyHistory.isNotEmpty) {
-                    bool? response = await CommonWidgets.commonAlertDialog(
-                        context,
-                        title: 'Exit?',
-                        body: 'Unsaved changes will be lost.',
-                        agreeLabel: 'Yes',
-                        denyLabel: 'No');
-                    if (response == true) {
-                      GoRouter.of(context).pop();
-                    }
-                  } else {
-                    GoRouter.of(context).pop();
-                  }
-                },
-                tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+              return Row(
+                children: [
+                  SizedBox(
+                    width: AppSpacing.md,
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      Icons.arrow_back,
+                      size: AppSpacing.iconSize2Xl,
+                    ),
+                    onPressed: () async {
+                      if (_headingHistory.isNotEmpty ||
+                          _bodyHistory.isNotEmpty) {
+                        bool? response = await CommonWidgets.commonAlertDialog(
+                            context,
+                            title: 'Exit?',
+                            body: 'Unsaved changes will be lost.',
+                            agreeLabel: 'Yes',
+                            denyLabel: 'No');
+                        if (response == true) {
+                          GoRouter.of(context).pop();
+                        }
+                      } else {
+                        GoRouter.of(context).pop();
+                      }
+                    },
+                    tooltip:
+                        MaterialLocalizations.of(context).backButtonTooltip,
+                  ),
+                ],
               );
             },
           ),
@@ -384,17 +435,14 @@ class _ViewNotePageState extends State<ViewNotePage> {
             if (_isInEditing)
               Container(
                 margin: EdgeInsets.symmetric(
-                    vertical: 9,
-                    horizontal: SizeConfig.blockSizeHorizontal! * 2),
-                padding:
-                    const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-                // decoration: BoxDecoration(
-                //     color: kPinkD1, borderRadius: BorderRadius.circular(10)),
+                    vertical: AppSpacing.sm, horizontal: AppSpacing.xs),
+                padding: EdgeInsets.zero,
+                decoration: BoxDecoration(
+                    color: AppColors.secondary,
+                    borderRadius: AppBorderRadius.lg),
                 child: Row(
                   children: [
-                    SizedBox(width: SizeConfig.blockSizeHorizontal! * 2),
                     IconButton(
-                        splashRadius: 20,
                         tooltip: 'perform undo action',
                         onPressed: () {
                           // perform undo operation
@@ -408,7 +456,6 @@ class _ViewNotePageState extends State<ViewNotePage> {
                           Icons.undo,
                         )),
                     IconButton(
-                        splashRadius: 20,
                         tooltip: 'perform redo action',
                         onPressed: () {
                           // perform redo operation
@@ -425,7 +472,6 @@ class _ViewNotePageState extends State<ViewNotePage> {
                 ),
               ),
             IconButton(
-                splashRadius: 20,
                 tooltip: 'edit note',
                 onPressed: () {
                   setState(() {
@@ -439,16 +485,16 @@ class _ViewNotePageState extends State<ViewNotePage> {
                       )
                     : const Icon(Icons.check)),
             Padding(
-              padding:
-                  EdgeInsets.only(right: SizeConfig.blockSizeHorizontal! * 5),
+              padding: EdgeInsets.only(right: AppSpacing.md),
               child: PopupMenuButton<String>(
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: AppBorderRadius.lg,
                 ),
-                icon: const Icon(
+                icon: Icon(
                   Ionicons.ellipsis_vertical,
+                  size: AppSpacing.iconSizeXl,
                 ),
-                splashRadius: 20,
+                color: AppColors.secondary,
                 onSelected: (value) async {
                   switch (value) {
                     case 'share':
@@ -464,136 +510,98 @@ class _ViewNotePageState extends State<ViewNotePage> {
                   return [
                     if (_headingController.text.isNotEmpty &&
                         _bodyController.text.isNotEmpty) ...[
-                      PopupMenuItem<String>(
-                        value: 'share',
-                        child: ListTile(
-                          contentPadding:
-                              const EdgeInsets.symmetric(vertical: 0),
-                          horizontalTitleGap: 15,
-                          leading: const Icon(
-                            Icons.share,
-                          ),
-                          title: Text(
-                            'share',
-                          ),
-                          tileColor: Colors.transparent,
-                        ),
-                      ),
-                      PopupMenuItem<String>(
-                        value: 'details',
-                        child: ListTile(
-                          contentPadding:
-                              const EdgeInsets.symmetric(vertical: 0),
-                          horizontalTitleGap: 15,
-                          leading: const Icon(
-                            Icons.details_outlined,
-                          ),
-                          title: Text(
-                            'details',
-                          ),
-                          tileColor: Colors.transparent,
-                        ),
-                      ),
+                      _buildPopupMenuItem(
+                          Icons.share_rounded, "Share", 'share'),
+                      _buildPopupMenuItem(
+                          Icons.info_outline_rounded, "Details", 'details'),
                     ],
-                    PopupMenuItem<String>(
-                      value: 'save',
-                      child: ListTile(
-                        contentPadding: const EdgeInsets.symmetric(vertical: 0),
-                        horizontalTitleGap: 15,
-                        leading: const Icon(
-                          Icons.save,
-                        ),
-                        title: Text(
-                          'save',
-                        ),
-                        tileColor: Colors.transparent,
-                      ),
-                    )
+                    _buildPopupMenuItem(Icons.save_rounded, "Save", 'save')
                   ];
                 },
               ),
             ),
           ],
         ),
-        body: Container(
+        body: Padding(
+          padding: EdgeInsets.symmetric(horizontal: AppSpacing.md),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25),
+                padding: EdgeInsets.symmetric(vertical: AppSpacing.md),
                 child: Row(
                   children: [
-                    note.isSynced == true
-                        ? const Icon(
-                            Icons.sync,
-                            size: 12,
-                          )
-                        : const Icon(
-                            Icons.sync_disabled,
-                            size: 12,
-                          ),
-                    const SizedBox(
-                      width: 5,
+                    Icon(
+                      note.isSynced ? Icons.sync : Icons.sync_disabled,
+                      size: AppSpacing.iconSizeSm,
+                      color: AppColors.mutedForeground,
+                    ),
+                    SizedBox(
+                      width: AppSpacing.sm,
                     ),
                     Text(
                       DateFormat('d MMMM, h:mm a')
                           .format(note.editedTime.toLocal())
                           .toString(),
+                      style: AppText.textSm
+                          .copyWith(color: AppColors.mutedForeground),
                     ),
                   ],
                 ),
               ),
               SizedBox(
-                height: SizeConfig.blockSizeVertical!,
+                height: AppSpacing.sm,
               ),
               TextFormField(
                 controller: _headingController,
                 onChanged: (_) => _onHeadingTextChanged(),
                 focusNode: _headingFocusNode,
                 readOnly: !_isInEditing,
+                style: AppText.text2XlBlack,
                 minLines: 1,
                 maxLines: 3,
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 25),
-                  hintText: 'Heading',
-                ),
+                decoration: const InputDecoration(
+                    hintText: 'Heading', fillColor: AppColors.card),
               ),
               SizedBox(
-                height: SizeConfig.blockSizeVertical! * 3,
+                height: AppSpacing.sm,
               ),
               if (_isInEditing)
                 Flexible(
                   child: Column(
                     children: [
                       Flexible(
-                        child: TextFormField(
-                          controller: _bodyController,
-                          focusNode: _bodyFocusNode,
-                          expands: true,
-                          maxLines: null,
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            contentPadding:
-                                const EdgeInsets.symmetric(horizontal: 25),
-                            hintText: 'Content',
+                        child: Padding(
+                          padding: EdgeInsets.only(top: AppSpacing.sm),
+                          child: TextFormField(
+                            controller: _bodyController,
+                            focusNode: _bodyFocusNode,
+                            textAlignVertical: TextAlignVertical.top,
+                            expands: true,
+                            maxLines: null,
+                            decoration: const InputDecoration(
+                                hintText: 'Content', fillColor: AppColors.card),
+                            onChanged: (_) => _onBodyTextChanged(),
                           ),
-                          onChanged: (_) => _onBodyTextChanged(),
                         ),
                       ),
-                      MarkdownToolbar(
-                        controller: _bodyController,
-                        focusNode: _bodyFocusNode,
-                        onPreviewChanged: () {
-                          setState(() {
-                            _isInEditing = !_isInEditing;
-                          });
-                        },
-                        isEditorFocused: (bool value) {
-                          setState(() {
-                            _isInEditing = value;
-                          });
-                        },
+                      Padding(
+                        padding: EdgeInsets.only(
+                            top: AppSpacing.md, bottom: AppSpacing.lg),
+                        child: MarkdownToolbar(
+                          controller: _bodyController,
+                          focusNode: _bodyFocusNode,
+                          onPreviewChanged: () {
+                            setState(() {
+                              _isInEditing = !_isInEditing;
+                            });
+                          },
+                          isEditorFocused: (bool value) {
+                            setState(() {
+                              _isInEditing = value;
+                            });
+                          },
+                        ),
                       )
                     ],
                   ),
@@ -602,16 +610,67 @@ class _ViewNotePageState extends State<ViewNotePage> {
                 Flexible(
                   child: MarkdownWidget(
                     shrinkWrap: true,
-                    padding: const EdgeInsets.only(
-                        top: 0, bottom: 30, left: 25, right: 25),
                     data: _bodyController.text,
-                    config: MarkdownConfig(configs: [
+                    markdownGenerator: MarkdownGenerator(),
+                    config: MarkdownConfig.darkConfig.copy(configs: [
+                      PreConfig(
+                          theme: atomOneLightTheme,
+                          decoration: BoxDecoration(
+                              color: AppColors.secondary,
+                              borderRadius: AppBorderRadius.lg)),
                       LinkConfig(
                         onTap: (url) => _onTapLink(url),
+                        style: AppText.textBase.copyWith(
+                            decoration: TextDecoration.underline,
+                            decorationColor: AppColors.primary,
+                            color: AppColors
+                                .primary), // Styling links with primary color
                       ),
                       ImgConfig(builder: (url, attributes) {
                         return customImageBuilder(url, attributes, context);
-                      })
+                      }),
+                      H1Config(
+                        style: AppText.text3XlBold, // H1 styling
+                      ),
+                      H2Config(
+                        style: AppText.text2XlBold, // H2 styling
+                      ),
+                      H3Config(
+                        style: AppText.textXlBold, // H3 styling
+                      ),
+                      H4Config(
+                        style: AppText.textLgBold, // H4 styling
+                      ),
+                      H5Config(
+                        style: AppText.textBaseBold, // H5 styling
+                      ),
+                      H6Config(
+                        style: AppText.textSmBold, // H6 styling
+                      ),
+                      const HrConfig(
+                        color: AppColors.border, // Horizontal rule styling
+                      ),
+                      CheckBoxConfig(
+                        builder: (checked) {
+                          if (checked) {
+                            return Icon(
+                              Icons.check_box,
+                              color: AppColors.primary,
+                              size: AppSpacing.iconSizeLg,
+                            );
+                          } else {
+                            return Icon(
+                              Icons.check_box_outline_blank,
+                              color: AppColors.primary,
+                              size: AppSpacing.iconSizeLg,
+                            );
+                          }
+                        },
+                      ),
+                      const HrConfig(color: AppColors.border, height: 2.0),
+                      const BlockquoteConfig(
+                          sideColor: AppColors.primary,
+                          textColor: AppColors.foreground)
                     ]),
                   ),
                 )
