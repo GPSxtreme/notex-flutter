@@ -45,37 +45,49 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   FutureOr<void> handleUpdateData(
       UserUpdateUserDataEvent event, Emitter<UserState> emit) async {
     try {
-      emit(UserSettingsFetchedState(USER.data!, img,isUpdating: true));
+      emit(UserSettingsFetchedState(USER.data!, img, isUpdating: true));
       // update profile picture
-      if(event.img != null){
-        bool response = await UserRepository.updateUserProfilePicture(event.img!);
-        if(!response){
+      if (event.img != null) {
+        bool response =
+            await UserRepository.updateUserProfilePicture(event.img!);
+        if (!response) {
           emit(UserOperationFailedState("Failed updating profile picture"));
-        }else{
+        } else {
           await CachedNetworkImage.evictFromCache(USER.profilePictureCacheKey);
           await SharedPreferencesRepository.generateProfilePictureCacheKey();
         }
       }
-      if(event.data != null){
-        UpdateUserDataResponseModel response = await UserRepository.updateUserData(event.data!);
-        if(response.success){
+      if (event.data != null) {
+        if (event.data!.dob.isAfter(DateTime.now())) {
+          emit(
+              UserOperationFailedState("Date of birth can't be in the future"));
+          emit(UserSettingsFetchedState(USER.data!, img));
+          return;
+        } else if (DateTime.now().difference(event.data!.dob).inDays <
+            8 * 365) {
+          emit(UserOperationFailedState(
+              "Date of birth must be at least 8 years old"));
+          emit(UserSettingsFetchedState(USER.data!, img));
+          return;
+        }
+        UpdateUserDataResponseModel response =
+            await UserRepository.updateUserData(event.data!);
+        if (response.success) {
           emit(UserSendScaffoldMessageState(response.message));
           // update login token
           await SharedPreferencesRepository.saveJwtToken(response.token!);
           await AuthRepository.init();
-          await USER.init().then(
-              (_) {
-                emit(UserSettingsFetchedState(USER.data!, img));
-              }
-          );
-        } else{
+          await USER.init().then((_) {
+            emit(UserSettingsFetchedState(USER.data!, img));
+          });
+        } else {
           emit(UserUpdateUserDataFailedState(response.message));
           emit(UserSettingsFetchedState(USER.data!, img));
         }
       }
     } catch (error) {
       emit(UserOperationFailedState(error.toString()));
-    } finally{
+    } finally {
       emit(UserResetAfterUpdateState());
     }
   }
