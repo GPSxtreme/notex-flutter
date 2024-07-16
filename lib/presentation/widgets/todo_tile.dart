@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:notex/data/models/todo_model.dart';
 import 'package:notex/presentation/styles/app_colors.dart';
+import 'package:notex/presentation/styles/app_text.dart';
 import '../blocs/todos/todos_bloc.dart';
 import '../styles/size_config.dart';
 
@@ -41,45 +42,63 @@ class _TodoTileState extends State<TodoTile> {
   }
 
   detailTile(String key, String value) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        padding: EdgeInsets.symmetric(
+            horizontal: AppSpacing.md, vertical: AppSpacing.sm),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [Text(key), Text(value)],
+          children: [
+            Text(
+              key,
+              style:
+                  AppText.textBase.copyWith(color: AppColors.mutedForeground),
+            ),
+            Text(
+              value,
+              style: AppText.textBaseSemiBold
+                  .copyWith(color: AppColors.foreground),
+            )
+          ],
         ),
       );
 
-  divider() => Divider(
+  divider() => const Divider(
         thickness: 1.0,
         indent: 20,
         endIndent: 20,
+        color: AppColors.border,
       );
 
   void _showNoteDetails() => showModalBottomSheet(
         showDragHandle: true,
+        backgroundColor: AppColors.secondary,
         context: context,
         builder: (BuildContext context) {
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              detailTile(
-                  'Created on',
-                  DateFormat('d MMMM, h:mm a')
-                      .format(widget.todo.createdTime.toLocal())
-                      .toString()),
-              divider(),
-              detailTile(
-                  'Remainder time',
-                  DateFormat('d MMMM, h:mm a')
-                      .format(widget.todo.expireTime.toLocal())
-                      .toString()),
-              divider(),
-              detailTile(
-                  'Is completed', widget.todo.isCompleted ? 'yes' : 'no'),
-              divider(),
-              detailTile('Is synced', widget.todo.isSynced ? 'yes' : 'no'),
-              divider(),
-              detailTile('Is uploaded', widget.todo.isUploaded ? 'yes' : 'no'),
-            ],
+          return Padding(
+            padding: EdgeInsets.only(bottom: AppSpacing.xl, top: AppSpacing.sm),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                detailTile(
+                    'Created on',
+                    DateFormat('d MMMM, h:mm a')
+                        .format(widget.todo.createdTime.toLocal())
+                        .toString()),
+                divider(),
+                detailTile(
+                    'Remainder time',
+                    DateFormat('d MMMM, h:mm a')
+                        .format(widget.todo.expireTime.toLocal())
+                        .toString()),
+                divider(),
+                detailTile(
+                    'Is completed', widget.todo.isCompleted ? 'Yes' : 'No'),
+                divider(),
+                detailTile('Is synced', widget.todo.isSynced ? 'Yes' : 'No'),
+                divider(),
+                detailTile(
+                    'Is uploaded', widget.todo.isUploaded ? 'Yes' : 'No'),
+              ],
+            ),
           );
         },
       );
@@ -122,15 +141,12 @@ class _TodoTileState extends State<TodoTile> {
         return Container(
           width: double.maxFinite,
           decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20.0),
-              border: Border.all(
-                width: 1.0,
-              )),
+              borderRadius: AppBorderRadius.xxl, color: AppColors.secondary),
           child: Material(
             color: Colors.transparent,
-            borderRadius: BorderRadius.circular(20.0),
+            borderRadius: AppBorderRadius.xxl,
             child: InkWell(
-              borderRadius: BorderRadius.circular(20.0),
+              borderRadius: AppBorderRadius.xxl,
               onLongPress: () {
                 widget.todosBloc.add(TodosEnteredEditingEvent());
                 _isEditOnTap();
@@ -143,17 +159,17 @@ class _TodoTileState extends State<TodoTile> {
                 }
               },
               child: Padding(
-                padding: EdgeInsets.symmetric(
-                    vertical: SizeConfig.blockSizeVertical! * 0.5),
+                padding: EdgeInsets.symmetric(vertical: AppSpacing.sm),
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     if (state is! TodosEditingState && !_isSyncing) ...[
                       Transform.scale(
                         scale: 1.3,
                         child: Checkbox(
                             value: widget.todo.isCompleted,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
+                            shape: const CircleBorder(),
                             onChanged: (bool? value) {
                               if (value != null) {
                                 if (value) {
@@ -177,33 +193,25 @@ class _TodoTileState extends State<TodoTile> {
                       )
                     ],
                     SizedBox(
-                      width: SizeConfig.blockSizeHorizontal! * 2,
+                      width: AppSpacing.md,
                     ),
                     Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              widget.todo.body,
-                            ),
-                            SizedBox(
-                              height: SizeConfig.blockSizeVertical! * 0.5,
-                            ),
-                          ],
-                        ),
+                      child: Text(
+                        widget.todo.body,
+                        style: AppText.textBaseMedium,
                       ),
                     ),
                     if (state is! TodosEditingState)
                       IconButton(
+                          style: const ButtonStyle(
+                              backgroundColor:
+                                  WidgetStatePropertyAll(Colors.transparent)),
                           onPressed: () {
                             _showNoteDetails();
                           },
-                          splashRadius: 20,
-                          icon: const Icon(
-                            Ionicons.ellipsis_vertical,
-                            size: 15,
+                          icon: Icon(
+                            Ionicons.information,
+                            size: AppSpacing.iconSizeBase,
                           )),
                     if (state is TodosEditingState)
                       Transform.scale(
