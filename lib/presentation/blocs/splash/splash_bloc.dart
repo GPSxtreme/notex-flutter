@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:notex/core/repositories/auth_repository.dart';
@@ -15,7 +16,9 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
   }
 
   Future<void> authenticateUser(Emitter emit) async {
-    await UtilRepository.checkForUpdate();
+    if (Platform.isAndroid) {
+      await UtilRepository.checkForUpdate();
+    }
     String? userToken = await SharedPreferencesRepository.getJwtToken();
     if (userToken != null) {
       await AuthRepository.init().then((_) async {
