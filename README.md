@@ -4,7 +4,7 @@ Cloud notes and tasks app. Never lose a note or miss a task. Stay organized.
 [Available on Google play store!](https://play.google.com/store/apps/details?id=com.gpsxtreme.notex.notex)
 
 
-![Notex](https://github.com/GPSxtreme/notex-flutter/assets/86603322/3cea450b-27ad-472d-9016-50c6f34be2c2)
+![notex_banner_resized](https://github.com/user-attachments/assets/18112c22-3d2c-4047-a051-b075c5d5ae9e)
 
 ## Table of Contents
 1. [About](#about)
