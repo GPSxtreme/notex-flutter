@@ -2,6 +2,21 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>NSCameraUsageDescription</key>
+	<string>This app requires camera access to capture your profile photo</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app requires photo library access to select your profile picture</string>
+	<key>NSUserNotificationCenterUsageDescription</key>
+	<string>We use notifications to remind you about upcoming movies and TV shows.</string>
+	<key>NSLocalNotificationUsageDescription</key>
+	<string>We use local notifications to remind you about upcoming movies and TV shows even when the app is not running.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -10,6 +25,8 @@
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>ITunesSoftwareServiceIdentifier</key>
+	<string>6578461622</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
