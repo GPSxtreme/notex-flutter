@@ -1,4 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -345,13 +347,14 @@ class _SettingsPageState extends State<SettingsPage> {
                                 .add(SettingsRedirectToDevMailEvent()),
                             icon: Icons.mail_outline,
                           ),
-                          _iconListTile(
-                            title: 'Updates',
-                            subtitle: 'Check for app updates',
-                            onTap: () => settingsBloc
-                                .add(SettingsCheckForAppUpdatesEvent()),
-                            icon: Icons.update,
-                          ),
+                          if (Platform.isAndroid)
+                            _iconListTile(
+                              title: 'Updates',
+                              subtitle: 'Check for app updates',
+                              onTap: () => settingsBloc
+                                  .add(SettingsCheckForAppUpdatesEvent()),
+                              icon: Icons.update,
+                            ),
                           label('Account Management'),
                           if (!USER.data!.isEmailVerified)
                             _iconListTile(
