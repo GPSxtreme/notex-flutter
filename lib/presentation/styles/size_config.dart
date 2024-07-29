@@ -21,7 +21,7 @@ class SizeConfig {
     {'width': 411.0, 'height': 823.0, 'scale': 0.95}, // Pixel 2/3 XL
     {'width': 768.0, 'height': 1024.0, 'scale': 1.2}, // iPad (7th generation)
     {'width': 834.0, 'height': 1112.0, 'scale': 1.3}, // iPad Pro 10.5-inch
-    {'width': 1024.0, 'height': 1366.0, 'scale': 1.4}, // iPad Pro 12.9-inch
+    {'width': 1024.0, 'height': 1366.0, 'scale': 1.5}, // iPad Pro 12.9-inch
   ];
 
   double computeScaleFactor(double screenWidth, double screenHeight) {
