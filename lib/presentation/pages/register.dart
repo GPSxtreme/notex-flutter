@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:notex/presentation/blocs/register/register_bloc.dart';
 import 'package:notex/presentation/styles/app_colors.dart';
 import 'package:notex/presentation/styles/app_text.dart';
+import 'package:notex/presentation/widgets/fit_width_box.dart';
 import 'package:notex/router/app_route_constants.dart';
 
 import '../styles/app_styles.dart';
@@ -85,10 +86,10 @@ class _RegisterPageState extends State<RegisterPage> {
         builder: (context, state) {
           return Scaffold(
             resizeToAvoidBottomInset: false,
-            body: Stack(
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: AppSpacing.md),
+            body: Center(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: AppSpacing.md),
+                child: FitWidthBox(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -278,7 +279,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     ],
                   ),
                 ),
-              ],
+              ),
             ),
           );
         });
