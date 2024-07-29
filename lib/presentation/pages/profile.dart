@@ -13,6 +13,7 @@ import 'package:notex/data/models/updatable_user_data_model.dart';
 import 'package:notex/presentation/blocs/user/user_bloc.dart';
 import 'package:notex/presentation/styles/app_colors.dart';
 import 'package:notex/presentation/styles/app_text.dart';
+import 'package:notex/presentation/widgets/fit_width_box.dart';
 import 'dart:io';
 import '../../main.dart';
 import '../styles/app_styles.dart';
@@ -92,6 +93,7 @@ class _ProfilePageState extends State<ProfilePage> {
         showDragHandle: true,
         context: context,
         backgroundColor: AppColors.secondary,
+        constraints: const BoxConstraints(maxWidth: 900),
         builder: (BuildContext context) {
           return Padding(
             padding: EdgeInsets.only(bottom: AppSpacing.lg),
@@ -271,8 +273,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               child: Stack(
                                 children: [
                                   CircleAvatar(
-                                    radius:
-                                        SizeConfig.blockSizeHorizontal! * 18,
+                                    radius: AppSpacing.iconSize7Xl,
                                     backgroundImage: (_imageFile != null)
                                         ? FileImage(_imageFile!)
                                         : state.profilePicture as ImageProvider,
@@ -362,198 +363,209 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: AppSpacing.md, vertical: AppSpacing.xxl),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        TextField(
-                          controller: _emailController,
-                          keyboardType: TextInputType.text,
-                          readOnly: true,
-                          enableInteractiveSelection: false,
-                        ),
-                        SizedBox(
-                          height: AppSpacing.md,
-                        ),
-                        TextField(
-                          controller: _nameController,
-                          onChanged: (_) {
-                            setState(() {});
-                          },
-                          keyboardType: TextInputType.text,
-                        ),
-                        SizedBox(
-                          height: AppSpacing.md,
-                        ),
-                        Row(
+                  Center(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: AppSpacing.md, vertical: AppSpacing.xxl),
+                      child: FitWidthBox(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Flexible(
-                              child: TextField(
-                                controller: _dobController,
-                                readOnly: true,
-                                onTap: () async {
-                                  await _selectDate();
-                                },
-                                onChanged: (_) {
-                                  setState(() {});
-                                },
-                                keyboardType: TextInputType.datetime,
-                              ),
+                            TextField(
+                              controller: _emailController,
+                              keyboardType: TextInputType.text,
+                              readOnly: true,
+                              enableInteractiveSelection: false,
                             ),
                             SizedBox(
-                              width: AppSpacing.sm,
+                              height: AppSpacing.md,
                             ),
-                            IntrinsicHeight(
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.secondary,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: AppBorderRadius.lg,
+                            TextField(
+                              controller: _nameController,
+                              onChanged: (_) {
+                                setState(() {});
+                              },
+                              keyboardType: TextInputType.text,
+                            ),
+                            SizedBox(
+                              height: AppSpacing.md,
+                            ),
+                            Row(
+                              children: [
+                                Flexible(
+                                  child: TextField(
+                                    controller: _dobController,
+                                    readOnly: true,
+                                    onTap: () async {
+                                      await _selectDate();
+                                    },
+                                    onChanged: (_) {
+                                      setState(() {});
+                                    },
+                                    keyboardType: TextInputType.datetime,
                                   ),
                                 ),
-                                onPressed: () async {
-                                  await _selectDate();
-                                },
-                                child: const Icon(
-                                  Icons.calendar_month,
+                                SizedBox(
+                                  width: AppSpacing.sm,
+                                ),
+                                IntrinsicHeight(
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: AppColors.secondary,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: AppBorderRadius.lg,
+                                      ),
+                                    ),
+                                    onPressed: () async {
+                                      await _selectDate();
+                                    },
+                                    child: const Icon(
+                                      Icons.calendar_month,
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                            SizedBox(
+                              height: AppSpacing.lg,
+                            ),
+                            Text(" Country",
+                                style: AppText.textSm.copyWith(
+                                  color: AppColors.mutedForeground,
+                                )),
+                            SizedBox(
+                              height: AppSpacing.md,
+                            ),
+                            Material(
+                              borderRadius: AppBorderRadius.lg,
+                              child: InkWell(
+                                borderRadius: AppBorderRadius.lg,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: AppBorderRadius.lg,
+                                  ),
+                                  child: CountryCodePicker(
+                                    padding: EdgeInsets.zero,
+                                    barrierColor: Colors.transparent,
+                                    backgroundColor: AppColors.background,
+                                    initialSelection: state.user.country,
+                                    boxDecoration: BoxDecoration(
+                                        color: AppColors.card,
+                                        borderRadius: AppBorderRadius.lg,
+                                        border: Border.all(
+                                            color: AppColors.border,
+                                            width: 1.0)),
+                                    searchDecoration: InputDecoration(
+                                      filled: true,
+                                      fillColor: Colors
+                                          .transparent, // Background color for the text field
+                                      hintStyle: AppText.textBase.copyWith(
+                                          color: AppColors.mutedForeground),
+                                      border: OutlineInputBorder(
+                                        // Normal state border
+                                        borderRadius: AppBorderRadius.lg,
+                                        borderSide: const BorderSide(
+                                            color: AppColors
+                                                .border), // Border color
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                        // Enabled state border
+                                        borderRadius: AppBorderRadius.lg,
+
+                                        borderSide: const BorderSide(
+                                            color: AppColors.border),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        // Focused state border
+                                        borderRadius: AppBorderRadius.lg,
+                                        borderSide: const BorderSide(
+                                            color: AppColors.primary,
+                                            width:
+                                                1.0), // Thicker border when focused
+                                      ),
+                                      contentPadding: EdgeInsets.symmetric(
+                                          horizontal: AppSpacing.md,
+                                          vertical:
+                                              12.0), // Padding inside the text field
+                                    ),
+                                    emptySearchBuilder: (context) {
+                                      return Padding(
+                                        padding: EdgeInsets.all(AppSpacing.md),
+                                        child: Text(
+                                            "Please enter your country code / telephone code if no results are shown.",
+                                            textAlign: TextAlign.center,
+                                            style: AppText.textSm.copyWith(
+                                              color: AppColors.mutedForeground,
+                                            )),
+                                      );
+                                    },
+                                    showOnlyCountryWhenClosed: true,
+                                    showCountryOnly: true,
+                                    dialogSize: Size(
+                                        SizeConfig.screenWidth! * 0.8,
+                                        SizeConfig.screenHeight! * 0.8),
+                                    flagWidth:
+                                        SizeConfig.blockSizeHorizontal! * 10,
+                                    alignLeft: true,
+                                    showDropDownButton: true,
+                                    closeIcon: const Icon(
+                                      Icons.close,
+                                      size: 25,
+                                    ),
+                                    onChanged: (CountryCode countryCode) {
+                                      setState(() {
+                                        _selectedCountry = countryCode.code!;
+                                      });
+                                    },
+                                  ),
                                 ),
                               ),
-                            )
+                            ),
+                            if (_saveChangesFlag)
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 30),
+                                child: SizedBox(
+                                  width: double.maxFinite,
+                                  child: ElevatedButton(
+                                    onPressed: !state.isUpdating
+                                        ? () {
+                                            try {
+                                              DateTime.parse(
+                                                  _dobController.text);
+                                            } catch (_) {
+                                              kSnackBar(context,
+                                                  "Please enter a valid date of birth");
+                                              return;
+                                            }
+                                            userBloc.add(UserUpdateUserDataEvent(
+                                                img: _imageFile,
+                                                data: UpdatableUserDataModel(
+                                                    dob: DateFormat(
+                                                            'MM/dd/yyyy')
+                                                        .parse(
+                                                            _dobController.text)
+                                                        .toUtc(),
+                                                    name: _nameController.text,
+                                                    countryCode:
+                                                        _selectedCountry)));
+                                          }
+                                        : null,
+                                    child: !state.isUpdating
+                                        ? Text(
+                                            "Save",
+                                            style: AppText.textBaseBold,
+                                          )
+                                        : const SpinKitCircle(
+                                            color: AppColors.primary,
+                                            size: 20,
+                                          ),
+                                  ),
+                                ),
+                              )
                           ],
                         ),
-                        SizedBox(
-                          height: AppSpacing.lg,
-                        ),
-                        Text(" Country",
-                            style: AppText.textSm.copyWith(
-                              color: AppColors.mutedForeground,
-                            )),
-                        SizedBox(
-                          height: AppSpacing.md,
-                        ),
-                        Material(
-                          borderRadius: AppBorderRadius.lg,
-                          child: InkWell(
-                            borderRadius: AppBorderRadius.lg,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: AppBorderRadius.lg,
-                              ),
-                              child: CountryCodePicker(
-                                padding: EdgeInsets.zero,
-                                barrierColor: Colors.transparent,
-                                backgroundColor: AppColors.background,
-                                initialSelection: state.user.country,
-                                boxDecoration: BoxDecoration(
-                                    color: AppColors.card,
-                                    borderRadius: AppBorderRadius.lg,
-                                    border: Border.all(
-                                        color: AppColors.border, width: 1.0)),
-                                searchDecoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: Colors
-                                      .transparent, // Background color for the text field
-                                  hintStyle: AppText.textBase.copyWith(
-                                      color: AppColors.mutedForeground),
-                                  border: OutlineInputBorder(
-                                    // Normal state border
-                                    borderRadius: AppBorderRadius.lg,
-                                    borderSide: const BorderSide(
-                                        color:
-                                            AppColors.border), // Border color
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    // Enabled state border
-                                    borderRadius: AppBorderRadius.lg,
-
-                                    borderSide: const BorderSide(
-                                        color: AppColors.border),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    // Focused state border
-                                    borderRadius: AppBorderRadius.lg,
-                                    borderSide: const BorderSide(
-                                        color: AppColors.primary,
-                                        width:
-                                            1.0), // Thicker border when focused
-                                  ),
-                                  contentPadding: EdgeInsets.symmetric(
-                                      horizontal: AppSpacing.md,
-                                      vertical:
-                                          12.0), // Padding inside the text field
-                                ),
-                                emptySearchBuilder: (context) {
-                                  return Padding(
-                                    padding: EdgeInsets.all(AppSpacing.md),
-                                    child: Text(
-                                        "Please enter your country code / telephone code if no results are shown.",
-                                        textAlign: TextAlign.center,
-                                        style: AppText.textSm.copyWith(
-                                          color: AppColors.mutedForeground,
-                                        )),
-                                  );
-                                },
-                                showOnlyCountryWhenClosed: true,
-                                showCountryOnly: true,
-                                dialogSize: Size(SizeConfig.screenWidth! * 0.8,
-                                    SizeConfig.screenHeight! * 0.8),
-                                flagWidth: SizeConfig.blockSizeHorizontal! * 10,
-                                alignLeft: true,
-                                showDropDownButton: true,
-                                closeIcon: const Icon(
-                                  Icons.close,
-                                  size: 25,
-                                ),
-                                onChanged: (CountryCode countryCode) {
-                                  setState(() {
-                                    _selectedCountry = countryCode.code!;
-                                  });
-                                },
-                              ),
-                            ),
-                          ),
-                        ),
-                        if (_saveChangesFlag)
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 30),
-                            child: SizedBox(
-                              width: double.maxFinite,
-                              child: ElevatedButton(
-                                onPressed: !state.isUpdating
-                                    ? () {
-                                        try {
-                                          DateTime.parse(_dobController.text);
-                                        } catch (_) {
-                                          kSnackBar(context,
-                                              "Please enter a valid date of birth");
-                                          return;
-                                        }
-                                        userBloc.add(UserUpdateUserDataEvent(
-                                            img: _imageFile,
-                                            data: UpdatableUserDataModel(
-                                                dob: DateFormat('MM/dd/yyyy')
-                                                    .parse(_dobController.text)
-                                                    .toUtc(),
-                                                name: _nameController.text,
-                                                countryCode:
-                                                    _selectedCountry)));
-                                      }
-                                    : null,
-                                child: !state.isUpdating
-                                    ? Text(
-                                        "Save",
-                                        style: AppText.textBaseBold,
-                                      )
-                                    : const SpinKitCircle(
-                                        color: AppColors.primary,
-                                        size: 20,
-                                      ),
-                              ),
-                            ),
-                          )
-                      ],
+                      ),
                     ),
                   ),
                 ]
