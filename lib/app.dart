@@ -17,6 +17,7 @@ class _MyAppState extends State<MyApp> {
     SizeConfig().init(context);
     return MaterialApp.router(
       darkTheme: defaultThemeData,
+      themeMode: ThemeMode.dark,
       debugShowCheckedModeBanner: false,
       routerConfig: router,
     );
