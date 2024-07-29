@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:notex/core/repositories/todos_repository.dart';
 import 'package:notex/data/models/todo_model.dart';
 import 'package:notex/data/repositories/model_to_entity_repository.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../../../main.dart';
 
 part 'todos_event.dart';
@@ -156,6 +157,9 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
     } catch (error) {
       emit(TodosAddTodoFailedState('An unexpected error occurred \n $error'));
     } finally {
+      if (await Permission.scheduleExactAlarm.status.isDenied) {
+        await Permission.scheduleExactAlarm.request();
+      }
       NOTIFICATION_SERVICES.showNotification(
           title: 'Remainder set for todo!',
           body: 'TODO: ${event.todo.body}',
@@ -224,9 +228,9 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
             }
           });
         }).then((_) {
-          if(_doneTodos.isEmpty && _notDoneTodos.isEmpty){
+          if (_doneTodos.isEmpty && _notDoneTodos.isEmpty) {
             emit(TodosEmptyState());
-          }else{
+          } else {
             emit(TodosFetchedState(_doneTodos, _notDoneTodos));
           }
         });
@@ -269,7 +273,7 @@ class TodosBloc extends Bloc<TodosEvent, TodosState> {
       _selectedTodos.removeWhere((todo) => _temp.contains(todo));
     }
     emit(TodosEditingState(_doneTodos, _notDoneTodos,
-        selectedTodoIds: [..._selectedTodos.map((e) => e.id).toList()],
+        selectedTodoIds: [..._selectedTodos.map((e) => e.id)],
         areAllSelected: event.areAllSelected));
   }
 
