@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:notex/core/repositories/local_database_repository.dart';
+import 'package:notex/presentation/styles/app_colors.dart';
 import 'package:notex/services/notification.dart';
 import 'app.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -17,6 +18,11 @@ NotificationService NOTIFICATION_SERVICES = NotificationService();
 void main() async {
   await dotenv.load();
   await NOTIFICATION_SERVICES.init();
+  // Configure the system navigation bar to use light content (dark color)
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    systemNavigationBarColor: AppColors.background,
+    systemNavigationBarIconBrightness: Brightness.light,
+  ));
   SystemChrome.setPreferredOrientations(
           [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown])
       .then((value) => runApp(const MyApp()));
