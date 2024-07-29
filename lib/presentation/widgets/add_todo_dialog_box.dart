@@ -25,8 +25,9 @@ Future<DateTime?> showDateTimePicker({
   DateTime? firstDate,
   DateTime? lastDate,
 }) async {
-  initialDate ??= DateTime.now();
-  firstDate ??= DateTime.now();
+  final now = DateTime.now();
+  initialDate ??= now;
+  firstDate ??= now;
   lastDate ??= firstDate.add(const Duration(days: 365 * 200));
 
   final DateTime? selectedDate = await showDatePicker(
@@ -42,19 +43,20 @@ Future<DateTime?> showDateTimePicker({
 
   final TimeOfDay? selectedTime = await showTimePicker(
     context: context,
-    initialTime:
-        TimeOfDay.fromDateTime(DateTime.now().add(const Duration(seconds: 70))),
+    initialTime: TimeOfDay.fromDateTime(now.add(const Duration(minutes: 1))),
   );
 
-  return selectedTime == null
-      ? selectedDate
-      : DateTime(
-          selectedDate.year,
-          selectedDate.month,
-          selectedDate.day,
-          selectedTime.hour,
-          selectedTime.minute,
-        );
+  if (selectedTime == null) return selectedDate;
+
+  final selectedDateTime = DateTime(
+    selectedDate.year,
+    selectedDate.month,
+    selectedDate.day,
+    selectedTime.hour,
+    selectedTime.minute,
+  );
+
+  return selectedDateTime.isBefore(now) ? DateTime.now() : selectedDateTime;
 }
 
 class _AddTodoDialogBoxState extends State<AddTodoDialogBox> {
