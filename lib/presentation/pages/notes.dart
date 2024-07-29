@@ -95,7 +95,7 @@ class _NotesPageState extends State<NotesPage>
           _notes = state.notes.where((n) => n.isDeleted == false).toList();
         }
         int numberOfColumns =
-            (SizeConfig.screenWidth! / 300).ceil().clamp(1, 4);
+            (SizeConfig.screenWidth! / 300).ceil().clamp(1, 5);
         return Scaffold(
           body: Container(
             margin: EdgeInsets.symmetric(horizontal: AppSpacing.md),
