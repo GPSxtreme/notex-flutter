@@ -364,8 +364,7 @@ class _HomePageState extends State<HomePage> {
                         const Spacer(),
                         Container(
                           margin:
-                              EdgeInsets.symmetric(horizontal: AppSpacing.md)
-                                  .copyWith(right: 0),
+                              EdgeInsets.all(AppSpacing.md).copyWith(right: 0),
                           child: Material(
                             color: AppColors.secondary,
                             borderRadius: AppBorderRadius.lg,
