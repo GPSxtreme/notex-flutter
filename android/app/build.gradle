@@ -72,6 +72,7 @@ android {
         release {
             signingConfig signingConfigs.debug
             signingConfig signingConfigs.release
+            shrinkResources false // preserves notification icon
         }
     }
 
