@@ -7,7 +7,7 @@ class NotificationService {
 
   Future<void> init() async {
     AndroidInitializationSettings initializationSettingsAndroid =
-        const AndroidInitializationSettings('logo');
+        const AndroidInitializationSettings('ic_stat_logo');
 
     var initializationSettingsIOS = DarwinInitializationSettings(
         requestAlertPermission: true,
@@ -21,23 +21,34 @@ class NotificationService {
     await notificationsPlugin.initialize(initializationSettings,
         onDidReceiveNotificationResponse:
             (NotificationResponse notificationResponse) async {});
+    requestNotificationPermission();
+  }
+
+  void requestNotificationPermission() {
     notificationsPlugin
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>()
         ?.requestNotificationsPermission();
   }
 
-  notificationDetails() {
+  NotificationDetails notificationDetails() {
     return const NotificationDetails(
-        android: AndroidNotificationDetails('channelId', 'channelName',
+        android: AndroidNotificationDetails('channelId', 'Todo reminders',
+            icon: 'ic_stat_logo',
+            largeIcon: DrawableResourceAndroidBitmap('app_icon'),
+            channelDescription: 'TODO reminders',
+            priority: Priority.max,
             importance: Importance.max),
-        iOS: DarwinNotificationDetails());
+        iOS: DarwinNotificationDetails(
+          presentAlert: true,
+          presentBadge: true,
+          presentSound: true,
+        ));
   }
 
   Future showNotification(
       {int id = 0, String? title, String? body, String? payLoad}) async {
-    return notificationsPlugin.show(
-        id, title, body, await notificationDetails());
+    return notificationsPlugin.show(id, title, body, notificationDetails());
   }
 
   Future scheduleNotification(
@@ -46,6 +57,7 @@ class NotificationService {
       String? body,
       String? payLoad,
       required DateTime scheduledNotificationDateTime}) async {
+    requestNotificationPermission();
     return notificationsPlugin.zonedSchedule(
         id,
         title,
@@ -54,7 +66,7 @@ class NotificationService {
           scheduledNotificationDateTime,
           tz.local,
         ),
-        await notificationDetails(),
+        notificationDetails(),
         // ignore: deprecated_member_use
         androidAllowWhileIdle: true,
         uiLocalNotificationDateInterpretation:
