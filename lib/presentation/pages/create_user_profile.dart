@@ -44,10 +44,11 @@ class _CreateUserProfileState extends State<CreateUserProfile> {
     final DateTime hundredYearsAgo =
         currentDate.subtract(const Duration(days: 365 * 100));
     final DateTime? picked = await showDatePicker(
-        context: context,
-        initialDate: tenYearsAgo,
-        firstDate: hundredYearsAgo,
-        lastDate: tenYearsAgo);
+      context: context,
+      initialDate: tenYearsAgo,
+      firstDate: hundredYearsAgo,
+      lastDate: currentDate,
+    );
     if (picked != null) {
       String formattedDate = DateFormat('MM/dd/yyyy').format(picked);
       setState(() {
