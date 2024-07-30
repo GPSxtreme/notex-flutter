@@ -28,8 +28,7 @@ class CreateUserProfileBloc
             "Date of birth can't be in the future"));
         return;
       } else if (DateTime.now().difference(event.data.dob).inDays < 8 * 365) {
-        emit(CreateUserProfileFailedState(
-            "Date of birth must be at least 8 years old"));
+        emit(CreateUserProfileFailedState("Must be at least 8 years old"));
         return;
       }
       await UserRepository.updateUserProfilePicture(event.imageFile)
