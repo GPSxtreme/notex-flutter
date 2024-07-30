@@ -65,8 +65,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
           return;
         } else if (DateTime.now().difference(event.data!.dob).inDays <
             8 * 365) {
-          emit(UserOperationFailedState(
-              "Date of birth must be at least 8 years old"));
+          emit(UserOperationFailedState("Must be at least 8 years old"));
           emit(UserSettingsFetchedState(USER.data!, img));
           return;
         }
