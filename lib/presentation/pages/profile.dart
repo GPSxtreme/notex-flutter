@@ -64,10 +64,11 @@ class _ProfilePageState extends State<ProfilePage> {
     final DateTime hundredYearsAgo =
         currentDate.subtract(const Duration(days: 365 * 100));
     final DateTime? picked = await showDatePicker(
-        context: context,
-        initialDate: tenYearsAgo,
-        firstDate: hundredYearsAgo,
-        lastDate: tenYearsAgo);
+      context: context,
+      initialDate: tenYearsAgo,
+      firstDate: hundredYearsAgo,
+      lastDate: currentDate,
+    );
     if (picked != null) {
       String formattedDate = DateFormat('MM/dd/yyyy').format(picked);
       setState(() {
@@ -530,14 +531,6 @@ class _ProfilePageState extends State<ProfilePage> {
                                   child: ElevatedButton(
                                     onPressed: !state.isUpdating
                                         ? () {
-                                            try {
-                                              DateTime.parse(
-                                                  _dobController.text);
-                                            } catch (_) {
-                                              kSnackBar(context,
-                                                  "Please enter a valid date of birth");
-                                              return;
-                                            }
                                             userBloc.add(UserUpdateUserDataEvent(
                                                 img: _imageFile,
                                                 data: UpdatableUserDataModel(
